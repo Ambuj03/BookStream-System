@@ -113,7 +113,7 @@ USER_TYPE_CHOICES = [("admin","Admin"),("distributor","Distributor")]
 
 EVENT_TYPE_CHOICES = [("low stock","Low Stock"),("others","Others")]
 
-STATUS_CHOICES = [("read","Read"), ("Unread")]
+STATUS_CHOICES = [("read","Read"), ("unread","Unread")]
 
 
 class Notification(models.Model):
@@ -131,7 +131,7 @@ class Notification(models.Model):
 
 # payment mode choices
 
-PAYMENT_MODE_CHOICES = [("Online"),("Cash")]
+PAYMENT_MODE_CHOICES = [("online","Online"),("cash","Cash")]
 
 class Receipt(models.Model):
     receipt_id = models.AutoField(primary_key=True)
