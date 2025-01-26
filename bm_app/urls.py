@@ -1,6 +1,8 @@
 from django.urls import path
-from .import views
+from .views import home_page, login_page, signup_page
 
-urlPatterns = [
-    path('bm_app/', views.book_list, name = 'book_list'),
-]   
+urlpatterns = [
+    path('', home_page, name='home'),
+    path('login/', login_page, name='login'),
+    path('signup/', signup_page, name='signup'),
+]
