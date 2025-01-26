@@ -1,15 +1,19 @@
-<html>
-<head>
-<h1>Books List</h1>
-</head>
-
+{%extends "base.html"%}
+<!doctype html>
 <body>
+    {%block content%}
+    <h1>Books List</h1>
     <h1>Books</h1>
+
     <ul>
     {%for book in books%}
-
+        
         <li>{{book.book_name}}</li>
+
     {%endfor%}
+    {%endblock%}
+
 </ul>
 </body>
 </html>
+

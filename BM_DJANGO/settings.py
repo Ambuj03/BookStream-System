@@ -48,14 +48,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+]   
 
 ROOT_URLCONF = 'BM_DJANGO.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['/home/ambuj03/Desktop/BM_DJANGO/bm_app/templates/bm_app'],
+        #add os.base_dir and more to make it platform independent
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -4,4 +4,4 @@ from .models import Books
 # Listing all the books
 def book_list(request):
     books = Books.objects.all()
-    return render(request, 'bm_app/templates/bm_app/book_list.html',{'books' : books})
+    return render(request, 'book_list.html', {'books' : books})
