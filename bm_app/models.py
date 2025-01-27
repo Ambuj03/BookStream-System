@@ -30,14 +30,13 @@ class BooksCategory(models.Model):
 
 class Books(models.Model):
     book_id = models.AutoField(primary_key=True)
-    book_name = models.CharField(max_length=200)
+    book_name = models.CharField(max_length=100)
     book_author = models.CharField(max_length=100, blank=True, null=True)
     book_language = models.CharField(max_length=50)
     book_price = models.IntegerField()
     book_category = models.ForeignKey('BooksCategory', models.DO_NOTHING, 
                     db_column='book_category', to_field='bookscategory_name', 
                     blank=False, null=False) # changed blank and null values, check removing db column
-                    
 
     class Meta:
         managed = False
@@ -142,7 +141,7 @@ class Receipt(models.Model):
     date = models.DateTimeField(blank=True, null=True)
     quantity = models.IntegerField()
     paymentmode = models.CharField(db_column='paymentMode', choices=PAYMENT_MODE_CHOICES,max_length=6, blank=True, null=True)  # Field name made lowercase.
-
+ 
     class Meta:
         managed = False
         db_table = 'receipt'
