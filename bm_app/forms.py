@@ -16,4 +16,5 @@ class transaction_form(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(transaction_form, self).__init__(*args, **kwargs)
+        # import pdb; pdb.set_trace()
         self.fields['book'].label_from_instance = lambda obj: obj.book_name
