@@ -7,6 +7,8 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
+from phonenumber_field.modelfields import PhoneNumberField
+
 
 class Admin(models.Model):
     admin_id = models.AutoField(primary_key=True)
@@ -59,13 +61,13 @@ class Customer(models.Model):
 class Distributor(models.Model):
     distributor_id = models.AutoField(primary_key=True)
     distributor_name = models.CharField(max_length=100)
-    distributor_phonenumber = models.CharField(db_column='distributor_phoneNumber', max_length=10)  # Field name made lowercase.
+    distributor_phonenumber = PhoneNumberField(blank = True, null = True)       #db_column='distributor_phoneNumber'  # Field name made lowercase.
     distributor_address = models.TextField(blank=True, null=True)
     distributor_email = models.CharField(max_length=100)
     distributor_password = models.CharField(max_length=100)
     distributor_age = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
-    admin_id = models.ForeignKey(Admin, models.DO_NOTHING) # changed admin to admin_id
+    admin = models.ForeignKey(Admin, models.DO_NOTHING) # changed admin to admin_id
 
     class Meta:
         managed = False
@@ -74,8 +76,8 @@ class Distributor(models.Model):
 
 class DistributorInventory(models.Model):
     inventory_id = models.AutoField(primary_key=True)
-    books_id = models.ForeignKey(Books, models.DO_NOTHING) # from books to book_id
-    distributor_id = models.ForeignKey(Distributor, models.DO_NOTHING) #changed from distributor to distributor_id
+    books = models.ForeignKey(Books, models.DO_NOTHING) # from books to book_id
+    distributor = models.ForeignKey(Distributor, models.DO_NOTHING) #changed from distributor to distributor_id
     books_stock = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -85,7 +87,7 @@ class DistributorInventory(models.Model):
 
 class Donation(models.Model):
     donation_id = models.AutoField(primary_key=True)
-    customer_id = models.ForeignKey(Customer, models.DO_NOTHING) # customer to customer_id
+    customer = models.ForeignKey(Customer, models.DO_NOTHING) # customer to customer_id
     donation_date = models.DateTimeField(blank=True, null=True)
     donation_amount = models.IntegerField()
     donation_purpose = models.CharField(max_length=100, blank=True, null=True)
