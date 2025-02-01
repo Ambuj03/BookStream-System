@@ -1,6 +1,4 @@
 from django.shortcuts import render, get_object_or_404, redirect
-
-from .models import Books,Donation,Customer
 from .forms import transaction_form
 
 #Showing main page
@@ -23,17 +21,26 @@ def home_page(request):
 
 def new_transaction_view(request):
 
-    #  if request.method == 'POST':
-    #     my_form = transaction_form(request.POST) to be used according to the Form/ModelForm used
+    if request.method == 'POST':
+        print(request.POST)
+        my_form = transaction_form(request.POST) #to be used according to the Form/ModelForm used
+        if my_form.is_valid():
+            my_form.save()
+            return redirect('home')
         
-    #     if transaction_form
+    else:
+        my_form = transaction_form()
+        # context = {
+        #     'form' : my_form
+        # }
+    return render(request, 'bm_app/new_transaction.html', {'form' : my_form})
+
+# def login_view(request):
+#     return render(request = )
+
+
+
     
-    my_form = transaction_form()
-    context = {
-        'form' : my_form
-    }
-    return render(request, 'bm_app/new_transaction.html', context)
-
-
+    
 
 

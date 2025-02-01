@@ -63,3 +63,13 @@ class transaction_form(forms.Form):
             customer = customer
         )
         receipt.save()
+
+
+class login_form(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField()
+
+# class signup_form(form.Form):
+# add some fields
+
+
