@@ -35,8 +35,8 @@ def new_transaction_view(request):
         # }
     return render(request, 'bm_app/new_transaction.html', {'form' : my_form})
 
-# def login_view(request):
-#     return render(request = )
+def login_view(request):
+    return render(request = )
 
 
 
