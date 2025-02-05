@@ -66,8 +66,8 @@ class transaction_form(forms.Form):
 
 
 class login_form(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField()
+    email = forms.EmailField(label='Email')
+    password = forms.CharField(widget=forms.PasswordInput)
 
 # class signup_form(form.Form):
 # add some fields

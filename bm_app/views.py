@@ -1,8 +1,10 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from .forms import transaction_form, login_form
 
 # login required things from documentation
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import login
+
+from django.utils import timezone
 
 
 #Showing main page
@@ -22,7 +24,6 @@ def home_page(request):
     return render(request,'bm_app/home.html',{})
 
 # New Transaction form
-
 def new_transaction_view(request):
 
     if request.method == 'POST':
@@ -43,22 +44,11 @@ def new_transaction_view(request):
 def login_view(request):
 
     if request.method == 'POST':
-        my_login_form = login_form()
-        if my_login_form.is_valid():
-            username = my_login_form.cleaned_data.get('username')
-            password = my_login_form.cleaned_data.get('password')
-            user = authenticate(request, username = username, password = password)
-            if user is not None :
-                login(request, user)
-                return redirect("bm_app/new_transaction.html")
-            else:
-                login_form.add_error(None,'Invalid Username or Password')
-                return redirect("bm_app/login.html")
-
-
+        print("HariOm")
     else:
        my_login_form = login_form()
-       return render(request,"bm_app/login.html", {'form' : my_login_form})
+
+    return render(request,"bm_app/login.html", {'form' : my_login_form})
 
 
 
