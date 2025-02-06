@@ -70,9 +70,9 @@ class transaction_form(forms.Form):
 class login_form(forms.Form):
     email = forms.EmailField(label='Email')
     password = forms.CharField(widget=forms.PasswordInput)
-
 # class signup_form(form.Form):
 # add some fields
+
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
