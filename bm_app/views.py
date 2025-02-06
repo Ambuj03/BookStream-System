@@ -38,26 +38,27 @@ def new_transaction_view(request):
 
 
 def login_page(request):
-
     if request.method == 'POST':
         form = login_form(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            print(email,password)
-            
-            user = authenticate(request, email = email, password = password)
-            if user:
-                login(request,user)
-                return redirect('home/new_transaction.html')
+
+            try:
+                user = Distributor.objects.get(email=email)  # Fetch user by email
+            except Distributor.DoesNotExist:
+                user = None
+
+            if user and user.check_password(password):  # Verify password
+                login(request, user)  # Log the user in
+                return redirect('home')  # Use the name from `urls.py`
             else:
-                return render(request, "bm_app/login.html", {'form' : form, "error" : "Invalid Credentials"})
+                return render(request, "bm_app/login.html", {'form': form, "error": "Invalid Credentials"})
         else:
             return render(request, "bm_app/login.html", {'form': form, "error": "Invalid form"})
     else:
-       form = login_form()
-
-    return render(request,"bm_app/login.html", {'form' : form})
+        form = login_form()
+    return render(request, "bm_app/login.html", {'form': form})
 
 
 # def signup_page(request):
