@@ -61,17 +61,6 @@ def login_page(request):
     return render(request, "bm_app/login.html", {'form': form})
 
 
-# def signup_page(request):
-#     if request.method == 'POST':
-#         form = signup_form(request.POST)
-#         if form.is_valid():
-#             user = form.save()
-#             login(request, user)
-#             # return redirect('login')
-#             return redirect('home/new_transaction')
-#     else:
-#         form = signup_form()
-#     return render(request,'signup.html',{'form' : form})
 
 def signup_page(request):
     if request.method == "POST":
@@ -92,7 +81,7 @@ def signup_page(request):
             )
             distributor.save()
 
-            return redirect("login")  # Redirect to login after signup
+            return redirect("login_page")  # Redirect to login after signup
         else:
             return render(request, "signup.html", {"form": form})  # Re-render with errors
     else:
