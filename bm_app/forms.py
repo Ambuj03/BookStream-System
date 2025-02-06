@@ -1,6 +1,8 @@
 from django import forms
 
-from .models import Books, Receipt, Customer, Donation
+from .models import Books, Receipt, Customer, Donation, Distributor
+
+from django.contrib.auth.forms import UserCreationForm
 
 
 class transaction_form(forms.Form):
@@ -72,4 +74,24 @@ class login_form(forms.Form):
 # class signup_form(form.Form):
 # add some fields
 
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from .models import Distributor, Admin  # Import both models
 
+class signup_form(UserCreationForm):
+    distributor_name = forms.CharField(max_length=100, label='Distributor Name')
+    distributor_phonenumber = forms.CharField(max_length=15, label='Phone Number')
+    distributor_address = forms.CharField(max_length=200, label="Address")
+    distributor_age = forms.DateField(label="Age", widget=forms.DateInput(attrs={'type': 'date'}))
+    admin = forms.ModelChoiceField(queryset=Admin.objects.all(), required=True, label="Admin")  # Ensure Admin is chosen
+
+    class Meta:
+        model = Distributor
+        fields = ('email', 'distributor_name', 'distributor_phonenumber', 'distributor_address', 'distributor_age', 'admin')
+
+    def save(self, commit=True):
+        distributor = super().save(commit=False)
+        distributor.admin = self.cleaned_data["admin"]  # Assign selected admin
+        if commit:
+            distributor.save()
+        return distributor
