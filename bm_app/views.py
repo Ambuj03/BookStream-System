@@ -1,23 +1,19 @@
-from django.shortcuts import render, redirect
-from .forms import transaction_form, login_form
+from django.shortcuts import render, redirect, HttpResponse
+from .forms import transaction_form, login_form, signup_form
 
-# login required things from documentation
-from django.contrib.auth import login
+# # login required things from documentation
+from django.contrib.auth import login,authenticate
 
-from django.utils import timezone
+# from django.utils import timezone
+from .models import Distributor
+from django.contrib.auth.hashers import make_password  # To hash passwords before saving
+
+
 
 
 #Showing main page
 def main_page(request):
     return render(request,'bm_app/main.html',{})
-
-# showing login page
-def login_page(request):
-    return render(request,'bm_app/login.html',{})
-
-# showing signup page
-def signup_page(request):
-    return render(request,'bm_app/signup.html',{})
 
 # showing home page
 def home_page(request):
@@ -41,18 +37,63 @@ def new_transaction_view(request):
     return render(request, 'bm_app/new_transaction.html', {'form' : my_form})
 
 
-def login_view(request):
+def login_page(request):
 
     if request.method == 'POST':
-        print("HariOm")
+        form = login_form(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            print(email,password)
+            
+            user = authenticate(request, email = email, password = password)
+            if user:
+                login(request,user)
+                return redirect('home/new_transaction.html')
+            else:
+                return render(request, "bm_app/login.html", {'form' : form, "error" : "Invalid Credentials"})
+        else:
+            return render(request, "bm_app/login.html", {'form': form, "error": "Invalid form"})
     else:
-       my_login_form = login_form()
+       form = login_form()
 
-    return render(request,"bm_app/login.html", {'form' : my_login_form})
-
-
-
-    
-    
+    return render(request,"bm_app/login.html", {'form' : form})
 
 
+# def signup_page(request):
+#     if request.method == 'POST':
+#         form = signup_form(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             login(request, user)
+#             # return redirect('login')
+#             return redirect('home/new_transaction')
+#     else:
+#         form = signup_form()
+#     return render(request,'signup.html',{'form' : form})
+
+def signup_page(request):
+    if request.method == "POST":
+        form = signup_form(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password1"]
+            admin = form.cleaned_data["admin"]  # Fetch selected admin
+
+            if not admin:
+                return HttpResponse("Admin selection is required!", status=400)
+
+            # Create a new distributor
+            distributor = Distributor.objects.create(
+                email=email,
+                password=make_password(password),  # Hash the password
+                admin=admin  # Assign selected admin
+            )
+            distributor.save()
+
+            return redirect("login")  # Redirect to login after signup
+        else:
+            return render(request, "signup.html", {"form": form})  # Re-render with errors
+    else:
+        form = signup_form()  # Empty form for GET request
+    return render(request, "signup.html", {"form": form})

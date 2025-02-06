@@ -41,9 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+AUTH_USER_MODEL = "bm_app.Distributor" #added for authentication usng dist model
+
+
 # Custom authentication backend 
 AUTHENTICATION_BACKENDS = [
-    'bm_app.backends.DistributorBackend',
     'django.contrib.auth.backends.ModelBackend',  # Keep the default backend
       # Add your custom backend
 ]
