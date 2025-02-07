@@ -81,7 +81,7 @@ def signup_page(request):
             )
             distributor.save()
 
-            return redirect("login_page")  # Redirect to login after signup
+            return redirect("login")  # Redirect to login after signup
         else:
             return render(request, "signup.html", {"form": form})  # Re-render with errors
     else:
