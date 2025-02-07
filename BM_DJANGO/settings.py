@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'phonenumber_field',
     'bm_app',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,29 +40,31 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+AUTH_USER_MODEL = "bm_app.Distributor" #added for authentication usng dist model
+
+
 # Custom authentication backend 
 AUTHENTICATION_BACKENDS = [
-    'bm_app.backends.DistributorBackend',
     'django.contrib.auth.backends.ModelBackend',  # Keep the default backend
       # Add your custom backend
 ]
 
 #  for debugging purposes
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console':{
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'bm_app': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console':{
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'bm_app': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#     },
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
