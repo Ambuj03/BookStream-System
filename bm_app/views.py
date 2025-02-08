@@ -66,24 +66,14 @@ def signup_page(request):
     if request.method == "POST":
         form = signup_form(request.POST)
         if form.is_valid():
-            email = form.cleaned_data["email"]
-            password = form.cleaned_data["password1"]
-            admin = form.cleaned_data["admin"]  # Fetch selected admin
-
-            if not admin:
-                return HttpResponse("Admin selection is required!", status=400)
-
-            # Create a new distributor
-            distributor = Distributor.objects.create(
-                email=email,
-                password=make_password(password),  # Hash the password
-                admin=admin  # Assign selected admin
-            )
-            distributor.save()
+            # Extract all cleaned data from the form
+            distributor = form.save(commit=False)  # Don't save yet
+            distributor.password = make_password(form.cleaned_data["password1"])  # Hash password
+            distributor.save()  # Now save the distributor
 
             return redirect("login")  # Redirect to login after signup
         else:
-            return render(request, "signup.html", {"form": form})  # Re-render with errors
+            return render(request, "signup.html", {"form": form})  # Re-render form with errors
     else:
         form = signup_form()  # Empty form for GET request
     return render(request, "signup.html", {"form": form})
