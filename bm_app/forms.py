@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Books, Receipt, Customer, Donation, Distributor
+from .models import Books, Receipt, Customer, Donation, Distributor, Admin
 
 from django.contrib.auth.forms import UserCreationForm
 
@@ -70,15 +70,22 @@ class transaction_form(forms.Form):
 
 
 class login_form(forms.Form):
-    email = forms.EmailField(label='Email')
-    password = forms.CharField(widget=forms.PasswordInput)
-# class signup_form(form.Form):
-# add some fields
+    email = forms.EmailField(
+        label="Email",
+        widget=forms.EmailInput(attrs={'placeholder': 'Enter email'})
+    )
 
+    password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={'placeholder': 'Enter password'})
+    )
 
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import Distributor, Admin  # Import both models
+    def clean_username(self):
+        email = self.cleaned_data.get("email")
+        if not Distributor.objects.filter(email = email).exists():
+            raise forms.ValidationError("No account with this email")
+        return email
+
 
 class signup_form(UserCreationForm):
     distributor_name = forms.CharField(max_length=100, label='Distributor Name', required=True
