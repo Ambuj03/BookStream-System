@@ -14,7 +14,7 @@ migrations/
 !migrations/__init__.py
 
 # Database files
-*.sqlite3
+*db.sqlite3
 *.db
 
 # Logs & Temporary files
