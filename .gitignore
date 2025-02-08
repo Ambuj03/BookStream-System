@@ -1,1 +1,33 @@
-bm_venv
+# Byte-compiled / cached files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+bm_venv/
+venv/
+
+# Environment variables
+.env
+
+# Django migrations (optional: track only initial migrations)
+migrations/
+!migrations/__init__.py
+
+# Database files
+*.sqlite3
+*.db
+
+# Logs & Temporary files
+*.log
+*.pot
+*.pyc
+*.swp
+*.swo
+.DS_Store
+
+# Static files (collected in production)
+staticfiles/
+media/
+
+# VSCode settings (if using VSCode)
+.vscode/
