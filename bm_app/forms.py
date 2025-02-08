@@ -4,6 +4,8 @@ from .models import Books, Receipt, Customer, Donation, Distributor
 
 from django.contrib.auth.forms import UserCreationForm
 
+import re # regex
+
 
 class transaction_form(forms.Form):
     book = forms.ModelChoiceField(queryset=Books.objects.all(), label = 'Select a book',
@@ -79,15 +81,34 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Distributor, Admin  # Import both models
 
 class signup_form(UserCreationForm):
-    distributor_name = forms.CharField(max_length=100, label='Distributor Name')
-    distributor_phonenumber = forms.CharField(max_length=15, label='Phone Number')
-    distributor_address = forms.CharField(max_length=200, label="Address")
-    distributor_age = forms.DateField(label="Age", widget=forms.DateInput(attrs={'type': 'date'}))
-    admin = forms.ModelChoiceField(queryset=Admin.objects.all(), required=True, label="Admin")  # Ensure Admin is chosen
+    distributor_name = forms.CharField(max_length=100, label='Distributor Name', required=True
+                        , widget=forms.TextInput(attrs={'placeholder' : 'Enter your name'}))
+
+    distributor_phonenumber = forms.CharField(max_length=10, label='Phone Number', required=True,
+                            widget=forms.TextInput(attrs={'placeholder' : 'Enter phone number'}))
+
+    distributor_address = forms.CharField(max_length=200, label="Address", required=False
+                        , widget=forms.Textarea(attrs={'placeholder' : 'Enter address'}))
+
+    distributor_age = forms.DateField(label="Age", required=True, widget=forms.DateInput(attrs={'type': 'date'}))
+
+    admin = forms.ModelChoiceField(queryset=Admin.objects.all(), required=True, empty_label="Select Admin",label="Admin")  # Ensure Admin is chosen
 
     class Meta:
         model = Distributor
         fields = ('email', 'distributor_name', 'distributor_phonenumber', 'distributor_address', 'distributor_age', 'admin')
+
+    def clean_distributor_phonenumber(self):
+        phone = self.cleaned_data.get("distributor_phonenumber")
+        if not re.match(r'^[6789]\d{9}$', phone):  
+            raise forms.ValidationError("Enter a valid Indian phone number (10 digits, starting with 6, 7, 8, or 9).")
+        return phone
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if Distributor.objects.filter(email=email).exists():
+            raise forms.ValidationError("Email already in use.")
+        return email
 
     def save(self, commit=True):
         distributor = super().save(commit=False)
