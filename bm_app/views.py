@@ -8,6 +8,8 @@ from django.contrib.auth import login,authenticate
 from .models import Distributor
 from django.contrib.auth.hashers import make_password  # To hash passwords before saving
 
+from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -16,19 +18,21 @@ def main_page(request):
     return render(request,'bm_app/main.html',{})
 
 # showing home page
+# @login_required
 def home_page(request):
     return render(request,'bm_app/home.html',{})
 
 # New Transaction form
+# @login_required
 def new_transaction_view(request):
 
     if request.method == 'POST':
-        print(request.POST)
-        my_form = transaction_form(request.POST) #to be used according to the Form/ModelForm used
+        my_form = transaction_form(request.POST,)#distributor = request.user) #to be used according to the Form/ModelForm used
         if my_form.is_valid():
             my_form.save()
             return redirect('home')
-        
+        else:
+            return render(request, 'bm_app/new_transaction.html', {'form' : my_form})
     else:
         my_form = transaction_form()
         # context = {

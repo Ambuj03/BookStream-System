@@ -96,7 +96,7 @@ class MasterInventory(models.Model):
     stock = models.IntegerField(default=0)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'master_inventory'
 
 class DistributorInventory(models.Model):
@@ -106,7 +106,7 @@ class DistributorInventory(models.Model):
     books_stock = models.IntegerField(default=0)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'distributor_inventory'
 
 class Customer(models.Model):
@@ -118,7 +118,7 @@ class Customer(models.Model):
     customer_remarks = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'customer'
 
 class Donation(models.Model):
@@ -129,7 +129,7 @@ class Donation(models.Model):
     donation_purpose = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'donation'
 
 class Notification(models.Model):
@@ -142,7 +142,7 @@ class Notification(models.Model):
     status = models.CharField(max_length=6, default='Unread')
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'notification'
 
 class Receipt(models.Model):
@@ -156,5 +156,5 @@ class Receipt(models.Model):
     payment_mode = models.CharField(db_column='paymentMode', max_length=6, choices=[('ONLINE', 'Online'), ('CASH', 'Cash')], blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'receipt'

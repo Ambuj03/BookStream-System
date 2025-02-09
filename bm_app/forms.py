@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 import re # regex
 
 
-class transaction_form(forms.Form):
+class transaction_form(forms.ModelForm):
     book = forms.ModelChoiceField(queryset=Books.objects.all(), label = 'Select a book',
             to_field_name='book_name')
 
@@ -18,7 +18,14 @@ class transaction_form(forms.Form):
     customer_phone = forms.CharField(widget=forms.TextInput(attrs={'type': 'tel'}))
     customer_occupation = forms.CharField()
     customer_city = forms.CharField()
+    # payment_mode = forms.CharField(max_length=6, choices=[('ONLINE', 'Online'), ('CASH', 'Cash')], blank=True, null=True)
+
     remarks = forms.CharField()
+
+
+    class Meta:
+        model = Receipt
+        fields = ['payment_mode']
 
     def __init__(self, *args, **kwargs): #study object oriented programming to understand this
         super(transaction_form, self).__init__(*args, **kwargs)
@@ -42,9 +49,10 @@ class transaction_form(forms.Form):
         customer.save()
 
         #updating the donations table
+        
 
         donation = Donation(
-            customer_id = 1,
+            customer_id = 2501,
             donation_amount = data['donation_amount'],
             donation_purpose = data['donation_purpose']
         )
@@ -53,11 +61,12 @@ class transaction_form(forms.Form):
 
         #save receipt data
         receipt = Receipt(
-            customer_id = 1, #try to declare a seperate function.
-            book_id = 1, # fetched from bokk table referenced by book name
+            customer_id = 2501, #try to declare a seperate function.
+            book_id = 2501, # fetched from bokk table referenced by book name
             distributor_id = 1, # will come through authorization, make login
             book=data['book'],
             quantity=data['quantity'],
+            payment_mode = data['payment_mode'],
             # donation=data['donation_amount'],
             # customer_name=data['customer_name'],
             # customer_phone=data['customer_phone'],
@@ -65,6 +74,7 @@ class transaction_form(forms.Form):
             # remarks=data['remarks'], doesnt exists in the original table
             donation = donation,
             customer = customer
+            
         )
         receipt.save()
 
