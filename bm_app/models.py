@@ -8,7 +8,7 @@ class Admin(models.Model):
     admin_password = models.CharField(max_length=100)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'admin'
 
 class BooksCategory(models.Model):
@@ -16,7 +16,7 @@ class BooksCategory(models.Model):
     bookscategory_name = models.CharField(unique=True, max_length=100)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'books_category'
 
 class Books(models.Model):
@@ -28,7 +28,7 @@ class Books(models.Model):
     book_category = models.ForeignKey(BooksCategory, on_delete=models.CASCADE, db_column='book_category', to_field='bookscategory_name', null = True, blank = True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'books'
 
 
@@ -78,9 +78,9 @@ class Distributor(AbstractBaseUser, PermissionsMixin):
     last_login = None
 
       # Override fields to prevent Django errors
-    is_superuser = None
-    is_staff = None
-    is_active = None
+    is_superuser = False
+    is_staff = False
+    is_active = True
 
     class Meta:
         managed = False  # Keep it False since DB is already populated

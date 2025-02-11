@@ -1,14 +1,16 @@
-<html>
-    <head>
-        <title>Brihad Mridanga</title>
-    </head>
-    <body>
-        <h1>Welcome to the signup page</h1>
+{% extends "bm_app/base.html" %}
 
+{% block title %}Signup - Brihad Mridanga{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="text-center mb-4">Sign Up</h2>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit"> Sign Up</button>
+            <button type="submit" class="btn btn-success w-100">Sign Up</button>
         </form>
-    </body>
-</html>
+    </div>
+</div>
+{% endblock %}

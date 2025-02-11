@@ -1,17 +1,16 @@
-<html>
-    <head>
-        <title>
-            Brihad Mridanga
-        </title>
-    </head>
-    <body>
-        <nav>
-            <ul>
-                <li><a href="new_transaction">New Transaction</a></li>
-                <li><a href="">Books</a></li>
-                <li><a href="">Dashboard</a></li>
-                <li><a href="">Notifications</a></li>
-            </ul>
-        </nav>
-    </body>
-</html>
+{% extends "bm_app/base.html" %}
+
+{% block title %}Home - Brihad Mridanga{% endblock %}
+
+{% block content %}
+<div class="text-center my-5">
+    <h1>Welcome, {{ user.distributor_name|default:user.email }}</h1>
+    <p class="lead">This is your dashboard where you can manage transactions, view books, and check notifications.</p>
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a href="{% url 'new_transaction' %}" class="btn btn-primary btn-lg px-4">New Transaction</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg px-4">Books</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg px-4">Dashboard</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg px-4">Notifications</a>
+    </div>
+</div>
+{% endblock %}

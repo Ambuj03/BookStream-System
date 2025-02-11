@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from .forms import transaction_form, login_form, signup_form
 
 # # login required things from documentation
-from django.contrib.auth import login,authenticate
+from django.contrib.auth import login,authenticate, logout
 
 # from django.utils import timezone
 from .models import Distributor
@@ -106,7 +106,11 @@ def signup_page(request):
 
             return redirect("login")  # Redirect to login after signup
         else:
-            return render(request, "signup.html", {"form": form})  # Re-render form with errors
+            return render(request, "bm_app/signup.html", {"form": form})  # Re-render form with errors
     else:
         form = signup_form()  # Empty form for GET request
-    return render(request, "signup.html", {"form": form})
+    return render(request, "bm_app/signup.html", {"form": form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')

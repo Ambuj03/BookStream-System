@@ -1,11 +1,12 @@
-<html>
-    <head>
-        <title>Bridhad Mridanga</title>
-    </head>
-    <body>
-        <h1>Brihad Mridanga</h1>
-        <h3>It's an application to manage your book inventory and distribution.</h3>
-        <h4><a href="{% url 'login' %}">Login</a></h4>
-        <h4><a href="{% url 'signup' %}">Signup</a></h4>
-    </body>
-</html>
+{% extends "bm_app/base.html" %}
+
+{% block title %}Welcome - Brihad Mridanga{% endblock %}
+
+{% block content %}
+<div class="text-center my-5">
+    <h1>Brihad Mridanga</h1>
+    <p class="lead">Manage your book inventory and distribution effortlessly.</p>
+    <a href="{% url 'login' %}" class="btn btn-primary m-2">Login</a>
+    <a href="{% url 'signup' %}" class="btn btn-success m-2">Signup</a>
+</div>
+{% endblock %}

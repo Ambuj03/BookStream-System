@@ -1,14 +1,16 @@
-<html>
-    <head>
-        <title>
-            Brihad Mridanga
-        </title>
-    </head>
-    <body>
-         <form method = "post"> 
-                {% csrf_token %}
-                {{ form.as_p }}
-                <input type="submit" value = 'Save'/>
-         </form>
-    </body>
-</html>
+{% extends "bm_app/base.html" %}
+
+{% block title %}New Transaction - Brihad Mridanga{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="text-center mb-4">New Transaction</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary w-100">Save Transaction</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
