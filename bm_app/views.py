@@ -11,8 +11,6 @@ from django.contrib.auth.hashers import make_password  # To hash passwords befor
 from django.contrib.auth.decorators import login_required
 
 
-
-
 #Showing main page
 def main_page(request):
     return render(request,'bm_app/main.html',{})
@@ -26,7 +24,7 @@ def home_page(request):
 
 # New Transaction form  
 
-@login_required(login_url="login")  # Ensures only logged-in users can access
+@login_required(login_url="bm_app:login")  # Ensures only logged-in users can access
 def new_transaction_view(request):
     print("User:", request.user)  # Debugging to see the user object
     print("Is Authenticated:", request.user.is_authenticated)  # Check if logged in
@@ -42,16 +40,14 @@ def new_transaction_view(request):
             my_form = transaction_form(request.POST, distributor=request.user)
             if my_form.is_valid():
                 my_form.save(request)
-                return redirect('home')
+                return redirect('bm_app:home')
             else:
                 return render(request, 'bm_app/new_transaction.html', {'form': my_form})
         else:
             my_form = transaction_form()
         return render(request, 'bm_app/new_transaction.html', {'form': my_form})
 
-    return redirect("login")  # If user is not logged in, redirect
-
-
+    return redirect("bm_app:login")  # If user is not logged in, redirect
 
 
 def login_page(request):
@@ -75,13 +71,13 @@ def login_page(request):
 
             if user and user.check_password(password):
                 login(request, user)
-                return redirect('home')
+                return redirect('bm_app:home')
             print(f"Authentication result: {user}")  # Debugging
 
             if user is not None:
                 login(request, user)  # Log in the user
                 print(f"User {user} logged in successfully")  # Debugging
-                return redirect('home')
+                return redirect('bm_app:home')
             else:
                 print("Authentication failed")  # Debugging
                 return render(request, "bm_app/login.html", {'form': form, "error": "Invalid Credentials"})
@@ -104,7 +100,7 @@ def signup_page(request):
             distributor.password = make_password(form.cleaned_data["password1"])  # Hash password
             distributor.save()  # Now save the distributor
 
-            return redirect("login")  # Redirect to login after signup
+            return redirect("bm_app:login")  # Redirect to login after signup
         else:
             return render(request, "bm_app/signup.html", {"form": form})  # Re-render form with errors
     else:
@@ -113,4 +109,8 @@ def signup_page(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('bm_app:login')
+
+def book_search(request):
+    # For now, render a simple template
+    return render(request, 'bm_app/book_search.html', {})

@@ -33,7 +33,7 @@ class Books(models.Model):
 
 
 
-# Modifying the model for login,Since we are extending Django’s built-in User model, 
+# Modifying the model for login,Since we are extending Django's built-in User model, 
 # our Distributor model will inherit from AbstractUser.
 class DistributorManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):

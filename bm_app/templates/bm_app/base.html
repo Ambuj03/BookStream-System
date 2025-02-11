@@ -20,14 +20,30 @@
             background-color: #f8f9fa;
             text-align: center;
         }
+        .cart-icon {
+            position: relative;
+            padding-right: 1rem;
+        }
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
     </style>
     {% block extra_css %}{% endblock %}
+    <!-- Add Font Awesome for the cart icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'main' %}">Brihad Mridanga</a>
+            <a class="navbar-brand" href="{% url 'bm_app:main' %}">Brihad Mridanga</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
                     data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" 
                     aria-label="Toggle navigation">
@@ -37,20 +53,28 @@
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'home' %}">Home</a>
+                            <a class="nav-link" href="{% url 'bm_app:home' %}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'new_transaction' %}">New Transaction</a>
+                            <a class="nav-link" href="{% url 'bm_app:new_transaction' %}">New Transaction</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                            <a class="nav-link cart-icon" href="{% url 'cart:view_cart' %}">
+                                <i class="fas fa-shopping-cart"></i>
+                                {% if cart_count > 0 %}
+                                    <span class="cart-count">{{ cart_count }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'bm_app:logout' %}">Logout</a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            <a class="nav-link" href="{% url 'bm_app:login' %}">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'signup' %}">Signup</a>
+                            <a class="nav-link" href="{% url 'bm_app:signup' %}">Signup</a>
                         </li>
                     {% endif %}
                 </ul>
