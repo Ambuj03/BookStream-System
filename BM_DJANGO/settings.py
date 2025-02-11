@@ -81,7 +81,7 @@ ROOT_URLCONF = 'BM_DJANGO.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['/home/ambuj03/Desktop/BM_DJANGO/bm_app/templates/bm_app'],
+        'DIRS': ['templates'],
         #add os.base_dir and more to make it platform independent
         'APP_DIRS': True,
         'OPTIONS': {
@@ -105,7 +105,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'Brihad_Mridanga',
-        'USER': 'Ambuj03',
+        'USER': 'root',
         'PASSWORD': 'iskcon123',
         'HOST': '127.0.0.1',  
         'PORT': '3306',  
