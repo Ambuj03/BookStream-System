@@ -5,10 +5,11 @@ from .forms import transaction_form, login_form, signup_form
 from django.contrib.auth import login,authenticate, logout
 
 # from django.utils import timezone
-from .models import Distributor
+from .models import Distributor, DistributorProfile
 from django.contrib.auth.hashers import make_password  # To hash passwords before saving
 
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 
 
 #Showing main page
@@ -57,35 +58,20 @@ def login_page(request):
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
 
-            print(f"Attempting login with: {email} / {password}")  # Debugging
-
             try:
-                user = Distributor.objects.get(email=email)  # Fetch user by email
-                print(f"User found in DB: {user}")  # Debugging
+                user = Distributor.objects.get(email=email)
             except Distributor.DoesNotExist:
-                print("User not found in DB")  # Debugging
-                return render(request, "bm_app/login.html", {'form': form, "error": "Invalid Credentials"})
-
-            # Authenticate user
-            user = Distributor.objects.filter(email=email).first()
+                return render(request, "bm_app/login.html", 
+                            {'form': form, "error": "Invalid Credentials"})
 
             if user and user.check_password(password):
                 login(request, user)
-                return redirect('bm_app:home')
-            print(f"Authentication result: {user}")  # Debugging
-
-            if user is not None:
-                login(request, user)  # Log in the user
-                print(f"User {user} logged in successfully")  # Debugging
-                return redirect('bm_app:home')
-            else:
-                print("Authentication failed")  # Debugging
-                return render(request, "bm_app/login.html", {'form': form, "error": "Invalid Credentials"})
-        
-        else:
-            print("Invalid form data")  # Debugging
-            return render(request, "bm_app/login.html", {'form': form, "error": "Invalid form"})
-    
+                # Create profile if it doesn't exist
+                DistributorProfile.objects.get_or_create(distributor=user)
+                return redirect('bm_app:profile')  # Redirect to profile page
+            
+            return render(request, "bm_app/login.html", 
+                        {'form': form, "error": "Invalid Credentials"})
     else:
         form = login_form()
     return render(request, "bm_app/login.html", {'form': form})
@@ -107,10 +93,24 @@ def signup_page(request):
         form = signup_form()  # Empty form for GET request
     return render(request, "bm_app/signup.html", {"form": form})
 
+@require_http_methods(["GET", "POST"])  # Allow both GET and POST methods
 def logout_view(request):
     logout(request)
-    return redirect('bm_app:login')
+    return redirect('bm_app:login')  # Explicitly redirect to the login page using namespace
 
 def book_search(request):
     # For now, render a simple template
     return render(request, 'bm_app/book_search.html', {})
+
+@login_required(login_url="bm_app:login")
+def profile_view(request):
+    profile, created = DistributorProfile.objects.get_or_create(distributor=request.user)
+    distribution_history = profile.get_distribution_history()
+    total_books = profile.get_total_books_distributed()
+    
+    context = {
+        'profile': profile,
+        'distribution_history': distribution_history,
+        'total_books': total_books,
+    }
+    return render(request, 'bm_app/profile.html', context)

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.db.models import Sum
 
 class Admin(models.Model):
     admin_id = models.AutoField(primary_key=True)
@@ -158,3 +159,21 @@ class Receipt(models.Model):
     class Meta:
         managed = False
         db_table = 'receipt'
+
+class DistributorProfile(models.Model):
+    distributor = models.OneToOneField(Distributor, on_delete=models.CASCADE, related_name='profile')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def get_total_books_distributed(self):
+        from cart.models import CartItem  # Import here to avoid circular import
+        return CartItem.objects.filter(distributor=self.distributor).aggregate(
+            total=Sum('quantity'))['total'] or 0
+    
+    def get_distribution_history(self):
+        from cart.models import CartItem  # Import here to avoid circular import
+        return CartItem.objects.filter(
+            distributor=self.distributor
+        ).select_related('book').order_by('-added_at')
+
+    def __str__(self):
+        return f"Profile of {self.distributor.email}"
