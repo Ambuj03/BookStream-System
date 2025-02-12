@@ -11,6 +11,8 @@ env/
 .env
 
 # Django migrations (optional: track only initial migrations)
+cart/migrations/
+!cart/migrations/__init__.py
 migrations/
 !migrations/__init__.py
 

@@ -1,0 +1,47 @@
+{% extends 'bm_app/base.html' %}
+
+{% block title %}Distributor Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Distributor Profile</h2>
+                </div>
+                <div class="card-body">
+                    <h4>Distribution Statistics</h4>
+                    <p>Total Books Distributed: {{ total_books }}</p>
+                    
+                    <h4 class="mt-4">Distribution History</h4>
+                    {% if distribution_history %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Book</th>
+                                        <th>Quantity</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in distribution_history %}
+                                    <tr>
+                                        <td>{{ item.book.book_name }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>{{ item.added_at|date:"F d, Y" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>No distribution history yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
