@@ -3,14 +3,14 @@
 {% block title %}Home - Brihad Mridanga{% endblock %}
 
 {% block content %}
-<div class="text-center my-5">
+<div>
     <h1>Welcome, {{ user.distributor_name|default:user.email }}</h1>
-    <p class="lead">This is your dashboard where you can manage transactions, view books, and check notifications.</p>
-    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-        <a href="{% url 'new_transaction' %}" class="btn btn-primary btn-lg px-4">New Transaction</a>
-        <a href="#" class="btn btn-outline-secondary btn-lg px-4">Books</a>
-        <a href="#" class="btn btn-outline-secondary btn-lg px-4">Dashboard</a>
-        <a href="#" class="btn btn-outline-secondary btn-lg px-4">Notifications</a>
+    <p>This is your dashboard where you can manage transactions, view books, and check notifications.</p>
+    <div>
+        <a href="{% url 'new_transaction' %}">New Transaction</a>
+        <a href="#">Books</a>
+        <a href="#">Dashboard</a>
+        <a href="#">Notifications</a>
     </div>
 </div>
 {% endblock %}

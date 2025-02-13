@@ -45,11 +45,6 @@ class DistributorManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    # def create_superuser(self, email, password=None, **extra_fields):
-    #     extra_fields.setdefault("is_staff", True)
-    #     extra_fields.setdefault("is_superuser", True)
-    #     return self.create_user(email, password, **extra_fields)
-
 class Distributor(AbstractBaseUser, PermissionsMixin):
 
     username = None  # Remove default username field
@@ -145,16 +140,29 @@ class Notification(models.Model):
         managed = False
         db_table = 'notification'
 
+# Update your Receipt model
 class Receipt(models.Model):
     receipt_id = models.AutoField(primary_key=True)
-    customer = models.ForeignKey(Customer, on_delete=models.RESTRICT, null = True, blank = True)
-    book = models.ForeignKey(Books, on_delete=models.RESTRICT, null = True, blank = True)
-    donation = models.ForeignKey(Donation, on_delete=models.SET_NULL, blank=True, null=True)
-    distributor = models.ForeignKey(Distributor, on_delete=models.RESTRICT, null = True, blank = True)
-    date = models.DateTimeField(auto_now_add=True, null = True, blank = True)
-    quantity = models.IntegerField()
+    customer = models.ForeignKey(Customer, on_delete=models.RESTRICT)
+    donation = models.ForeignKey(Donation, on_delete=models.SET_NULL, null=True)
+    distributor = models.ForeignKey(Distributor, on_delete=models.RESTRICT)
+    date = models.DateTimeField(auto_now_add=True)
     payment_mode = models.CharField(db_column='paymentMode', max_length=6, choices=[('ONLINE', 'Online'), ('CASH', 'Cash')], blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'receipt'
+
+# Add new ReceiptBooks model
+class ReceiptBooks(models.Model):
+    id = models.AutoField(primary_key=True)
+    receipt = models.ForeignKey(Receipt, on_delete=models.RESTRICT)
+    book = models.ForeignKey(Books, on_delete=models.RESTRICT)
+    quantity = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'receipt_books'
+
+
+
