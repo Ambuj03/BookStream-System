@@ -40,31 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-AUTH_USER_MODEL = "bm_app.Distributor" #added for authentication usng dist model
-
-
 # Custom authentication backend 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Keep the default backend
       # Add your custom backend
 ]
 
-#  for debugging purposes
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console':{
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'loggers': {
-#         'bm_app': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#         },
-#     },
-# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -96,6 +77,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'BM_DJANGO.wsgi.application'
+
+
+# Authentication Settings
+LOGIN_URL = 'login'  # Where to redirect if user isn't logged in
+LOGIN_REDIRECT_URL = 'home'  # Where to redirect after successful login
+LOGOUT_REDIRECT_URL = 'main'  # Where to redirect after logout
+
 
 
 # Database
