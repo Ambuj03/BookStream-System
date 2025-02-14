@@ -3,12 +3,12 @@
 {% block title %}New Transaction - Brihad Mridanga{% endblock %}
 
 {% block content %}
-<div>
-    <h2>New Transaction</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save Transaction</button>
-    </form>
-</div>
+<h3>New Transaction</h3>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Complete Transaction</button>
+</form>
+
 {% endblock %}

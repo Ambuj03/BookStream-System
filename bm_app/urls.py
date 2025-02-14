@@ -8,6 +8,4 @@ urlpatterns = [
     path('home/', home_page, name='home'),
     path('home/new_transaction', new_transaction_view, name='new_transaction'),
     path('logout/', logout_view, name='logout'),
-
-    # path('login/', login_view, name = "login"),
 ]
