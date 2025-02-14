@@ -3,6 +3,7 @@ from django import forms
 from .models import Books, Receipt, Customer, Donation, Distributor, Admin
 
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 import re # regex
@@ -83,9 +84,9 @@ class transaction_form(forms.ModelForm):
 
 #LOGIN FORM ********************************************************************
 class login_form(forms.Form):
-    email = forms.EmailField(
-        label="Email",
-        widget=forms.EmailInput(attrs={'placeholder': 'Enter email'})
+    username = forms.CharField(
+        label="Username",
+        widget=forms.TextInput(attrs={'placeholder': 'Enter username'})
     )
 
     password = forms.CharField(
@@ -102,38 +103,32 @@ class login_form(forms.Form):
 
 #SIGNUP FORM*******************************************************************
 class signup_form(UserCreationForm):
-    distributor_name = forms.CharField(max_length=100, label='Distributor Name', required=True
-                        , widget=forms.TextInput(attrs={'placeholder' : 'Enter your name'}))
-
-    distributor_phonenumber = forms.CharField(max_length=10, label='Phone Number', required=True,
-                            widget=forms.TextInput(attrs={'placeholder' : 'Enter phone number'}))
-
-    distributor_address = forms.CharField(max_length=200, label="Address", required=False
-                        , widget=forms.Textarea(attrs={'placeholder' : 'Enter address'}))
-
-    distributor_age = forms.DateField(label="Age", required=True, widget=forms.DateInput(attrs={'type': 'date'}))
-
-    admin = forms.ModelChoiceField(queryset=Admin.objects.all(), required=True, empty_label="Select Admin",label="Admin")  # Ensure Admin is chosen
+    # Default UserCreationForm fields:
+    # - username
+    # - password1
+    # - password2
+    
+    # Additional fields for Distributor
+    distributor_name = forms.CharField(max_length=100)
+    distributor_email = forms.EmailField()
+    distributor_phonenumber = forms.CharField(max_length=10)
+    distributor_address = forms.CharField(widget=forms.Textarea, required=False)
+    distributor_age = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    admin = forms.ModelChoiceField(queryset=Admin.objects.all(), empty_label="Select Admin")
 
     class Meta:
-        model = Distributor
-        fields = ('email', 'distributor_name', 'distributor_phonenumber', 'distributor_address', 'distributor_age', 'admin')
+        model = User
+        fields = ('username', 'password1', 'password2')  # Using default fields
 
     def clean_distributor_phonenumber(self):
-        phone = self.cleaned_data.get("distributor_phonenumber")
-        if not re.match(r'^[6789]\d{9}$', phone):  
-            raise forms.ValidationError("Enter a valid Indian phone number (10 digits, starting with 6, 7, 8, or 9).")
+        phone = self.cleaned_data.get('distributor_phonenumber')
+        if not re.match(r'^[6789]\d{9}$', phone):
+            raise forms.ValidationError("Enter valid Indian phone number.")
         return phone
 
-    def clean_email(self):
-        email = self.cleaned_data.get("email")
-        if Distributor.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email already in use.")
-        return email
-
     def save(self, commit=True):
-        distributor = super().save(commit=False)
-        distributor.admin = self.cleaned_data["admin"]  # Assign selected admin
+        user = super().save(commit=False)
         if commit:
-            distributor.save()
-        return distributor
+            user.save()
+        return user
+

@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.contrib.auth.models import User
 
 class Admin(models.Model):
     admin_id = models.AutoField(primary_key=True)
@@ -31,58 +31,19 @@ class Books(models.Model):
         managed = False
         db_table = 'books'
 
-
-
-# Modifying the model for login,Since we are extending Django’s built-in User model, 
-# our Distributor model will inherit from AbstractUser.
-class DistributorManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
-        if not email:
-            raise ValueError("Email is required")
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)  # Hash the password
-        user.save(using=self._db)
-        return user
-
-class Distributor(AbstractBaseUser, PermissionsMixin):
-
-    username = None  # Remove default username field
-    email = models.EmailField(unique=True, db_column='distributor_email')  # Map email
-    password = models.CharField(max_length=128, db_column='distributor_password')  # Map password
-
+class Distributor(models.Model):
     distributor_id = models.AutoField(primary_key=True)
     distributor_name = models.CharField(max_length=100)
+    distributor_email = models.EmailField(unique=True)
     distributor_phonenumber = models.CharField(db_column='distributor_phoneNumber', max_length=15)
     distributor_address = models.TextField(blank=True, null=True)
     distributor_age = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     admin = models.ForeignKey("Admin", on_delete=models.RESTRICT, null=True, blank=True)
 
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-
-    objects = DistributorManager()
-
-    USERNAME_FIELD = "email"  # Login will be based on email
-    REQUIRED_FIELDS = []
-
-
-    # Override `last_login` to prevent errors, if you need this feature add this coulmn in database
-    # ALTER TABLE distributor ADD COLUMN last_login DATETIME NULL;
-    last_login = None
-
-      # Override fields to prevent Django errors
-    is_superuser = False
-    is_staff = False
-    is_active = True
-
     class Meta:
-        managed = False  # Keep it False since DB is already populated
-        db_table = "distributor"
-
-
-
+        managed = False
+        db_table = 'distributor'
 
 class MasterInventory(models.Model):
     inventory_id = models.AutoField(primary_key=True)
