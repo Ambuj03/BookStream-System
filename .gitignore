@@ -7,7 +7,7 @@ bm_venv/
 venv/
 env/
 
-
+# Create or edit .gitignore
 echo "__pycache__/" >> .gitignore
 echo "*.pyc" >> .gitignore
 
