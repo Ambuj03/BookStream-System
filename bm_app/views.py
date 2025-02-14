@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from .forms import signup_form, transaction_form
 from .models import Distributor, Books
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-
 
 
 #Showing main page
@@ -15,6 +15,7 @@ def main_page(request):
 
 # showing home page
 @login_required(login_url="login")
+@never_cache
 def home_page(request):
     print(f"DEBUG: User Authenticated: {request.user.is_authenticated}")  # Debug
     print(f"DEBUG: Logged-in User: {request.user}")  # Debug
@@ -22,11 +23,9 @@ def home_page(request):
 
 # New Transaction form  
 
-@login_required(login_url="login")  # Ensures only logged-in users can access
+@login_required(login_url="login")
+@never_cache
 def new_transaction_view(request):
-    # Get first 5 books (to keep the list manageable)
-    books = Books.objects.all()[:5]
-    
     if request.method == 'POST':
         form = transaction_form(request.POST, distributor=request.user)
         if form.is_valid():
@@ -35,11 +34,9 @@ def new_transaction_view(request):
     else:
         form = transaction_form()
 
-    context = {
-        'form': form,
-        'books': books,
-    }
-    return render(request, 'bm_app/new_transaction.html', context)
+    return render(request, 'bm_app/new_transaction.html', {
+        'form': form
+    })
 
 
 

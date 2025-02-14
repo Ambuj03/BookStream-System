@@ -1,12 +1,12 @@
-{% extends "bm_app/base.html" %}
+{% comment %} {% extends "bm_app/base.html" %} {% endcomment %}
 
-{% block title %}Welcome - Brihad Mridanga{% endblock %}
+{% comment %} {% block title %}Welcome - Brihad Mridanga{% endblock %} {% endcomment %}
 
 {% block content %}
 <div>
     <h1>Brihad Mridanga</h1>
     <p>Manage your book inventory and distribution effortlessly.</p>
-    <a href="{% url 'login' %}">Login</a>
+    <a href="{% url 'login' %}">Login</a></p>
     <a href="{% url 'signup' %}">Signup</a>
 </div>
 {% endblock %}
