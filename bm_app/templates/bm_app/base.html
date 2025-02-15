@@ -6,7 +6,9 @@
 <body>
     {% comment %} {{ user }} {% endcomment %}
     {% if request.user.is_authenticated %}
+        <footer>
             <a href="{% url 'logout' %}">Logout</a>
+        </footer>
     {% endif %}
 
     {% block content %}
