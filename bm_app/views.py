@@ -38,6 +38,12 @@ def new_transaction_view(request):
         'form': form
     })
 
+@login_required(login_url='login')
+@never_cache
+def books_view(request):
+    books = Books.objects.get();
+    return render(request, 'bm_app/books.html', {'books' : books})
+
 
 
 

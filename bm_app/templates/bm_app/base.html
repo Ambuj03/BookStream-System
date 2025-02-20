@@ -8,9 +8,11 @@
 <body>
     {% comment %} {{ user }} {% endcomment %}
     {% if request.user.is_authenticated %}
-        <footer>
-            <a href="{% url 'logout' %}">Logout</a>
-        </footer>
+        <header>
+            <nav class = "nav-right">
+                <a id = "logout" href="{% url 'logout' %}">Logout</a>
+            </nav>
+        </header>
     {% endif %}
 
     {% block content %}

@@ -1,17 +1,17 @@
- {% extends "bm_app/base.html" %}
- {% load static %}
+{% extends "bm_app/base.html" %}
+{% load static %}
 
 {% block title %}Welcome - Brihad Mridanga{% endblock %} 
 
 {% block content %}
 
 <head>
-   <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{% static 'bm_app/css/style.css' %}">
 </head>
 <div>
     <h1>Brihad Mridanga</h1>
     <p>Manage your book inventory and distribution effortlessly.</p>
-    <a href="{% url 'login' %}">Login</a></p>
-    <a href="{% url 'signup' %}">Signup</a>
+    <a class = "login" href="{% url 'login' %}">Login</a></p>
+    <a class = "signup" href="{% url 'signup' %}">Signup</a>
 </div>
 {% endblock %}
