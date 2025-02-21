@@ -4,14 +4,13 @@
 {% block title %}Welcome - Brihad Mridanga{% endblock %} 
 
 {% block content %}
-
-<head>
-    <link rel="stylesheet" href="{% static 'bm_app/css/style.css' %}">
-</head>
-<div>
+<div class="main-container">
     <h1>Brihad Mridanga</h1>
-    <p>Manage your book inventory and distribution effortlessly.</p>
-    <a class = "login" href="{% url 'login' %}">Login</a></p>
-    <a class = "signup" href="{% url 'signup' %}">Signup</a>
+    <p class="headline">Manage your book inventory and distribution effortlessly.</p>
+    
+    <div class="auth-buttons">
+        <a href="{% url 'login' %}" class="btn loginBut">Login</a>
+        <a href="{% url 'signup' %}" class="btn signupBut">Signup</a>
+    </div>
 </div>
 {% endblock %}
