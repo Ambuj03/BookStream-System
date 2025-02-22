@@ -3,16 +3,66 @@
 {% block title %}Home - Brihad Mridanga{% endblock %}
 
 {% block content %}
-<div>
-    <h1>Home Page{{ user.distributor_name|default:user.email }}</h1>
-    <p class = "headline">This is your dashboard where you can manage transactions, view books, and check notifications.</p>
-    <div>
-        <ul>
-            <li><b><a href="{% url 'new_transaction' %}">New Transaction</a></b></li>
-            <li><b><a href="{% url 'books' %}">Books</a></b></li>
-            <li><b><a href="#">Dashboard</a></b></li>
-            <li><b><a href="#">Notifications</a></b></li>
-        </ul>
+<div class="container-fluid">
+    <!-- Welcome Section -->
+    <div class="row bg-primary text-white py-4 mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-4">Welcome{{ user.distributor_name|default:user.email }}</h1>
+            <p class="lead">Manage your book distribution activities efficiently</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="container">
+        <div class="row g-4">
+            <!-- New Transaction Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-exchange-alt fa-3x mb-3 text-primary"></i>
+                        <h5 class="card-title">New Transaction</h5>
+                        <p class="card-text">Record new book distributions</p>
+                        <a href="{% url 'new_transaction' %}" class="btn btn-primary">Start Transaction</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Books Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-book fa-3x mb-3 text-success"></i>
+                        <h5 class="card-title">Books</h5>
+                        <p class="card-text">View and manage book inventory</p>
+                        <a href="{% url 'books' %}" class="btn btn-success">Manage Books</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-bar fa-3x mb-3 text-info"></i>
+                        <h5 class="card-title">Dashboard</h5>
+                        <p class="card-text">View your distribution statistics</p>
+                        <a href="#" class="btn btn-info text-white">View Stats</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-bell fa-3x mb-3 text-warning"></i>
+                        <h5 class="card-title">Notifications</h5>
+                        <p class="card-text">Check your recent updates</p>
+                        <a href="#" class="btn btn-warning text-white">View Updates</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

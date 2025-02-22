@@ -1,16 +1,18 @@
 {% extends "bm_app/base.html" %}
 {% load static %}
 
-{% block title %}Welcome - Brihad Mridanga{% endblock %} 
+{% block title %}Welcome - Brihad Mridanga{% endblock %}
 
 {% block content %}
-<div class="main-container">
-    <h1>Brihad Mridanga</h1>
-    <p class="headline">Manage your book inventory and distribution effortlessly.</p>
-    
-    <div class="auth-buttons">
-        <a href="{% url 'login' %}" class="btn loginBut">Login</a>
-        <a href="{% url 'signup' %}" class="btn signupBut">Signup</a>
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4 mb-4">Brihad Mridanga</h1>
+        <p class="lead mb-5">Manage your book inventory and distribution effortlessly.</p>
+        
+        <div class="d-grid gap-2 d-md-block">
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg mx-2">Login</a>
+            <a href="{% url 'signup' %}" class="btn btn-success btn-lg mx-2">Signup</a>
+        </div>
     </div>
 </div>
 {% endblock %}
