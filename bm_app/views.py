@@ -41,7 +41,7 @@ def new_transaction_view(request):
 @login_required(login_url='login')
 @never_cache
 def books_view(request):
-    books = Books.objects.get();
+    books = Books.objects.all();
     return render(request, 'bm_app/books.html', {'books' : books})
 
 

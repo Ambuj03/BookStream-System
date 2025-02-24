@@ -1,19 +1,50 @@
 {% extends "bm_app/base.html" %}
+{% load static %}
 
-{%block title%}Books{%endblock%}
+{% block title %}Books - Brihad Mridanga{% endblock %}
 
-{%block content%}
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-book me-2"></i>Book Inventory</h2>
+        </div>
+        <div class="col text-end">
+            <a href="{% url 'login' %}" class="btn btn-primary">// change login with a valid url where to add a new book
+                <i class="fas fa-plus me-2"></i>Add New Book
+            </a>
+        </div>
+    </div>
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <h1>Books Page</h1>
-        {for book : Books}
-    </body>
-    </html>
-
-{%endblock%}
+    {% if books %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for book in books %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.book_name }}</h5>
+                    <p class="card-text">
+                        <small class="text-muted">Author: {{ book.book_author }}</small>
+                    </p>
+                    <ul class="list-unstyled">
+                        <li><strong>Language:</strong> {{ book.book_language }}</li>
+                        <li><strong>Price:</strong> ₹{{ book.book_price }}</li>
+                        <li><strong>Stock:</strong> {{ book.book_quantity }}</li>
+                    </ul>
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-2"></i>Edit
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle me-2"></i>No books available in the inventory.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
