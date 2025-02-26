@@ -5,14 +5,35 @@
 
 {% block content %}
 <div class="container mt-4">
+    <!-- Search and Add Book Row -->
     <div class="row mb-4">
-        <div class="col">
+        <div class="col-md-6">
             <h2><i class="fas fa-book me-2"></i>Book Inventory</h2>
         </div>
-        <div class="col text-end">
-            <a href="{% url 'login' %}" class="btn btn-primary">// change login with a valid url where to add a new book
+        <div class="col-md-6 text-md-end">
+            <a href="{% url 'login' %}" class="btn btn-primary">
+                {% comment %} change login with acutal add book page {% endcomment %}
                 <i class="fas fa-plus me-2"></i>Add New Book
             </a>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="row mb-4">
+        <div class="col">
+            <form method="GET" class="d-flex gap-2">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" name="q" class="form-control" placeholder="Search books..." 
+                           value="{{ request.GET.q|default:'' }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+                {% if request.GET.q %}
+                    <a href="{% url 'books' %}" class="btn btn-outline-secondary">Clear</a>
+                {% endif %}
+            </form>
         </div>
     </div>
 
@@ -43,7 +64,12 @@
     </div>
     {% else %}
     <div class="alert alert-info" role="alert">
-        <i class="fas fa-info-circle me-2"></i>No books available in the inventory.
+        <i class="fas fa-info-circle me-2"></i>
+        {% if request.GET.q %}
+            No books found matching your search.
+        {% else %}
+            No books available in the inventory.
+        {% endif %}
     </div>
     {% endif %}
 </div>

@@ -7,6 +7,7 @@ from .forms import signup_form, transaction_form
 from .models import Distributor, Books
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 #Showing main page
@@ -41,10 +42,19 @@ def new_transaction_view(request):
 @login_required(login_url='login')
 @never_cache
 def books_view(request):
-    books = Books.objects.all();
-    return render(request, 'bm_app/books.html', {'books' : books})
-
-
+    search_query = request.GET.get('q', '')
+    books = Books.objects.all()
+    
+    if search_query:
+        books = books.filter(
+            Q(book_name__icontains=search_query) |
+            Q(book_author__icontains=search_query) |
+            Q(book_language__icontains=search_query)
+        )
+    
+    return render(request, 'bm_app/books.html', {
+        'books': books,
+    })
 
 
 def login_page(request):
