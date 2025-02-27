@@ -1,0 +1,4 @@
+.col:hover{
+    color: red;
+    box-shadow: 2px red;
+}

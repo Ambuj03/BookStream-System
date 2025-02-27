@@ -5,8 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from .forms import signup_form, transaction_form
 from .models import Distributor, Books
-from django.http import HttpResponse
-from django.contrib.auth.models import User
+from django.db.models import Q
+from django.core.paginator import Paginator
 
 
 #Showing main page
@@ -38,7 +38,29 @@ def new_transaction_view(request):
         'form': form
     })
 
+@login_required(login_url='login')
+@never_cache
+def books_view(request):
 
+    # Adding Paginatore logic
+    books = Books.objects.all()
+
+    search_query = request.GET.get('q', '')
+    
+    if search_query:
+        books = books.filter(
+            Q(book_name__icontains=search_query) |
+            Q(book_author__icontains=search_query) |
+            Q(book_language__icontains=search_query)
+        )
+
+    paginator = Paginator(books, 6)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'bm_app/books.html', {
+        'page_obj': page_obj, 'search_query' : search_query,
+    })
 
 
 def login_page(request):
