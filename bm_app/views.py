@@ -26,17 +26,24 @@ def home_page(request):
 @login_required(login_url="login")
 @never_cache
 def new_transaction_view(request):
-    if request.method == 'POST':
-        form = transaction_form(request.POST, distributor=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    else:
-        form = transaction_form()
-
-    return render(request, 'bm_app/new_transaction.html', {
-        'form': form
-    })
+    try:
+        # Get the distributor instance for the logged-in user
+        distributor = Distributor.objects.get(user=request.user)
+        
+        if request.method == 'POST':
+            form = transaction_form(request.POST, distributor=distributor)
+            if form.is_valid():
+                receipt = form.save()
+                return redirect('home')
+        else:
+            form = transaction_form(distributor=distributor)
+            
+        return render(request, 'bm_app/new_transaction.html', {
+            'form': form
+        })
+    except Distributor.DoesNotExist:
+        # Handle the case where no distributor exists for the user
+        return redirect('login')
 
 @login_required(login_url='login')
 @never_cache

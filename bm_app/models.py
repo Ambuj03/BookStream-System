@@ -33,6 +33,7 @@ class Books(models.Model):
 
 class Distributor(models.Model):
     distributor_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)  # Add this line
     distributor_name = models.CharField(max_length=100)
     distributor_email = models.EmailField(unique=True)
     distributor_phonenumber = models.CharField(db_column='distributor_phoneNumber', max_length=15)
