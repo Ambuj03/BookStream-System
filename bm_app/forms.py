@@ -28,6 +28,7 @@ class transaction_form(forms.ModelForm):
     customer_city = forms.CharField(max_length=50)
     remarks = forms.CharField(widget=forms.Textarea,required=False)
 
+
     class Meta:
         model = Receipt
         fields = ['payment_mode']
@@ -57,13 +58,18 @@ class transaction_form(forms.ModelForm):
             donation_purpose=data['donation_purpose']
         )
 
+        # Fix: Use the distributor instance instead of the class
         receipt = Receipt.objects.create(
             customer=customer,
-            book=data['book'],
-            quantity=data['quantity'],
             donation=donation,
-            distributor=self.distributor,
+            distributor=self.distributor,  # Changed this line
             payment_mode=data['payment_mode']
+        )
+
+        receipt_books = ReceiptBooks.objects.create(
+            receipt=receipt,
+            book=data['book'],
+            quantity=data['quantity']
         )
 
         return receipt
@@ -114,8 +120,17 @@ class signup_form(UserCreationForm):
         return phone
 
     def save(self, commit=True):
-        user = super().save(commit=False)
-        if commit:
-            user.save()
+        user = super().save(commit=True)
+        
+        # Create Distributor and link it to User
+        distributor = Distributor.objects.create(
+            user=user,  # Link the user
+            distributor_name=self.cleaned_data['distributor_name'],
+            distributor_email=self.cleaned_data['distributor_email'],
+            distributor_phonenumber=self.cleaned_data['distributor_phonenumber'],
+            distributor_address=self.cleaned_data['distributor_address'],
+            distributor_age=self.cleaned_data['distributor_age'],
+            admin=self.cleaned_data['admin']
+        )
         return user
 
