@@ -92,16 +92,6 @@ def signup_page(request):
         if form.is_valid():
             # Create User with default fields
             user = form.save()
-            
-            # Create Distributor with additional details
-            Distributor.objects.create(
-                distributor_name=form.cleaned_data['distributor_name'],
-                distributor_email=form.cleaned_data['distributor_email'],
-                distributor_phonenumber=form.cleaned_data['distributor_phonenumber'],
-                distributor_address=form.cleaned_data['distributor_address'],
-                distributor_age=form.cleaned_data['distributor_age'],
-                admin=form.cleaned_data['admin']
-            )
             return redirect('login')
     else:
         form = signup_form()

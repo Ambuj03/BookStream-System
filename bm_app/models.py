@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Admin(models.Model):
     admin_id = models.AutoField(primary_key=True)
@@ -108,7 +109,7 @@ class Receipt(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.RESTRICT)
     donation = models.ForeignKey(Donation, on_delete=models.SET_NULL, null=True)
     distributor = models.ForeignKey(Distributor, on_delete=models.RESTRICT)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default = timezone.now)
     payment_mode = models.CharField(db_column='paymentMode', max_length=6, choices=[('ONLINE', 'Online'), ('CASH', 'Cash')], blank=True, null=True)
 
     class Meta:
