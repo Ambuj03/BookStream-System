@@ -22,7 +22,7 @@ class transaction_form(forms.ModelForm):
     quantity = forms.IntegerField(min_value=1, error_messages={"min_value":"Quantity can't be null"})
     donation_amount = forms.IntegerField()
     donation_purpose = forms.CharField(max_length=255)
-    customer_name = forms.CharField(max_length=50, required=True)
+    customer_name = forms.CharField(max_length=50)
     customer_phone = forms.CharField(widget=forms.TextInput(attrs={'type': 'tel'}),validators=[validate_indian_phone])
     customer_occupation = forms.CharField(max_length=50)
     customer_city = forms.CharField(max_length=50)
@@ -88,10 +88,14 @@ class login_form(forms.Form):
     )
 
     def clean_username(self):
-        email = self.cleaned_data.get("email")
-        if not Distributor.objects.filter(email = email).exists():
-            raise forms.ValidationError("No account with this email")
-        return email
+        username = self.cleaned_data.get("username")
+        try:
+            user = User.objects.get(username=username)
+            distributor = Distributor.objects.get(user = user)
+            return username
+        except (User.DoesNotExist, Distributor.DoesNotExist):
+            raise forms.ValidationError("Invalid Username")
+
     
 
 #SIGNUP FORM*******************************************************************
