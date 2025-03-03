@@ -1,0 +1,17 @@
+{% extends "bm_app/base.html" %}
+
+{% block title %}Inventory - Brihad Mridanga{% endblock %}
+
+{% block content %}
+    {% comment %} Create a inventory where distributor is able 
+    to update the quantities of the books, alse if the quantity is zero
+    he should be able to see in the books page but not make a transaction,
+    while transaction the book count should be shown and later updated in the 
+    inventory after the transcaiton and based on this only system will send the
+    notification. {% endcomment %}
+    {%for inv in inventory%}
+        <li>{{inv.inventory_id}}</li>
+        {% comment %} <li>{{inv.distributor_id}}</li> {% endcomment %}
+    {%endfor%}
+    
+{%endblock%}
