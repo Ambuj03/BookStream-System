@@ -1,17 +1,75 @@
-{% extends "bm_app/base.html" %}
+{% extends "bm_app/base.html"%}
 
 {% block title %}Inventory - Brihad Mridanga{% endblock %}
 
 {% block content %}
-    {% comment %} Create a inventory where distributor is able 
-    to update the quantities of the books, alse if the quantity is zero
-    he should be able to see in the books page but not make a transaction,
-    while transaction the book count should be shown and later updated in the 
-    inventory after the transcaiton and based on this only system will send the
-    notification. {% endcomment %}
-    {%for inv in inventory%}
-        <li>{{inv.inventory_id}}</li>
-        {% comment %} <li>{{inv.distributor_id}}</li> {% endcomment %}
-    {%endfor%}
-    
-{%endblock%}
+{% comment %} Create a inventory where distributor is able
+to update the quantities of the books, alse if the quantity is zero
+he should be able to see in the books page but not make a transaction,
+while transaction the book count should be shown and later updated in the
+inventory after the transcaiton and based on this only system will send the
+notification. {% endcomment %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2><i class="fas fa-boxes me-2"></i>My Inventory</h2>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <a href="{%url 'add_books'%}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add BBT Books
+            </a> 
+            &nbsp;
+            &nbsp;
+            <a href="{%url 'add_custom_books'%}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add Custom Books
+            </a>
+        </div>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            {% if inventory or distributorBooks%}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Author</th>
+                            <th>Language</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class = "quant">
+                        {% for item in inventory %}
+                        <tr>
+                            <td>{{ item.books.book_name }}</td>
+                            <td>{{ item.books.book_author }}</td>
+                            <td>{{ item.books.book_language }}</td>
+                            <td>₹{{ item.books.book_price }}</td>
+                            <td>{{ item.books_stock }}</td>
+                            <td>{{ item.books.book_category}}</td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                You don't have any books in your inventory yet.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

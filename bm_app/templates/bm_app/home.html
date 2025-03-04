@@ -7,7 +7,7 @@
     <!-- Welcome Section -->
     <div class="row bg-primary text-white py-4 mb-4">
         <div class="col-12 text-center">
-            <h1 class="display-4">Welcome{{ user.distributor_name|default:user.email }}</h1>
+            <h1 class="display-4">Welcome {{ user.username|default:user.email }}</h1>
             <p class="lead">Manage your book distribution activities efficiently</p>
         </div>
     </div>

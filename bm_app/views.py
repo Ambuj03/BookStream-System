@@ -4,7 +4,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from .forms import signup_form, transaction_form
-from .models import Distributor, Books
+from .bookAddForm import bookAddForm
+from .models import Distributor, Books, DistributorInventory, DistributorBooks
 from django.db.models import Q
 from django.core.paginator import Paginator
 
@@ -68,6 +69,43 @@ def books_view(request):
     return render(request, 'bm_app/books.html', {
         'page_obj': page_obj, 'search_query' : search_query,
     })
+
+
+
+@login_required(login_url='login')
+@never_cache
+def inventory_view(request):
+
+    distributor = Distributor.objects.get(user = request.user)
+    inventory = DistributorInventory.objects.filter(distributor = distributor)
+    distributorBooks = DistributorBooks.objects.filter(distributor = distributor)
+    # inventory = DistributorInventory.objects.all()
+
+    return render(request, 'bm_app/inventory.html', {'inventory' : inventory, 'distributorBooks': distributorBooks})
+
+
+@login_required(login_url='login')
+@never_cache
+def add_books(request):
+    if request.method == 'POST':
+            distributor = Distributor.objects.get(user = request.user)
+            form = bookAddForm(request.POST, distributor=distributor)
+            if form.is_valid():
+                form.save()
+                return redirect('inventory')
+        
+    else :
+        form = bookAddForm()
+        
+    return render(request, 'bm_app/subpage/addBbtBooks.html', {'form' : form})
+    
+    
+
+@login_required(login_url='login')
+@never_cache
+def add_custom_books(request):
+    return render(request, 'bm_app/subpage/addCustomBooks.html', {})
+
 
 
 def login_page(request):

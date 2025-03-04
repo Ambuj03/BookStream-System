@@ -3,3 +3,12 @@
     box-shadow: 2px 2px 30px rgba(15, 110, 158, 0.5);  /* horizontal-offset vertical-offset blur-radius color */
     transition: .5s;
 }
+
+.display-4{
+    display: block;
+}
+
+.quant{
+    align-items: center;
+    color: red;
+}
