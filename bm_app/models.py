@@ -19,6 +19,9 @@ class BooksCategory(models.Model):
     class Meta:
         managed = False
         db_table = 'books_category'
+        
+    def __str__(self):
+        return self.bookscategory_name
 
 class Books(models.Model):
     book_id = models.AutoField(primary_key=True)
@@ -31,10 +34,13 @@ class Books(models.Model):
     class Meta:
         managed = False
         db_table = 'books'
+        
+    def __str__(self):
+        return self.book_name
 
 class Distributor(models.Model):
     distributor_id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)  # Add this line
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)  
     distributor_name = models.CharField(max_length=100)
     distributor_email = models.EmailField(unique=True)
     distributor_phonenumber = models.CharField(db_column='distributor_phoneNumber', max_length=15)
@@ -66,6 +72,22 @@ class DistributorInventory(models.Model):
     class Meta:
         managed = False
         db_table = 'distributor_inventory'
+        
+class DistributorBooks(models.Model):
+    distributor = models.ForeignKey(Distributor, on_delete=models.CASCADE)
+    book_name = models.CharField(max_length=200)
+    book_author = models.CharField(max_length=100)
+    book_language = models.CharField(max_length=50)
+    book_price = models.IntegerField()
+    book_category = models.CharField(max_length=100)
+    book_stock = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'distributor_books'
+
+    def __str__(self):
+        return self.book_name
 
 class Customer(models.Model):
     customer_id = models.AutoField(primary_key=True)

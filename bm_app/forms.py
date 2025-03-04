@@ -33,10 +33,11 @@ class transaction_form(forms.ModelForm):
         model = Receipt
         fields = ['payment_mode']
 
+    # Was unneccesary since i return book name using __str__ in model itself
     def __init__(self, *args, distributor=None, **kwargs):
         self.distributor = distributor
         super(transaction_form, self).__init__(*args, **kwargs)
-        self.fields['book'].label_from_instance = lambda obj: obj.book_name
+        # self.fields['book'].label_from_instance = lambda obj: obj.book_name
 
     def save(self, commit=True):
         data = self.cleaned_data
@@ -76,25 +77,26 @@ class transaction_form(forms.ModelForm):
 
 
 #LOGIN FORM ********************************************************************
-class login_form(forms.Form):
-    username = forms.CharField(
-        label="Username",
-        widget=forms.TextInput(attrs={'placeholder': 'Enter username'})
-    )
+# Not needed since we are using inbuilt Auth form
+# class login_form(forms.Form):
+#     username = forms.CharField(
+#         label="Username",
+#         widget=forms.TextInput(attrs={'placeholder': 'Enter username'})
+#     )
 
-    password = forms.CharField(
-        label="Password",
-        widget=forms.PasswordInput(attrs={'placeholder': 'Enter password'})
-    )
+#     password = forms.CharField(
+#         label="Password",
+#         widget=forms.PasswordInput(attrs={'placeholder': 'Enter password'})
+#     )
 
-    def clean_username(self):
-        username = self.cleaned_data.get("username")
-        try:
-            user = User.objects.get(username=username)
-            distributor = Distributor.objects.get(user = user)
-            return username
-        except (User.DoesNotExist, Distributor.DoesNotExist):
-            raise forms.ValidationError("Invalid Username")
+#     def clean_username(self):
+#         username = self.cleaned_data.get("username")
+#         try:
+#             user = User.objects.get(username=username)
+#             distributor = Distributor.objects.get(user = user)
+#             return username
+#         except (User.DoesNotExist, Distributor.DoesNotExist):
+#             raise forms.ValidationError("Invalid Username")
 
     
 
