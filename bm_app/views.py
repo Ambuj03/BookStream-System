@@ -4,10 +4,15 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from .forms import signup_form, transaction_form
-from .bookAddForm import bookAddForm
 from .models import Distributor, Books, DistributorInventory, DistributorBooks
 from django.db.models import Q
 from django.core.paginator import Paginator
+
+#for formset related things
+from django.db import transaction
+from .bookAddForm import  get_book_formset
+
+from django.contrib import messages
 
 
 #Showing main page
@@ -86,18 +91,40 @@ def inventory_view(request):
 
 @login_required(login_url='login')
 @never_cache
+# def add_books(request):
+#     if request.method == 'POST':
+#             distributor = Distributor.objects.get(user = request.user)
+#             form = bookAddForm(request.POST, distributor=distributor)
+#             if form.is_valid():
+#                 form.save()
+#                 return redirect('inventory')
+        
+#     else :
+#         form = bookAddForm()
+        
+#     return render(request, 'bm_app/subpage/addBbtBooks.html', {'form' : form})
+
 def add_books(request):
+                
+    distributor = Distributor.objects.get(user = request.user)
+
     if request.method == 'POST':
-            distributor = Distributor.objects.get(user = request.user)
-            form = bookAddForm(request.POST, distributor=distributor)
-            if form.is_valid():
-                form.save()
-                return redirect('inventory')
+            formset = get_book_formset(distributor, request.POST)
+            if formset.is_valid():
+                with transaction.atomic(): # Ensures all books are added or none
+                    try:  
+                        for form in formset:
+                            if form.cleaned_data:
+                                form.save()
+                        return redirect('inventory')
+                    except Exception as e:
+                        messages.error(request, 'Error Saving Books')
+                        return redirect('add_books')
         
     else :
-        form = bookAddForm()
+        formset = get_book_formset(distributor)
         
-    return render(request, 'bm_app/subpage/addBbtBooks.html', {'form' : form})
+    return render(request, 'bm_app/subpage/addBbtBooks.html', {'formset' : formset})
     
     
 
