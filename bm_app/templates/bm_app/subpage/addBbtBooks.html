@@ -7,10 +7,55 @@
 {% block content %}
 
 <div class="container mt-4">
-    <form class = mb-3 method="post">
-        {%csrf_token%}
-        {{form.as_p}}
-        <input type="submit" Submit>
-    </form>
+    <div class="row justify-content-center">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <form class="mb-3" method="post">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            
+            {% if formset.non_form_errors %}
+            <div class="alert alert-danger">
+                {{ formset.non_form_errors }}
+            </div>
+            {% endif %}
+            
+            <table class="table">
+                <thead>
+                    <tr>
+                        <h2><th>Book</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in formset %}
+                        <tr>
+                            <td>
+                                {{ form.book.label_tag }} {{form.book}}
+                                {% if form.book.errors %}
+                                    <div class="text-danger">{{ form.book.errors }}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{form.quantity.label_tag}} {{ form.quantity }}
+                                {% if form.quantity.errors %}
+                                    <div class="text-danger">{{ form.quantity.errors }}</div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
 </div>
 {%endblock%}

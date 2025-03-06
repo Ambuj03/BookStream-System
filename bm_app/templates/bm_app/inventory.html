@@ -60,6 +60,21 @@ notification. {% endcomment %}
                             </td>
                         </tr>
                         {% endfor %}
+                        {% for item in distributorBooks %}
+                        <tr>
+                            <td>{{ item.book_name }}</td>
+                            <td>{{ item.book_author }}</td>
+                            <td>{{ item.book_language }}</td>
+                            <td>₹{{ item.book_price }}</td>
+                            <td>{{ item.book_stock }}</td>
+                            <td>{{ item.book_category}}</td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
