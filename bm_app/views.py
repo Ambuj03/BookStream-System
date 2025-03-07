@@ -10,10 +10,11 @@ from django.core.paginator import Paginator
 
 #for formset related things
 from django.db import transaction
-from .bookAddForm import  get_book_formset
+from .bookAddForm import  get_book_formset, AddCustomBooks
 
 from django.contrib import messages
 
+from django.shortcuts import get_object_or_404
 
 #Showing main page
 def main_page(request):
@@ -89,8 +90,8 @@ def inventory_view(request):
     return render(request, 'bm_app/inventory.html', {'inventory' : inventory, 'distributorBooks': distributorBooks})
 
 
-@login_required(login_url='login')
-@never_cache
+# @login_required(login_url='login')
+# @never_cache
 # def add_books(request):
 #     if request.method == 'POST':
 #             distributor = Distributor.objects.get(user = request.user)
@@ -111,6 +112,7 @@ def add_books(request):
     if request.method == 'POST':
             formset = get_book_formset(distributor, request.POST)
             if formset.is_valid():
+                saved_books = []  # List to store returned books
                 with transaction.atomic(): # Ensures all books are added or none
                     try:  
                         for form in formset:
@@ -125,13 +127,30 @@ def add_books(request):
         formset = get_book_formset(distributor)
         
     return render(request, 'bm_app/subpage/addBbtBooks.html', {'formset' : formset})
+
+def delete_book(request, book_id):
+    if request.method == 'POST':
+        book = get_object_or_404(DistributorBooks, id = book_id) #Tradition filter will work well as well 
+        book.delete()
+        messages.success(request, 'Book deleted successfully')
+        return redirect('inventory')
     
     
 
 @login_required(login_url='login')
 @never_cache
-def add_custom_books(request):
-    return render(request, 'bm_app/subpage/addCustomBooks.html', {})
+def add_custom_books(request): 
+
+    distributor = Distributor.objects.get(user = request.user)
+    if request.method == 'POST':
+        form = AddCustomBooks(request.POST, distributor = distributor)
+        if form.is_valid():
+            form.save()
+            return redirect('inventory')
+    else:
+        form = AddCustomBooks(distributor = distributor)
+
+    return render(request, 'bm_app/subpage/addCustomBooks.html', {'form' : form})
 
 
 
