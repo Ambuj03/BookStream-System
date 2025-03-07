@@ -54,9 +54,13 @@ notification. {% endcomment %}
                             <td>{{ item.books_stock }}</td>
                             <td>{{ item.books.book_category}}</td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit"></i>
-                                </a>
+                                <form method="POST" action="{% url 'delete_book' item.id %}" style="display: inline;" 
+                                      onsubmit="return confirm('Are you sure you want to delete this book?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         {% endfor %}
@@ -69,9 +73,13 @@ notification. {% endcomment %}
                             <td>{{ item.book_stock }}</td>
                             <td>{{ item.book_category}}</td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit"></i>
-                                </a>
+                                <form method="POST" action="{% url 'delete_book' item.id %}" style="display: inline;" 
+                                      onsubmit="return confirm('Are you sure you want to delete this book?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         {% endfor %}
