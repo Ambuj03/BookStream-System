@@ -16,14 +16,28 @@ class BookAddForm(forms.Form):
         if not data:
             return None
 
-        books = data['book']
-        distributorBooks = DistributorBooks.objects.create(
+        book = data['book']
+        quantity = data['quantity']
+
+        # get_or_create could also have been used, try it later.
+        existing_book = DistributorBooks.objects.filter(
+            book_name = book.book_name
+        ).first()
+
+        if existing_book:
+            existing_book.book_stock += quantity
+            existing_book.save()
+            return existing_book
+
+        else: 
+            
+            distributorBooks = DistributorBooks.objects.create(
                 distributor_id = self.distributor.distributor_id,
                 book_name = data['book'],
-                book_author = books.book_author,
-                book_language = books.book_language,
-                book_price = books.book_price,
-                book_category = books.book_category,
+                book_author = book.book_author,
+                book_language = book.book_language,
+                book_price = book.book_price,
+                book_category = book.book_category,
                 book_stock = data['quantity']
         )
         
@@ -51,4 +65,36 @@ def get_book_formset(distributor, *args, **kwargs):
         form.distributor = distributor
 
     return formset
+
+
+class AddCustomBooks(forms.Form):
+    # Set distributor id and book_category manually
+
+    book_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class' : 'form-control'}))
+    book_author = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class' : 'form-control'}))
+    book_language =forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class' : 'form-control'}))
+    book_price = forms.IntegerField(min_value=1, widget=forms.NumberInput(attrs={'class' : 'form-control'}))
+    book_stock = forms.IntegerField(min_value=1, widget=forms.NumberInput(attrs={'class' : 'form-control'}))
+
+    def __init__(self, *args, distributor=None, **kwargs):
+        super(AddCustomBooks, self).__init__(*args, **kwargs) # why up and down matters?
+        self.distributor = distributor
+
+    def save(self):
+        data = self.cleaned_data        
+
+        distributor = DistributorBooks.objects.create(
+            distributor_id = self.distributor.distributor_id,
+            book_name = data['book_name'],
+            book_author = data['book_author'],
+            book_language = data['book_language'],
+            book_price = data['book_price'],
+            book_category = "NON_BBT",
+            book_stock = data['book_stock']
+
+        )
         
+        return distributor
+    
+
+    
