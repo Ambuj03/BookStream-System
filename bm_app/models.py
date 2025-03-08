@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Admin(models.Model):
     admin_id = models.AutoField(primary_key=True)
@@ -18,6 +19,9 @@ class BooksCategory(models.Model):
     class Meta:
         managed = False
         db_table = 'books_category'
+        
+    def __str__(self):
+        return self.bookscategory_name
 
 class Books(models.Model):
     book_id = models.AutoField(primary_key=True)
@@ -30,9 +34,13 @@ class Books(models.Model):
     class Meta:
         managed = False
         db_table = 'books'
+        
+    def __str__(self):
+        return self.book_name
 
 class Distributor(models.Model):
     distributor_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)  
     distributor_name = models.CharField(max_length=100)
     distributor_email = models.EmailField(unique=True)
     distributor_phonenumber = models.CharField(db_column='distributor_phoneNumber', max_length=15)
@@ -64,6 +72,22 @@ class DistributorInventory(models.Model):
     class Meta:
         managed = False
         db_table = 'distributor_inventory'
+        
+class DistributorBooks(models.Model):
+    distributor = models.ForeignKey(Distributor, on_delete=models.CASCADE)
+    book_name = models.CharField(max_length=200)
+    book_author = models.CharField(max_length=100)
+    book_language = models.CharField(max_length=50)
+    book_price = models.IntegerField()
+    book_category = models.CharField(max_length=100)
+    book_stock = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'distributor_books'
+
+    def __str__(self):
+        return self.book_name
 
 class Customer(models.Model):
     customer_id = models.AutoField(primary_key=True)
@@ -103,12 +127,18 @@ class Notification(models.Model):
 
 # Update your Receipt model
 class Receipt(models.Model):
+    PAYMENT_CHOICES = [
+        ('ONLINE', 'ONLINE'),
+        ('CASH', 'CASH')
+    ]
+    
     receipt_id = models.AutoField(primary_key=True)
-    customer = models.ForeignKey(Customer, on_delete=models.RESTRICT)
-    donation = models.ForeignKey(Donation, on_delete=models.SET_NULL, null=True)
-    distributor = models.ForeignKey(Distributor, on_delete=models.RESTRICT)
-    date = models.DateTimeField(auto_now_add=True)
-    payment_mode = models.CharField(db_column='paymentMode', max_length=6, choices=[('ONLINE', 'Online'), ('CASH', 'Cash')], blank=True, null=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, db_column='customer_id')
+    donation = models.ForeignKey(Donation, on_delete=models.CASCADE, db_column='donation_id', null=True)
+    distributor = models.ForeignKey(Distributor, on_delete=models.CASCADE, db_column='distributor_id')
+    date = models.DateTimeField(auto_now_add=True, null=True)
+    paymentMode = models.CharField(max_length=6, choices=PAYMENT_CHOICES, null=True, db_column='paymentMode')
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True)
 
     class Meta:
         managed = False
@@ -117,8 +147,8 @@ class Receipt(models.Model):
 # Add new ReceiptBooks model
 class ReceiptBooks(models.Model):
     id = models.AutoField(primary_key=True)
-    receipt = models.ForeignKey(Receipt, on_delete=models.RESTRICT)
-    book = models.ForeignKey(Books, on_delete=models.RESTRICT)
+    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE, db_column='receipt_id')
+    book = models.ForeignKey(Books, on_delete=models.CASCADE, db_column='book_id')
     quantity = models.IntegerField()
 
     class Meta:

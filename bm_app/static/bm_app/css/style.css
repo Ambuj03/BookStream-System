@@ -1,4 +1,57 @@
-.col:hover{
+.card-body:hover {
+    color: rgb(13, 126, 141);
+    box-shadow: 2px 2px 30px rgba(15, 110, 158, 0.5);  /* horizontal-offset vertical-offset blur-radius color */
+    transition: .5s;
+}
+
+.display-4{
+    display: block;
+}
+
+.quant{
+    align-items: center;
     color: red;
-    box-shadow: 2px red;
+}
+
+.book-selection{
+    margin-bottom: 20px;
+}
+
+.search-box{
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+
+#book-table th, #book-table td{
+    padding: 8px;
+    border: 1px solid #bbb7b7;
+}
+
+#add-book {
+    cursor: pointer;
+}
+
+.select2-container {
+    width: 100% !important;
+}
+
+.quantity-input {
+    width: 80px;
+}
+
+#selected-books {
+    margin-top: 20px;
+}
+
+.remove-book {
+    padding: 0.25rem 0.5rem;
+}
+
+.card {
+    margin-bottom: 1.5rem;
+}
+
+.total-row {
+    font-weight: bold;
+    background-color: #f8f9fa;
 }
