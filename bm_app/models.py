@@ -127,12 +127,18 @@ class Notification(models.Model):
 
 # Update your Receipt model
 class Receipt(models.Model):
+    PAYMENT_CHOICES = [
+        ('ONLINE', 'ONLINE'),
+        ('CASH', 'CASH')
+    ]
+    
     receipt_id = models.AutoField(primary_key=True)
-    customer = models.ForeignKey(Customer, on_delete=models.RESTRICT)
-    donation = models.ForeignKey(Donation, on_delete=models.SET_NULL, null=True)
-    distributor = models.ForeignKey(Distributor, on_delete=models.RESTRICT)
-    date = models.DateTimeField(default = timezone.now)
-    payment_mode = models.CharField(db_column='paymentMode', max_length=6, choices=[('ONLINE', 'Online'), ('CASH', 'Cash')], blank=True, null=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, db_column='customer_id')
+    donation = models.ForeignKey(Donation, on_delete=models.CASCADE, db_column='donation_id', null=True)
+    distributor = models.ForeignKey(Distributor, on_delete=models.CASCADE, db_column='distributor_id')
+    date = models.DateTimeField(auto_now_add=True, null=True)
+    paymentMode = models.CharField(max_length=6, choices=PAYMENT_CHOICES, null=True, db_column='paymentMode')
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True)
 
     class Meta:
         managed = False
@@ -141,8 +147,8 @@ class Receipt(models.Model):
 # Add new ReceiptBooks model
 class ReceiptBooks(models.Model):
     id = models.AutoField(primary_key=True)
-    receipt = models.ForeignKey(Receipt, on_delete=models.RESTRICT)
-    book = models.ForeignKey(Books, on_delete=models.RESTRICT)
+    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE, db_column='receipt_id')
+    book = models.ForeignKey(Books, on_delete=models.CASCADE, db_column='book_id')
     quantity = models.IntegerField()
 
     class Meta:

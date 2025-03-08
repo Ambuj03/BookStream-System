@@ -12,3 +12,46 @@
     align-items: center;
     color: red;
 }
+
+.book-selection{
+    margin-bottom: 20px;
+}
+
+.search-box{
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+
+#book-table th, #book-table td{
+    padding: 8px;
+    border: 1px solid #bbb7b7;
+}
+
+#add-book {
+    cursor: pointer;
+}
+
+.select2-container {
+    width: 100% !important;
+}
+
+.quantity-input {
+    width: 80px;
+}
+
+#selected-books {
+    margin-top: 20px;
+}
+
+.remove-book {
+    padding: 0.25rem 0.5rem;
+}
+
+.card {
+    margin-bottom: 1.5rem;
+}
+
+.total-row {
+    font-weight: bold;
+    background-color: #f8f9fa;
+}
