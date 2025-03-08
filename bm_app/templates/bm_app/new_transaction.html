@@ -1,7 +1,17 @@
 {% extends "bm_app/base.html" %}
 {% load widget_tweaks %}
+{%load static%}
 
 {% block title %}New Transaction - Brihad Mridanga{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container {
+        width: 100% !important;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -14,30 +24,56 @@
                     </h3>
                 </div>
                 <div class="card-body">
-                    <form method="post" class="needs-validation" novalidate>
+                    <form id="transaction-form" method="POST">
                         {% csrf_token %}
                         
-                        {% for field in form %}
-                        <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label">
-                                {{ field.label }}
-                                {% if field.field.required %}
-                                    <span class="text-danger">*</span>
-                                {% endif %}
-                            </label>
-                            {{ field|add_class:"form-control" }}
-                            {% if field.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ field.errors.0 }}
+                        <!-- Book Selection Section -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Select Books</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <select id="book-select" class="form-control select2">
+                                            <option></option>
+                                        </select>
+                                    </div>
                                 </div>
-                            {% endif %}
-                            {% if field.help_text %}
-                                <div class="form-text">
-                                    {{ field.help_text }}
-                                </div>
-                            {% endif %}
+                                
+                                <!-- Selected Books Table -->
+                                <table id="selected-books" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Book Name</th>
+                                            <th>Available Stock</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Subtotal</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4" class="text-end"><strong>Total:</strong></td>
+                                            <td><span id="total-amount">0.00</span></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
-                        {% endfor %}
+
+                        <!-- Customer Details Section -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Customer Details</h5>
+                            </div>
+                            <div class="card-body">
+                                {{ form.as_p }}
+                            </div>
+                        </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
@@ -53,4 +89,10 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'bm_app/js/transaction.js' %}"></script>
 {% endblock %}

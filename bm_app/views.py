@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from .forms import signup_form, transaction_form
-from .models import Distributor, Books, DistributorInventory, DistributorBooks
+from .models import Distributor, Books, DistributorInventory, DistributorBooks, ReceiptBooks
 from django.db.models import Q
 from django.core.paginator import Paginator
 
@@ -15,6 +15,17 @@ from .bookAddForm import  get_book_formset, AddCustomBooks
 from django.contrib import messages
 
 from django.shortcuts import get_object_or_404
+
+import json
+from django.http import JsonResponse
+
+from django.core.exceptions import ValidationError
+
+from .models import Books, Receipt, Customer, Donation, Distributor,ReceiptBooks
+from decimal import Decimal
+
+
+
 
 #Showing main page
 def main_page(request):
@@ -28,28 +39,109 @@ def home_page(request):
     print(f"DEBUG: Logged-in User: {request.user}")  # Debug
     return render(request,'bm_app/home.html',{})
 
+@login_required(login_url="login")
+@never_cache
+def books_api(request):
+    # APi endpoint to get all the books.
+
+    distributor = Distributor.objects.get(user = request.user)
+    distributor_books = DistributorBooks.objects.filter(distributor = distributor)
+    books_data = []
+
+    for dist_book in distributor_books:
+        books_data.append({
+                    'dist_book_id': dist_book.id,  # DistributorBooks ID for reference
+                    'book_id': dist_book.book.book_id,
+                    'name': dist_book.book.book_name,
+                    'available_quantity': dist_book.quantity,
+                    'price': str(dist_book.book.book_price)
+                })
+
+    return JsonResponse(books_data, safe = False)
+
 # New Transaction form  
 
 @login_required(login_url="login")
 @never_cache
 def new_transaction_view(request):
     try:
-        # Get the distributor instance for the logged-in user
         distributor = Distributor.objects.get(user=request.user)
         
         if request.method == 'POST':
             form = transaction_form(request.POST, distributor=distributor)
             if form.is_valid():
-                receipt = form.save()
-                return redirect('home')
+                try:
+                    with transaction.atomic():
+                        # Create customer
+                        customer = Customer.objects.create(
+                            customer_name=form.cleaned_data['customer_name'],
+                            customer_phone=form.cleaned_data['customer_phone'],
+                            customer_occupation=form.cleaned_data['customer_occupation'],
+                            customer_city=form.cleaned_data['customer_city'],
+                            customer_remarks=form.cleaned_data['remarks']
+                        )
+
+                        # Create donation
+                        donation = Donation.objects.create(
+                            customer=customer,
+                            donation_amount=form.cleaned_data['donation_amount'],
+                            donation_purpose=form.cleaned_data['donation_purpose']
+                        )
+
+                        # Create receipt
+                        receipt = Receipt.objects.create(
+                            customer=customer,
+                            donation=donation,
+                            distributor=distributor,
+                            paymentMode=form.cleaned_data['paymentMode'],
+                            total_amount=Decimal(request.POST.get('total_amount', '0'))
+                        )
+                        
+                        # Process books data
+                        books_data = json.loads(request.POST.get('books', '[]'))
+                        
+                        for book_data in books_data:
+                            dist_book = DistributorBooks.objects.get(
+                                id=book_data['dist_book_id'],
+                                distributor=distributor
+                            )
+                            
+                            quantity = int(book_data['quantity'])
+                            
+                            # Validate stock
+                            if dist_book.book_stock < quantity:
+                                raise ValidationError(f"Insufficient stock for {dist_book.book_name}")
+                            
+                            # Find or get the corresponding book from Books table
+                            book = Books.objects.get(book_name=dist_book.book_name)
+                            
+                            # Create receipt book entry
+                            ReceiptBooks.objects.create(
+                                receipt=receipt,
+                                book=book,  # Use the book instance
+                                quantity=quantity
+                            )
+                            
+                            # Update stock
+                            dist_book.book_stock -= quantity
+                            dist_book.save()
+                            
+                        return JsonResponse({
+                            'success': True,
+                            'redirect_url': reverse('home')
+                        })
+                        
+                except ValidationError as e:
+                    return JsonResponse({'success': False, 'error': str(e)})
+                except Exception as e:
+                    return JsonResponse({'success': False, 'error': str(e)})
+            
+            return JsonResponse({'success': False, 'error': form.errors})
         else:
             form = transaction_form(distributor=distributor)
+            return render(request, 'bm_app/new_transaction.html', {'form': form})
             
-        return render(request, 'bm_app/new_transaction.html', {
-            'form': form
-        })
     except Distributor.DoesNotExist:
-        # Handle the case where no distributor exists for the user
         return redirect('login')
 
 @login_required(login_url='login')
@@ -96,7 +188,7 @@ def inventory_view(request):
 #     if request.method == 'POST':
 #             distributor = Distributor.objects.get(user = request.user)
 #             form = bookAddForm(request.POST, distributor=distributor)
-#             if form.is_valid():
+#             if form is_valid():
 #                 form.save()
 #                 return redirect('inventory')
         
@@ -186,3 +278,31 @@ def signup_page(request):
 def logout_view(request):
     logout(request)
     return redirect('main')
+
+@login_required
+def get_distributor_books(request):
+    try:
+        distributor = Distributor.objects.get(user=request.user)
+        search_term = request.GET.get('term', '')
+        print(f"Search term: {search_term}")  # Debug print
+        
+        books = DistributorBooks.objects.filter(
+            distributor=distributor,
+            book_name__icontains=search_term,
+            book_stock__gt=0
+        ).values('id', 'book_name', 'book_price', 'book_stock')[:10]
+        
+        print(f"Found books: {books}")  # Debug print
+        
+        results = {
+            'results': [{'id': book['id'], 
+                        'text': book['book_name'],
+                        'price': book['book_price'],
+                        'stock': book['book_stock']} 
+                       for book in books]
+        }
+        print(f"Returning: {results}")  # Debug print
+        return JsonResponse(results)
+    except Exception as e:
+        print(f"Error: {str(e)}")  # Debug print
+        return JsonResponse({'error': str(e)}, status=400)

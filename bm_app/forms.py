@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Books, Receipt, Customer, Donation, Distributor, Admin, ReceiptBooks
+from .models import  Receipt, Distributor, Admin
 
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -17,63 +17,24 @@ def validate_indian_phone(value):
         raise ValidationError("Enter a valid Indian phone number (starting with 6,7,8,9).")
 
 class transaction_form(forms.ModelForm):
-    book = forms.ModelChoiceField(queryset=Books.objects.all(), label='Select a book',
-            to_field_name='book_name')
-    quantity = forms.IntegerField(min_value=1, error_messages={"min_value":"Quantity can't be null"})
     donation_amount = forms.IntegerField()
     donation_purpose = forms.CharField(max_length=255)
     customer_name = forms.CharField(max_length=50)
-    customer_phone = forms.CharField(widget=forms.TextInput(attrs={'type': 'tel'}),validators=[validate_indian_phone])
+    customer_phone = forms.CharField(
+        widget=forms.TextInput(attrs={'type': 'tel'}),
+        validators=[validate_indian_phone]
+    )
     customer_occupation = forms.CharField(max_length=50)
     customer_city = forms.CharField(max_length=50)
-    remarks = forms.CharField(widget=forms.Textarea,required=False)
-
+    remarks = forms.CharField(widget=forms.Textarea, required=False)
 
     class Meta:
         model = Receipt
-        fields = ['payment_mode']
+        fields = ['paymentMode']
 
-    # Was unneccesary since i return book name using __str__ in model itself
     def __init__(self, *args, distributor=None, **kwargs):
         self.distributor = distributor
         super(transaction_form, self).__init__(*args, **kwargs)
-        # self.fields['book'].label_from_instance = lambda obj: obj.book_name
-
-    def save(self, commit=True):
-        data = self.cleaned_data
-
-        if not self.distributor:
-            raise ValidationError("You must be logged in as a Distributor.")
-
-        customer = Customer.objects.create(
-            customer_name=data['customer_name'],
-            customer_phone=data['customer_phone'],
-            customer_occupation=data['customer_occupation'],
-            customer_city=data['customer_city'],
-            customer_remarks=data['remarks']
-        )
-
-        donation = Donation.objects.create(
-            customer=customer,
-            donation_amount=data['donation_amount'],
-            donation_purpose=data['donation_purpose']
-        )
-
-        # Fix: Use the distributor instance instead of the class
-        receipt = Receipt.objects.create(
-            customer=customer,
-            donation=donation,
-            distributor=self.distributor,  # Changed this line
-            payment_mode=data['payment_mode']
-        )
-
-        receipt_books = ReceiptBooks.objects.create(
-            receipt=receipt,
-            book=data['book'],
-            quantity=data['quantity']
-        )
-
-        return receipt
 
 
 #LOGIN FORM ********************************************************************
