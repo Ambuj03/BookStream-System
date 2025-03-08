@@ -21,7 +21,7 @@ from django.http import JsonResponse
 
 from django.core.exceptions import ValidationError
 
-from .models import Books, Receipt, Customer, Donation, Distributor,ReceiptBooks
+from .models import Books, Receipt, Customer, Donation, Distributor,ReceiptBooks, BooksCategory
 from decimal import Decimal
 
 
@@ -112,13 +112,28 @@ def new_transaction_view(request):
                             if dist_book.book_stock < quantity:
                                 raise ValidationError(f"Insufficient stock for {dist_book.book_name}")
                             
-                            # Find or get the corresponding book from Books table
-                            book = Books.objects.get(book_name=dist_book.book_name)
+                            try:
+                                # Try to find the book in Books table
+                                book = Books.objects.get(book_name=dist_book.book_name)
+                            except Books.DoesNotExist:
+                                # Get or create a category for custom books
+                                custom_category, _ = BooksCategory.objects.get_or_create(
+                                    bookscategory_name='CUSTOM'
+                                )
+                                
+                                # Create new book entry
+                                book = Books.objects.create(
+                                    book_name=dist_book.book_name,
+                                    book_price=dist_book.book_price,
+                                    book_author="Custom Book",
+                                    book_language="N/A",
+                                    book_category=custom_category  # Use the category instance
+                                )
                             
                             # Create receipt book entry
                             ReceiptBooks.objects.create(
                                 receipt=receipt,
-                                book=book,  # Use the book instance
+                                book=book,
                                 quantity=quantity
                             )
                             
