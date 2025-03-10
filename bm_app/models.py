@@ -48,6 +48,9 @@ class Distributor(models.Model):
     distributor_age = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     admin = models.ForeignKey("Admin", on_delete=models.RESTRICT, null=True, blank=True)
+    
+    def __str__(self):
+        return self.distributor_name
 
     class Meta:
         managed = False
