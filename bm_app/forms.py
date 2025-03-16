@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import  Receipt, Distributor, Admin
+from .models import  Receipt, Distributor, Temple
 
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -37,30 +37,6 @@ class transaction_form(forms.ModelForm):
         super(transaction_form, self).__init__(*args, **kwargs)
 
 
-#LOGIN FORM ********************************************************************
-# Not needed since we are using inbuilt Auth form
-# class login_form(forms.Form):
-#     username = forms.CharField(
-#         label="Username",
-#         widget=forms.TextInput(attrs={'placeholder': 'Enter username'})
-#     )
-
-#     password = forms.CharField(
-#         label="Password",
-#         widget=forms.PasswordInput(attrs={'placeholder': 'Enter password'})
-#     )
-
-#     def clean_username(self):
-#         username = self.cleaned_data.get("username")
-#         try:
-#             user = User.objects.get(username=username)
-#             distributor = Distributor.objects.get(user = user)
-#             return username
-#         except (User.DoesNotExist, Distributor.DoesNotExist):
-#             raise forms.ValidationError("Invalid Username")
-
-    
-
 #SIGNUP FORM*******************************************************************
 class signup_form(UserCreationForm):
     # Default UserCreationForm fields:
@@ -74,7 +50,7 @@ class signup_form(UserCreationForm):
     distributor_phonenumber = forms.CharField(max_length=10)
     distributor_address = forms.CharField(widget=forms.Textarea, required=False)
     distributor_age = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
-    admin = forms.ModelChoiceField(queryset=Admin.objects.all(), empty_label="Select Admin")
+    temple = forms.ModelChoiceField(queryset=Temple.objects.all(), empty_label="Select Temple")
 
     class Meta:
         model = User
@@ -97,7 +73,7 @@ class signup_form(UserCreationForm):
             distributor_phonenumber=self.cleaned_data['distributor_phonenumber'],
             distributor_address=self.cleaned_data['distributor_address'],
             distributor_age=self.cleaned_data['distributor_age'],
-            admin=self.cleaned_data['admin']
+            temple=self.cleaned_data['temple']
         )
         return user
 

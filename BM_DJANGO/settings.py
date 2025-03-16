@@ -37,6 +37,8 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 INSTALLED_APPS = [
     'bm_app',
+    'jazzmin',
+    # 'grappelli',  
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
 ]
+
+GRAPPELLI_ADMIN_TITLE = 'Bookstore Management'
 
 # Custom authentication backend 
 AUTHENTICATION_BACKENDS = [

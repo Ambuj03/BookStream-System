@@ -15,8 +15,6 @@ class Temple(models.Model):
         managed = False
         db_table = 'temple'
 
-class Admin(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 class BooksCategory(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
@@ -161,8 +159,9 @@ class ReceiptBooks(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
     id = models.AutoField(primary_key=True)
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE, db_column='receipt_id')
-    book = models.ForeignKey(Books, on_delete=models.CASCADE, db_column='book_id')
+    book_name = models.CharField(max_length=100)
     quantity = models.IntegerField()
+    
 
     class Meta:
         managed = False

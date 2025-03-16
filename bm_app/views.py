@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from .forms import signup_form, transaction_form
-from .models import Distributor, Books, DistributorInventory, DistributorBooks, ReceiptBooks
+from .models import Distributor, Books, DistributorBooks, ReceiptBooks
 from django.db.models import Q
 from django.core.paginator import Paginator
 
@@ -39,6 +39,8 @@ def home_page(request):
     print(f"DEBUG: Logged-in User: {request.user}")  # Debug
     return render(request,'bm_app/home.html',{})
 
+
+
 @login_required(login_url="login")
 @never_cache
 def books_api(request):
@@ -51,10 +53,10 @@ def books_api(request):
     for dist_book in distributor_books:
         books_data.append({
                     'dist_book_id': dist_book.id,  # DistributorBooks ID for reference
-                    'book_id': dist_book.book.book_id,
-                    'name': dist_book.book.book_name,
-                    'available_quantity': dist_book.quantity,
-                    'price': str(dist_book.book.book_price)
+                    'book_id': dist_book.id,
+                    'name': dist_book.book_name,
+                    'available_quantity': dist_book.book_stock,
+                    'price': str(dist_book.book_price)
                 })
 
     return JsonResponse(books_data, safe = False)
@@ -72,20 +74,25 @@ def new_transaction_view(request):
             if form.is_valid():
                 try:
                     with transaction.atomic():
+
+                        temple_id = distributor.temple.temple_id
+
                         # Create customer
                         customer = Customer.objects.create(
                             customer_name=form.cleaned_data['customer_name'],
                             customer_phone=form.cleaned_data['customer_phone'],
                             customer_occupation=form.cleaned_data['customer_occupation'],
                             customer_city=form.cleaned_data['customer_city'],
-                            customer_remarks=form.cleaned_data['remarks']
+                            customer_remarks=form.cleaned_data['remarks'],
+                            temple_id = temple_id
                         )
 
                         # Create donation
                         donation = Donation.objects.create(
                             customer=customer,
                             donation_amount=form.cleaned_data['donation_amount'],
-                            donation_purpose=form.cleaned_data['donation_purpose']
+                            donation_purpose=form.cleaned_data['donation_purpose'],
+                            temple_id = temple_id
                         )
 
                         # Create receipt
@@ -94,7 +101,8 @@ def new_transaction_view(request):
                             donation=donation,
                             distributor=distributor,
                             paymentMode=form.cleaned_data['paymentMode'],
-                            total_amount=Decimal(request.POST.get('total_amount', '0'))
+                            total_amount=Decimal(request.POST.get('total_amount', '0')),
+                            temple_id = temple_id
                         )
                         
                         # Process books data
@@ -112,29 +120,12 @@ def new_transaction_view(request):
                             if dist_book.book_stock < quantity:
                                 raise ValidationError(f"Insufficient stock for {dist_book.book_name}")
                             
-                            try:
-                                # Try to find the book in Books table
-                                book = Books.objects.get(book_name=dist_book.book_name)
-                            except Books.DoesNotExist:
-                                # Get or create a category for custom books
-                                custom_category, _ = BooksCategory.objects.get_or_create(
-                                    bookscategory_name='CUSTOM'
-                                )
-                                
-                                # Create new book entry
-                                book = Books.objects.create(
-                                    book_name=dist_book.book_name,
-                                    book_price=dist_book.book_price,
-                                    book_author="Custom Book",
-                                    book_language="N/A",
-                                    book_category=custom_category  # Use the category instance
-                                )
-                            
                             # Create receipt book entry
                             ReceiptBooks.objects.create(
                                 receipt=receipt,
-                                book=book,
-                                quantity=quantity
+                                book_name=dist_book.book_name,
+                                quantity=quantity,
+                                temple_id = temple_id
                             )
                             
                             # Update stock
@@ -190,11 +181,10 @@ def books_view(request):
 def inventory_view(request):
 
     distributor = Distributor.objects.get(user = request.user)
-    inventory = DistributorInventory.objects.filter(distributor = distributor)
     distributorBooks = DistributorBooks.objects.filter(distributor = distributor)
     # inventory = DistributorInventory.objects.all()
 
-    return render(request, 'bm_app/inventory.html', {'inventory' : inventory, 'distributorBooks': distributorBooks})
+    return render(request, 'bm_app/inventory.html', {'distributorBooks': distributorBooks})
 
 
 # @login_required(login_url='login')
@@ -299,7 +289,7 @@ def get_distributor_books(request):
     try:
         distributor = Distributor.objects.get(user=request.user)
         search_term = request.GET.get('term', '')
-        print(f"Search term: {search_term}")  # Debug print
+        # print(f"Search term: {search_term}")  # Debug print
         
         books = DistributorBooks.objects.filter(
             distributor=distributor,
@@ -307,7 +297,7 @@ def get_distributor_books(request):
             book_stock__gt=0
         ).values('id', 'book_name', 'book_price', 'book_stock')[:10]
         
-        print(f"Found books: {books}")  # Debug print
+        # print(f"Found books: {books}")  # Debug print
         
         results = {
             'results': [{'id': book['id'], 
@@ -316,7 +306,7 @@ def get_distributor_books(request):
                         'stock': book['book_stock']} 
                        for book in books]
         }
-        print(f"Returning: {results}")  # Debug print
+        # print(f"Returning: {results}")  # Debug print
         return JsonResponse(results)
     except Exception as e:
         print(f"Error: {str(e)}")  # Debug print
