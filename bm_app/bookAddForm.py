@@ -1,13 +1,13 @@
 from django import forms
 
-from .models import Books, DistributorBooks
+from .models import Books, DistributorBooks, Distributor
 
 class BookAddForm(forms.Form):
     book = forms.ModelChoiceField(queryset=Books.objects.all(), label='Select a book')
     quantity = forms.IntegerField(label='Select the quantity')
     
     def __init__(self, *args, distributor=None, **kwargs):
-        super(BookAddForm, self).__init__(*args, **kwargs) # why up and down matters?
+        super(BookAddForm, self).__init__(*args, **kwargs) 
         self.distributor = distributor
         
     def save(self):
@@ -23,6 +23,8 @@ class BookAddForm(forms.Form):
         existing_book = DistributorBooks.objects.filter(
             book_name = book.book_name
         ).first()
+        
+        temple_id = self.distributor.temple.temple_id
 
         if existing_book:
             existing_book.book_stock += quantity
@@ -38,7 +40,8 @@ class BookAddForm(forms.Form):
                 book_language = book.book_language,
                 book_price = book.book_price,
                 book_category = book.book_category,
-                book_stock = data['quantity']
+                book_stock = data['quantity'],
+                temple_id = temple_id
         )
         
         return distributorBooks
@@ -77,11 +80,12 @@ class AddCustomBooks(forms.Form):
     book_stock = forms.IntegerField(min_value=1, widget=forms.NumberInput(attrs={'class' : 'form-control'}))
 
     def __init__(self, *args, distributor=None, **kwargs):
-        super(AddCustomBooks, self).__init__(*args, **kwargs) # why up and down matters?
+        super(AddCustomBooks, self).__init__(*args, **kwargs) 
         self.distributor = distributor
 
     def save(self):
-        data = self.cleaned_data        
+        data = self.cleaned_data    
+        temple_id = self.distributor.temple.temple_id    
 
         distributor = DistributorBooks.objects.create(
             distributor_id = self.distributor.distributor_id,
@@ -90,7 +94,8 @@ class AddCustomBooks(forms.Form):
             book_language = data['book_language'],
             book_price = data['book_price'],
             book_category = "NON_BBT",
-            book_stock = data['book_stock']
+            book_stock = data['book_stock'],
+            temple_id = temple_id
 
         )
         
