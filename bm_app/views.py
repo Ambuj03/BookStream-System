@@ -125,7 +125,8 @@ def new_transaction_view(request):
                                 receipt=receipt,
                                 book_name=dist_book.book_name,
                                 quantity=quantity,
-                                temple_id = temple_id
+                                temple_id = temple_id,
+                                book_price = dist_book.book_price,
                             )
                             
                             # Update stock
