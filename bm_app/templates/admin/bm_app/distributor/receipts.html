@@ -1,0 +1,66 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_list%}
+{%load custom_tags%}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}">
+  <style>
+    .receipt-books {
+        margin-left: 20px;
+        border-left: 2px solid #ddd;
+        padding-left: 20px;
+    }
+    .receipt-header {
+        background-color: #f5f5f5;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+    }
+    .book-list {
+        margin: 10px 0;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>{{ title }}</h1>
+    
+    {% for data in receipt_data %}
+        <div class="receipt-header">
+            <h3>Receipt #{{ data.receipt.id }}</h3>
+            <p>
+                <strong>Customer:</strong> {{ data.receipt.customer.customer_name }}<br>
+                <strong>Total Amount:</strong> ₹{{ data.receipt.total_amount }}<br>
+                <strong>Payment Mode:</strong> {{ data.receipt.paymentMode }}<br>
+                <strong>Date:</strong> {{ data.receipt.date }}
+            </p>
+            
+            <div class="receipt-books">
+                <h4>Books ({{ data.total_books }})</h4>
+                <div class="book-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Book Name</th>
+                                <th>Quantity</th>
+                                </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in data.books %}
+                            <tr>
+                                <td>{{ book.book_name }}</td>
+                                <td>{{ book.quantity }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>No receipts found for this distributor.</p>
+    {% endfor %}
+</div>
+{% endblock %}
