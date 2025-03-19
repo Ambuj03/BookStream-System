@@ -40,6 +40,7 @@ class Books(models.Model):
     class Meta:
         managed = False
         db_table = 'books'
+        verbose_name = 'Book'
         
     def __str__(self):
         return self.book_name
@@ -153,7 +154,7 @@ class Receipt(models.Model):
         db_table = 'receipt'
 
     def __str__(self):
-        return str(self.date)
+        return str(self.distributor.distributor_name)
 
 class ReceiptBooks(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
@@ -161,6 +162,7 @@ class ReceiptBooks(models.Model):
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE, db_column='receipt_id')
     book_name = models.CharField(max_length=100)
     quantity = models.IntegerField()
+    book_price = models.DecimalField(max_digits=10, decimal_places=2)
     
 
     class Meta:

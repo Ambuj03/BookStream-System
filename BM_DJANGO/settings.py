@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'bm_app',
     'jazzmin',
     # 'grappelli',  
+    'nested_admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
