@@ -124,7 +124,7 @@ class ReceiptAdmin(TempleRestrictedAdmin):
 # admin.site.register(Books)
 
 @admin.register(Books)
-class BooksAdmin(admin.ModelAdmin):
+class BooksAdmin(TempleRestrictedAdmin):
    
     list_display = ('book_name', 'book_author', 'book_language', 'book_price')
     search_fields = ('book_name', 'book_author')
@@ -143,3 +143,20 @@ class BooksAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
+@admin.register(MasterInventory)
+class MasterInventoryAdmin(TempleRestrictedAdmin):
+    list_display = ('book', 'stock',)
+    search_fields = ('book__book_name',)
+    
+    def get_exclude(self, request,obj):
+        if request.user.is_superuser:
+            return []
+        return ['temple']
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            temple = Temple.objects.get(admin=request.user)
+            obj.temple = temple
+        super().save_model(request, obj, form, change)
+
+    
