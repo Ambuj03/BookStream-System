@@ -67,7 +67,7 @@ class MasterInventory(models.Model):
     inventory_id = models.AutoField(primary_key=True)
     book = models.ForeignKey(Books, on_delete=models.RESTRICT)
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
-    stock = models.IntegerField(default=0)
+    stock = models.IntegerField(default=0)      
 
     class Meta:
         managed = False
