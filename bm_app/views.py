@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from .forms import signup_form, transaction_form
-from .models import Distributor, Books, DistributorBooks, ReceiptBooks
+from .models import Distributor, Books, DistributorBooks, ReceiptBooks, Temple
 from django.db.models import Q
 from django.core.paginator import Paginator
 
@@ -156,7 +156,8 @@ def new_transaction_view(request):
 def books_view(request):
 
     # Adding Paginatore logic
-    books = Books.objects.all()
+    distributor = Distributor.objects.get(user_id = request.user)
+    books = Books.objects.filter(temple = distributor.temple)
 
     search_query = request.GET.get('q', '')
     
