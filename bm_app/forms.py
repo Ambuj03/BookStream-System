@@ -43,13 +43,28 @@ class signup_form(UserCreationForm):
     # - username
     # - password1
     # - password2
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+
+        if len(username) > 15:
+            raise ValidationError("Username should be fewer than 15 Characters")
+        if not username.isalnum():
+            raise ValidationError("Username must contain only letters and numbers.")
+        return username 
+    
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if len(password) < 8:
+            raise ValidationError("Password must contain atleast 8 characters")
+        return password
     
     # Additional fields for Distributor
-    distributor_name = forms.CharField(max_length=100)
+    distributor_name = forms.CharField(max_length=20)
     distributor_email = forms.EmailField()
     distributor_phonenumber = forms.CharField(max_length=10)
-    distributor_address = forms.CharField(widget=forms.Textarea, required=False)
-    distributor_age = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    distributor_address = forms.CharField(widget=forms.Textarea, required=False, max_length=150)
+    distributor_birth_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     temple = forms.ModelChoiceField(queryset=Temple.objects.all(), empty_label="Select Temple")
 
     class Meta:
@@ -61,6 +76,14 @@ class signup_form(UserCreationForm):
         if not re.match(r'^[6789]\d{9}$', phone):
             raise forms.ValidationError("Enter valid Indian phone number.")
         return phone
+    
+    def clean_distributor_email(self):
+        email = self.cleaned_data.get('distributor_email')
+        # RFC 5322 compliant email regex
+        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(pattern, email):
+            raise forms.ValidationError("Please enter a valid email address.")
+        return email
 
     def save(self, commit=True):
         user = super().save(commit=True)
