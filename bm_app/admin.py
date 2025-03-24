@@ -159,9 +159,15 @@ class MasterInventoryAdmin(TempleRestrictedAdmin):
         if not request.user.is_superuser:
             temple = Temple.objects.get(admin=request.user)
             obj.temple = temple
-            
-        super().save_model(request, obj, form, change)
+
+        try:
+            mast_inven = MasterInventory.objects.get(book = obj.book, temple = temple)
+            mast_inven.stock += obj.stock
+            mast_inven.save()
         
+        except:
+            super().save_model(request, obj, form, change)
+
         
 @admin.register(BookAllocation)
 class BookAllocationAdmin(TempleRestrictedAdmin):
