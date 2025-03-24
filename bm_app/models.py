@@ -124,12 +124,14 @@ class Donation(models.Model):
 class Notification(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
     notification_id = models.AutoField(primary_key=True)
-    user_type = models.CharField(max_length=11)
-    user_id = models.IntegerField()
+    user_type = models.CharField(max_length=11) #
+    user_id = models.IntegerField() #
     message = models.TextField()
     event_type = models.CharField(max_length=9)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    status = models.CharField(max_length=6, default='Unread')
+    status = models.CharField(max_length=6, default='Unread')#
+    
+    # see if you can delete these three
 
     class Meta:
         managed = False

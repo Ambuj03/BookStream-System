@@ -18,15 +18,15 @@ def validate_indian_phone(value):
 
 class transaction_form(forms.ModelForm):
     donation_amount = forms.IntegerField()
-    donation_purpose = forms.CharField(max_length=255)
-    customer_name = forms.CharField(max_length=50)
+    donation_purpose = forms.CharField(max_length=30)
+    customer_name = forms.CharField(max_length=20)
     customer_phone = forms.CharField(
         widget=forms.TextInput(attrs={'type': 'tel'}),
         validators=[validate_indian_phone]
     )
-    customer_occupation = forms.CharField(max_length=50)
-    customer_city = forms.CharField(max_length=50)
-    remarks = forms.CharField(widget=forms.Textarea, required=False)
+    customer_occupation = forms.CharField(max_length=20)
+    customer_city = forms.CharField(max_length=15)
+    remarks = forms.CharField(widget=forms.Textarea, required=False, max_length= 150)
 
     class Meta:
         model = Receipt
