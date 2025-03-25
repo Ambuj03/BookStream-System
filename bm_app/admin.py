@@ -270,9 +270,6 @@ class BookAllocationDetailAdmin(TempleRestrictedAdmin):
         return ['temple'] 
     
 
-# admin.site.register(Donation, TempleRestrictedAdmin)    IS NOT VISIBLE GOD KNOWS WHY.
-admin.site.register(Notification)
-
 @admin.register(Customer)
 class CustomerAdmin(TempleRestrictedAdmin):
     list_display = ('customer_name', 'customer_phone','customer_city', 'customer_occupation')
@@ -290,3 +287,21 @@ class CustomerAdmin(TempleRestrictedAdmin):
             obj.temple = temple
             
         super().save_model(request, obj, form, change)
+
+@admin.register(Notification)
+class NotificationAdmin(TempleRestrictedAdmin):
+    list_display = ('user_type', 'message', 'status')
+
+    def get_exclude(self, request,obj):
+        if request.user.is_superuser:
+            return []
+        return ['temple']
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            temple = Temple.objects.get(admin=request.user)
+            obj.temple = temple
+            
+        super().save_model(request, obj, form, change)
+
+
