@@ -107,6 +107,10 @@ def new_transaction_view(request):
                         
                         # Process books data
                         books_data = json.loads(request.POST.get('books', '[]'))
+
+                        if not books_data:
+                            return JsonResponse({'success' : False,
+                                             'error' : 'At least one book must be selected'})
                         
                         for book_data in books_data:
                             dist_book = DistributorBooks.objects.get(
@@ -330,3 +334,7 @@ def get_distributor_books(request):
     except Exception as e:
         print(f"Error: {str(e)}")  # Debug print
         return JsonResponse({'error': str(e)}, status=400)
+    
+# Trying to fix multiple masterInventory entries for the same book
+
+
