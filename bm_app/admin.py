@@ -6,7 +6,7 @@ from django.urls import reverse, path
 from django.shortcuts import render
 from django.db import transaction
 from django.contrib import messages
-from .notifications import send_receipt_sms
+from .sms import send_receipt_sms
 
 
 

@@ -24,7 +24,7 @@ from django.core.exceptions import ValidationError
 from .models import Books, Receipt, Customer, Donation, Distributor,ReceiptBooks, BooksCategory
 from decimal import Decimal
 
-from .notifications import send_receipt_sms
+from .sms import send_receipt_sms
 
 
 
