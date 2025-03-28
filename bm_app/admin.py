@@ -6,6 +6,7 @@ from django.urls import reverse, path
 from django.shortcuts import render
 from django.db import transaction
 from django.contrib import messages
+from .notifications import send_receipt_sms
 
 
 
@@ -32,6 +33,7 @@ class TempleRestrictedAdmin(admin.ModelAdmin):
 
 @admin.register(Temple)
 class TempleAdmin(admin.ModelAdmin):
+
     def save_model(self, request, obj, form, change):
         # Get or create the temple_admin group
         temple_admin_group = Group.objects.get(name='temple_admin')
@@ -100,10 +102,18 @@ class DistributorAdmin(TempleRestrictedAdmin):
 
 @admin.register(Receipt)
 class ReceiptAdmin(TempleRestrictedAdmin):
-    list_display = ('get_customer_name', 'get_distributor_name', 'total_amount', 'get_donation_amount', 'paymentMode', 'date')
+    list_display = (
+        'get_customer_name', 'get_distributor_name', 
+        'total_amount', 'get_donation_amount', 
+        'paymentMode', 'date', 'notification_status'
+    )
     list_filter = ('paymentMode', 'date')
     search_fields = ('customer__customer_name', 'distributor__distributor_name')
-    readonly_fields = ('date','get_customer_name')
+    readonly_fields = (
+        'date', 'get_customer_name', 
+        'notification_sent', 'notification_status', 
+        'notification_timestamp'
+    )
 
     def get_customer_name(self,obj):
         return obj.customer.customer_name
@@ -121,6 +131,7 @@ class ReceiptAdmin(TempleRestrictedAdmin):
         if request.user.is_superuser:
             return []
         return ['customer']
+    
 
 
 # admin.site.register(Books)
@@ -136,7 +147,7 @@ class BooksAdmin(TempleRestrictedAdmin):
     def get_exclude(self, request, obj):
         if request.user.is_superuser:
             return []
-        return ['temple']
+        return ['temple']   
 
     def save_model(self, request, obj, form, change):
         if not request.user.is_superuser:
@@ -257,7 +268,7 @@ class BookAllocationDetailAdmin(TempleRestrictedAdmin):
                     messages.success(request, f"Added {obj.book.book_name} to distributor inventory. Stock: {obj.quantity}")
                     super().save_model(request, obj, form, change)
 
-            except Exception as e:
+            except Exception as e:      
                 if str(e) not in ["Insufficient Inventory" , "Inventory Record Not found"] :
                     messages.error(request, f"Error updating inventory: {str(e)}")
                     return
@@ -303,5 +314,42 @@ class NotificationAdmin(TempleRestrictedAdmin):
             obj.temple = temple
             
         super().save_model(request, obj, form, change)
+
+#Find out why donation isn't visible
+@admin.register(Donation)
+class DonationAdmin(TempleRestrictedAdmin):
+    list_display = ('customer_id', 'donation_date', 'donation_amount')
+
+    def get_exclude(self, request,obj):
+        if request.user.is_superuser:
+            return []
+        return ['temple']
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            temple = Temple.objects.get(admin=request.user)
+            obj.temple = temple
+            
+        super().save_model(request, obj, form, change)
+
+
+# Think about registering this
+# @admin.register(DistributorBooks)
+# class DistributorBooksAdmin(TempleRestrictedAdmin):
+#     list_display = ('distributor_id', 'book_name', 'book_stock',)
+
+#     def get_exclude(self, request,obj):
+#         if request.user.is_superuser:
+#             return []
+#         return ['temple']
+
+#     def save_model(self, request, obj, form, change):
+#         if not request.user.is_superuser:
+#             temple = Temple.objects.get(admin=request.user)
+#             obj.temple = temple
+            
+#         super().save_model(request, obj, form, change)
+
+
 
 

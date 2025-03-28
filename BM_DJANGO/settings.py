@@ -155,5 +155,3 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-print("DEBUG MODE:", DEBUG)
-print("ALLOWED_HOSTS:", ALLOWED_HOSTS)

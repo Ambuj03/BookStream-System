@@ -24,6 +24,7 @@ from django.core.exceptions import ValidationError
 from .models import Books, Receipt, Customer, Donation, Distributor,ReceiptBooks, BooksCategory
 from decimal import Decimal
 
+from .notifications import send_receipt_sms
 
 
 
@@ -132,6 +133,8 @@ def new_transaction_view(request):
                                 temple_id = temple_id,
                                 book_price = dist_book.book_price,
                             )
+                            
+                            success, message = send_receipt_sms(receipt)
                             
                             # Update stock
                             dist_book.book_stock -= quantity

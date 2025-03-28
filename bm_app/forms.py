@@ -32,6 +32,9 @@ class transaction_form(forms.ModelForm):
         model = Receipt
         fields = ['paymentMode']
 
+        # code is now redundant since we are usong user instance as distributor in receipt 
+        # and reciept is being saved in the view not here as previously
+
     def __init__(self, *args, distributor=None, **kwargs):
         self.distributor = distributor
         super(transaction_form, self).__init__(*args, **kwargs)
