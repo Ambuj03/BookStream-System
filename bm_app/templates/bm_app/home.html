@@ -7,7 +7,7 @@
     <!-- Welcome Section -->
     <div class="row bg-primary text-white py-4 mb-4">
         <div class="col-12 text-center">
-            <h1 class="display-4">Welcome {{ user.username|default:user.email }}</h1>
+            <h1 class="display-4">Welcome {{ user.username}}</h1>
             <p class="lead">Manage your book distribution activities efficiently</p>
         </div>
     </div>
@@ -33,7 +33,7 @@
                     <div class="card-body text-center">
                         <i class="fas fa-book fa-3x mb-3 text-success"></i>
                         <h5 class="card-title">Books</h5>
-                        <p class="card-text">View and manage book inventory</p>
+                        <p class="card-text">View Book Inventory</p>
                         <a href="{% url 'books' %}" class="btn btn-success">Manage Books</a>
                     </div>
                 </div>

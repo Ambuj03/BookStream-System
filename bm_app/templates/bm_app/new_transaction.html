@@ -45,11 +45,11 @@
                                 <table id="selected-books" class="table">
                                     <thead>
                                         <tr>
-                                            <th>Book Name</th>
-                                            <th>Available Stock</th>
-                                            <th>Quantity</th>
+                                            <th>Book</th>
+                                            <th>Stock</th>
+                                            <th>Qty</th>
                                             <th>Price</th>
-                                            <th>Subtotal</th>
+                                            <th>Total</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -71,7 +71,90 @@
                                 <h5 class="mb-0">Customer Details</h5>
                             </div>
                             <div class="card-body">
-                                {{ form.as_p }}
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.customer_name.id_for_label }}" class="form-label">Customer Name</label>
+                                        {{ form.customer_name|add_class:"form-control" }}
+                                        {% if form.customer_name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.customer_name.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.customer_phone.id_for_label }}" class="form-label">Phone Number</label>
+                                        {{ form.customer_phone|add_class:"form-control" }}
+                                        {% if form.customer_phone.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.customer_phone.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.customer_occupation.id_for_label }}" class="form-label">Occupation</label>
+                                        {{ form.customer_occupation|add_class:"form-control" }}
+                                        {% if form.customer_occupation.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.customer_occupation.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.customer_city.id_for_label }}" class="form-label">City</label>
+                                        {{ form.customer_city|add_class:"form-control" }}
+                                        {% if form.customer_city.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.customer_city.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.donation_amount.id_for_label }}" class="form-label">Donation Amount</label>
+                                        {{ form.donation_amount|add_class:"form-control" }}
+                                        {% if form.donation_amount.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.donation_amount.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.donation_purpose.id_for_label }}" class="form-label">Donation Purpose</label>
+                                        {{ form.donation_purpose|add_class:"form-control" }}
+                                        {% if form.donation_purpose.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.donation_purpose.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.paymentMode.id_for_label }}" class="form-label">Payment Mode</label>
+                                        {{ form.paymentMode|add_class:"form-control" }}
+                                        {% if form.paymentMode.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.paymentMode.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.remarks.id_for_label }}" class="form-label">Remarks</label>
+                                    {{ form.remarks|add_class:"form-control" }}
+                                    {% if form.remarks.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.remarks.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
 

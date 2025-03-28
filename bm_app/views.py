@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from .forms import signup_form, transaction_form
-from .models import Distributor, Books, DistributorBooks, ReceiptBooks, Temple
+from .models import Distributor, Books, DistributorBooks, ReceiptBooks, Temple, MasterInventory
 from django.db.models import Q
 from django.core.paginator import Paginator
 
@@ -24,6 +24,7 @@ from django.core.exceptions import ValidationError
 from .models import Books, Receipt, Customer, Donation, Distributor,ReceiptBooks, BooksCategory
 from decimal import Decimal
 
+from .notifications import send_receipt_sms
 
 
 
@@ -107,6 +108,10 @@ def new_transaction_view(request):
                         
                         # Process books data
                         books_data = json.loads(request.POST.get('books', '[]'))
+
+                        if not books_data:
+                            return JsonResponse({'success' : False,
+                                             'error' : 'At least one book must be selected'})
                         
                         for book_data in books_data:
                             dist_book = DistributorBooks.objects.get(
@@ -128,6 +133,8 @@ def new_transaction_view(request):
                                 temple_id = temple_id,
                                 book_price = dist_book.book_price,
                             )
+                            
+                            success, message = send_receipt_sms(receipt)
                             
                             # Update stock
                             dist_book.book_stock -= quantity
@@ -252,10 +259,27 @@ def add_custom_books(request):
     return render(request, 'bm_app/subpage/addCustomBooks.html', {'form' : form})
 
 
+# Writing a class inheriting Authentication form for field validation
+
+class CustomAuthenticationForm(AuthenticationForm):
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+
+        if len(username) > 15:
+            raise ValidationError("Username should be fewer than 15 Characters")
+        if not username.isalnum():
+            raise ValidationError("Username must contain only letters and numbers.")
+        return username 
+    
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if len(password) < 8:
+            raise ValidationError("Password must contain atleast 8 characters")
+        return password
 
 def login_page(request):
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
+        form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
@@ -266,7 +290,7 @@ def login_page(request):
         else:
             return render(request, 'bm_app/login.html', {'form': form})
     else:
-        form = AuthenticationForm()
+        form = CustomAuthenticationForm()
     return render(request, 'bm_app/login.html', {'form': form})
 
 def signup_page(request):
@@ -313,3 +337,7 @@ def get_distributor_books(request):
     except Exception as e:
         print(f"Error: {str(e)}")  # Debug print
         return JsonResponse({'error': str(e)}, status=400)
+    
+# Trying to fix multiple masterInventory entries for the same book
+
+

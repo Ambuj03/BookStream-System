@@ -73,6 +73,7 @@ class MasterInventory(models.Model):
         managed = False
         db_table = 'master_inventory'
 
+
 class DistributorBooks(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
     distributor = models.ForeignKey(Distributor, on_delete=models.CASCADE)
@@ -119,17 +120,19 @@ class Donation(models.Model):
         db_table = 'donation'
         
     def __str__(self):
-        return str(self.donation_amount)
+        return str(self.customer.customer_name)
 
 class Notification(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
     notification_id = models.AutoField(primary_key=True)
-    user_type = models.CharField(max_length=11)
-    user_id = models.IntegerField()
+    user_type = models.CharField(max_length=11) #
+    user_id = models.IntegerField() #
     message = models.TextField()
     event_type = models.CharField(max_length=9)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    status = models.CharField(max_length=6, default='Unread')
+    status = models.CharField(max_length=6, default='Unread')#
+    
+    # see if you can delete these three
 
     class Meta:
         managed = False
@@ -148,6 +151,9 @@ class Receipt(models.Model):
     date = models.DateTimeField(auto_now_add=True, null=True)
     paymentMode = models.CharField(max_length=6, choices=PAYMENT_CHOICES, null=True, db_column='paymentMode')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True)
+    notification_sent = models.BooleanField(default=False)
+    notification_status = models.CharField(max_length=50, default='PENDING')
+    notification_timestamp = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         managed = False

@@ -100,10 +100,24 @@ $(document).ready(function() {
     $('#transaction-form').on('submit', function(e) {
         e.preventDefault();
         
+        // Check if any books are selected
+        const selectedRows = $('#selected-books tbody tr').length;
+        if (selectedRows === 0) {
+            alert('Please select at least one book before submitting the transaction.');
+            return false;
+        }
+
         const booksData = [];
         $('#selected-books tbody tr').each(function() {
             const bookId = $(this).data('book-id');
-            const quantity = $(this).find('.quantity-input').val();
+            const quantity = parseInt($(this).find('.quantity-input').val());
+            
+            // Validate quantity
+            if (quantity <= 0) {
+                alert('Book quantities must be greater than zero.');
+                return false;
+            }
+
             booksData.push({
                 dist_book_id: bookId,
                 quantity: quantity
@@ -113,6 +127,13 @@ $(document).ready(function() {
         const formData = new FormData(this);
         formData.append('books', JSON.stringify(booksData));
         formData.append('total_amount', $('#total-amount').text());
+
+        // Validate total amount
+        const totalAmount = parseFloat($('#total-amount').text());
+        if (totalAmount <= 0) {
+            alert('Total amount must be greater than zero.');
+            return false;
+        }
 
         $.ajax({
             url: $(this).attr('action'),
@@ -124,15 +145,12 @@ $(document).ready(function() {
                 if (response.success) {
                     window.location.href = response.redirect_url;
                 } else {
-                    // Format and display the error message
                     let errorMessage = '';
                     if (typeof response.error === 'object') {
-                        // Handle form field errors
                         Object.keys(response.error).forEach(key => {
                             errorMessage += `${key}: ${response.error[key]}\n`;
                         });
                     } else {
-                        // Handle string error messages
                         errorMessage = response.error;
                     }
                     alert(errorMessage || 'An error occurred while processing your request.');
