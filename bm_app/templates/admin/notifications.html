@@ -1,0 +1,38 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+
+<div class="modules">
+    <h2>Notifications</h2>
+
+    {% if notifications %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Message</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notification in notifications %}
+                    <tr class = "{% if notification.status == 'Unread' %} unread-notification {% endif %}">
+                        <td>{{ notification.message }}</td>
+                        <td>{{ notification.created_at }}</td>
+                        <td>{{ notification.status }}</td>
+                        <td>
+                            {% if notification.status == 'Unread' %}
+                                <a href = "{% url 'admin:mark_notification_read notification.notification_id' %}"> class = "button" Mark as Read </a>
+                            {%endif%}
+                        </td>
+                    </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+    <p> No notifications found</p>
+    {% endif %}
+</div>
+
+{% endblock %}
