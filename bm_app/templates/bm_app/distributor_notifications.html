@@ -1,0 +1,93 @@
+{% extends "bm_app/base.html" %}
+
+{% block content %}
+<div class="notifications-container">
+    <h1>Your Notifications</h1>
+    
+    {% if notifications %}
+        <div class="notification-list">
+            {% for notification in notifications %}
+            <div class="notification-item {% if notification.status == 'Unread' %}unread{% endif %}" id="notification-{{ notification.notification_id }}">
+                <div class="notification-content">
+                    <p class="notification-message">{{ notification.message }}</p>
+                    <p class="notification-date">{{ notification.created_at }}</p>
+                </div>
+                {% if notification.status == 'Unread' %}
+                <button class="mark-read-btn" data-id="{{ notification.notification_id }}">Mark as Read</button>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have no notifications.</p>
+    {% endif %}
+</div>
+
+<style>
+    .notifications-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .notification-item {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .notification-item.unread {
+        background-color: #f0f7ff;
+        font-weight: bold;
+    }
+    
+    .notification-date {
+        color: #666;
+        font-size: 0.8em;
+    }
+    
+    .mark-read-btn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add click handlers for "Mark as Read" buttons
+        const markReadButtons = document.querySelectorAll('.mark-read-btn');
+        markReadButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const notificationId = this.getAttribute('data-id');
+                markAsRead(notificationId);
+            });
+        });
+        
+        function markAsRead(notificationId) {
+            fetch(`/notifications/mark-read/${notificationId}/`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const notification = document.getElementById(`notification-${notificationId}`);
+                    notification.classList.remove('unread');
+                    const button = notification.querySelector('.mark-read-btn');
+                    if (button) {
+                        button.remove();
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
