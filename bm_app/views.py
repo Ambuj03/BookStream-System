@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from .forms import signup_form, transaction_form
-from .models import Distributor, Books, DistributorBooks, ReceiptBooks, Temple, MasterInventory
+from .models import *
 from django.db.models import Q
 from django.core.paginator import Paginator
 
@@ -26,6 +26,7 @@ from decimal import Decimal
 
 from .sms import send_receipt_sms
 
+from .notifications import get_distributor_notifications, mark_notification_as_read
 
 
 #Showing main page
@@ -338,6 +339,53 @@ def get_distributor_books(request):
         print(f"Error: {str(e)}")  # Debug print
         return JsonResponse({'error': str(e)}, status=400)
     
-# Trying to fix multiple masterInventory entries for the same book
+
+# View for notifiations
+
+@login_required
+def distributor_notifications(request):
+    
+    # add try and except if required
+        distributor = Distributor.objects.get(user = request.user)
+        notifications = get_distributor_notifications(distributor.distributor_id)
+
+        filter_param = request.GET.get('filter')
+        if filter_param == 'unread':
+            notifications = [n for n in notifications if n.status == 'Unread']
+        elif filter_param == 'read':
+            notifications = [n for n in notifications if n.status == 'Read']
+
+        #Adding pagi logic
+        paginator = Paginator(notifications, 4)
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+        
+        return render(request, 'bm_app/distributor_notifications.html', {
+            'notifications' : page_obj,
+            'page_obj' : page_obj
+        })
+        
+@login_required
+def mark_notification_read(request, notification_id):
+    if request.method == 'POST':
+        try:
+            mark_notification_as_read(notification_id)
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@login_required
+def get_unread_notification_count(request):
+    
+    distributor = Distributor.objects.get(user = request.user)
+    count = get_distributor_notifications(distributor.distributor_id).filter(status = 'Unread').count()
+    return JsonResponse({'count' : count})
+
+
+
+
+
+
 
 

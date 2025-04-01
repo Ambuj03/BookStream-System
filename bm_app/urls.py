@@ -2,6 +2,7 @@ from django.urls import path
 from .views import inventory_view, main_page, login_page, signup_page
 from .views import home_page, new_transaction_view, logout_view,books_view, add_books, add_custom_books, delete_book, get_distributor_books
 from .views import books_api
+from .views import distributor_notifications, mark_notification_read, get_unread_notification_count
 
 urlpatterns = [
     path('', main_page, name='main'),
@@ -17,4 +18,9 @@ urlpatterns = [
     path('delete-book/<int:book_id>/', delete_book, name='delete_book'), 
     path('api/books/', books_api, name='books_api'),
     path('api/distributor-books/', get_distributor_books, name='get_distributor_books'),
+    
+    # notification related urls
+    path('notifications/', distributor_notifications, name = 'distributor_notifications'),
+    path('notifications/mark-read/<int:notification_id>/', mark_notification_read, name = 'mark_notification_read'),
+    path('notifications/count', get_unread_notification_count, name = 'unread_notification_count'),
 ]
