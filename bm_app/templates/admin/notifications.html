@@ -1,12 +1,102 @@
 {% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+    .notifications-module {
+        margin: 20px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.75);
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+    
+    .notifications-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .notifications-table th {
+        text-align: left;
+        padding: 12px 15px;
+        background-color: #f6f6f6;
+        border-bottom: 2px solid #ddd;
+        font-weight: bold;
+    }
+    
+    .notifications-table td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+    
+    .unread-notification {
+        font-weight: bold;
+        background-color: #f0f7ff;
+    }
+    
+    .mark-read-btn {
+        background-color: #447e9b;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    
+    .mark-read-btn:hover {
+        background-color: #385f70;
+    }
+    
+    .notification-status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+    }
+    
+    .status-unread {
+        background-color: #ffeeba;
+        color: #856404;
+    }
+    
+    .status-read {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .notification-date {
+        color: #666;
+        font-size: 0.9em;
+    }
+    
+    .no-notifications {
+        padding: 30px;
+        text-align: center;
+        color: #666;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-
-<div class="modules">
-    <h2>Notifications</h2>
-
+<div class="notifications-module">
+    <div class="notifications-header">
+        <h2>Notifications</h2>
+        <span id="notification-count">{{ notifications|length }} notification(s)</span>
+    </div>
+    
     {% if notifications %}
-        <table>
+        <table class="notifications-table">
             <thead>
                 <tr>
                     <th>Message</th>
@@ -17,22 +107,87 @@
             </thead>
             <tbody>
                 {% for notification in notifications %}
-                    <tr class = "{% if notification.status == 'Unread' %} unread-notification {% endif %}">
-                        <td>{{ notification.message }}</td>
-                        <td>{{ notification.created_at }}</td>
-                        <td>{{ notification.status }}</td>
-                        <td>
-                            {% if notification.status == 'Unread' %}
-                                <a href = "{% url 'admin:mark_notification_read notification.notification_id' %}"> class = "button" Mark as Read </a>
-                            {%endif%}
-                        </td>
-                    </tr>
-                    {% endfor %}
+                <tr id="notification-{{ notification.notification_id }}" class="{% if notification.status == 'Unread' %}unread-notification{% endif %}">
+                    <td>{{ notification.message }}</td>
+                    <td class="notification-date">{{ notification.created_at }}</td>
+                    <td>
+                        <span class="notification-status {% if notification.status == 'Unread' %}status-unread{% else %}status-read{% endif %}">
+                            {{ notification.status }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if notification.status == 'Unread' %}
+                        <button class="mark-read-btn" data-id="{{ notification.notification_id }}">Mark as Read</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     {% else %}
-    <p> No notifications found</p>
+        <div class="no-notifications">
+            <p>No notifications found.</p>
+        </div>
     {% endif %}
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const markReadButtons = document.querySelectorAll('.mark-read-btn');
+        markReadButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const notificationId = this.getAttribute('data-id');
+                markAsRead(notificationId);
+            });
+        });
+        
+        function markAsRead(notificationId) {
+            // Get CSRF token from cookie
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            fetch(`/notifications/mark-read/${notificationId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ notification_id: notificationId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const notification = document.getElementById(`notification-${notificationId}`);
+                    notification.classList.remove('unread-notification');
+                    
+                    // Update status cell
+                    const statusCell = notification.querySelector('.notification-status');
+                    statusCell.textContent = 'Read';
+                    statusCell.classList.remove('status-unread');
+                    statusCell.classList.add('status-read');
+                    
+                    // Remove button
+                    const button = notification.querySelector('.mark-read-btn');
+                    if (button) {
+                        button.remove();
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    });
+</script>
 {% endblock %}
