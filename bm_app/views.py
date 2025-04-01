@@ -26,6 +26,7 @@ from decimal import Decimal
 
 from .sms import send_receipt_sms
 
+from .notifications import get_distributor_notifications, mark_notification_as_read
 
 
 #Showing main page
@@ -339,5 +340,42 @@ def get_distributor_books(request):
         return JsonResponse({'error': str(e)}, status=400)
     
 # Trying to fix multiple masterInventory entries for the same book
+
+
+# View for notifiations
+
+@login_required
+def distributor_notifications(request):
+    
+    # add try and except if required
+        distributor = Distributor.objects.get(user = request.user)
+        #check by replacing distributor_id with only the object(it should work ideally)
+        notifications = get_distributor_notifications(distributor.distributor_id)
+        
+        return render(request, 'bm_app/distributor_notifications.html', {
+            'notifications' : notifications
+        })
+        
+@login_required
+def mark_notification_read(request, notification_id):
+    success = mark_notification_as_read(notification_id)
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success' : success})
+    
+    return redirect('distributor_notifications')
+
+@login_required
+def get_unread_notification_count(request):
+    
+    distributor = Distributor.objects.get(user = request.user)
+    count = get_distributor_notifications(distributor.distributor_id).filter(status = 'Unread').count()
+    return JsonResponse({'count' : count})
+
+
+        
+    
+        
+        
 
 
