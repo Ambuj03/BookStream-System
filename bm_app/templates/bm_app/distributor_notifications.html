@@ -5,7 +5,6 @@
     <div class="notifications-header">
         <div class="header-left">
             <h1>Your Notifications</h1>
-            <span class="notification-count">{{ notifications|length }} notification{% if notifications|length != 1 %}s{% endif %}</span>
         </div>
         {% if notifications %}
         <div class="header-right">
@@ -47,6 +46,37 @@
                 </div>
             {% endfor %}
         </div>
+        
+        <!-- Pagination Controls -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="pagination-controls">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" class="pagination-link pagination-first" title="First page">&laquo;</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" class="pagination-link" title="Previous page">Previous</a>
+            {% else %}
+                <span class="pagination-link disabled">&laquo;</span>
+                <span class="pagination-link disabled">Previous</span>
+            {% endif %}
+            
+            <div class="pagination-pages">
+                {% for i in page_obj.paginator.page_range %}
+                    {% if page_obj.number == i %}
+                        <span class="pagination-link active">{{ i }}</span>
+                    {% elif i > page_obj.number|add:"-3" and i < page_obj.number|add:"3" %}
+                        <a href="?page={{ i }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" class="pagination-link">{{ i }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" class="pagination-link" title="Next page">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" class="pagination-link pagination-last" title="Last page">&raquo;</a>
+            {% else %}
+                <span class="pagination-link disabled">Next</span>
+                <span class="pagination-link disabled">&raquo;</span>
+            {% endif %}
+        </div>
+        {% endif %}
     {% else %}
         <div class="no-notifications">
             <div class="empty-icon">📭</div>
@@ -222,6 +252,56 @@
         font-size: 14px;
         margin-top: 8px;
     }
+    
+    /* Pagination styles */
+    .pagination-controls {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .pagination-link {
+        padding: 8px 14px;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+        color: #4267B2;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        border: 1px solid #e5e5e5;
+    }
+    
+    .pagination-link:hover {
+        background-color: #e5e5e5;
+    }
+    
+    .pagination-link.active {
+        background-color: #4267B2;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .pagination-link.disabled {
+        color: #aaa;
+        cursor: not-allowed;
+        background-color: #f8f8f8;
+    }
+    
+    .pagination-pages {
+        display: flex;
+        gap: 5px;
+        margin: 0 5px;
+    }
+    
+    /* Responsive pagination */
+    @media (max-width: 600px) {
+        .pagination-controls {
+            flex-direction: column;
+        }
+    }
 </style>
 
 <script>
@@ -238,19 +318,17 @@
         // Filter functionality
         const filterSelect = document.getElementById('notification-filter');
         if (filterSelect) {
+            // Set initial filter value from URL if present
+            const urlParams = new URLSearchParams(window.location.search);
+            const filterParam = urlParams.get('filter');
+            if (filterParam) {
+                filterSelect.value = filterParam;
+            }
+            
             filterSelect.addEventListener('change', function() {
                 const filterValue = this.value;
-                const notifications = document.querySelectorAll('.notification-item');
-                
-                notifications.forEach(notification => {
-                    const status = notification.getAttribute('data-status');
-                    
-                    if (filterValue === 'all' || status === filterValue) {
-                        notification.style.display = 'flex';
-                    } else {
-                        notification.style.display = 'none';
-                    }
-                });
+                // Redirect to first page with filter applied
+                window.location.href = '?page=1' + (filterValue !== 'all' ? '&filter=' + filterValue : '');
             });
         }
         
@@ -299,14 +377,6 @@
                     // Replace button with read status
                     const actionDiv = notification.querySelector('.notification-actions');
                     actionDiv.innerHTML = '<span class="read-status">Read</span>';
-                    
-                    // Update notification count
-                    const countEl = document.querySelector('.notification-count');
-                    if (countEl) {
-                        const currentCount = parseInt(countEl.textContent.split(' ')[0]);
-                        const newCount = currentCount;
-                        countEl.textContent = `${newCount} notification${newCount !== 1 ? 's' : ''}`;
-                    }
                 }
             })
             .catch(error => console.error('Error:', error));

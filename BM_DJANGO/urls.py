@@ -16,9 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from bm_app.admin import admin_notifications_view, mark_notification_read_view
 
 urlpatterns = [
-    path('grappelli/', include('grappelli.urls')), 
+    path('admin/notifications/', admin_notifications_view, name='admin_notifications'),
+    path('admin/notifications/mark-read/<int:notification_id>/', mark_notification_read_view, name='mark_notification_read'),
     path('admin/', admin.site.urls),
     path('',include('bm_app.urls')),
     path('_nested_admin/', include('nested_admin.urls')),

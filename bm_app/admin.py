@@ -3,11 +3,30 @@ from django.contrib.auth.models import Group
 from .models import *
 from django.utils.html import format_html
 from django.urls import reverse, path
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db import transaction
 from django.contrib import messages
 from .sms import send_receipt_sms
+from .notifications import notify_new_book_allocation, mark_notification_as_read, get_admin_notifications, check_master_inventory_stock,check_distributor_stock
+        
 
+def admin_notifications_view(request):
+    notifications = get_admin_notifications(request.user)
+    
+    context = {
+        'notifications': notifications,
+        'title': 'Notifications',
+        'has_permission': True,
+        'site_header': admin.site.site_header,
+        'site_title': admin.site.site_title,
+        'index_title': admin.site.index_title,
+    }
+    
+    return render(request, 'admin/notifications.html', context)
+
+def mark_notification_read_view(request, notification_id):
+    mark_notification_as_read(notification_id)
+    return redirect('admin:index')  # Just redirect to admin index
 
 
 class TempleRestrictedAdmin(admin.ModelAdmin):
@@ -132,6 +151,13 @@ class ReceiptAdmin(TempleRestrictedAdmin):
             return []
         return ['customer']
     
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        
+        distributor_books = DistributorBooks.objects.filter(Distributor = obj.distributor)
+        for book in distributor_books:
+            check_distributor_stock(book)
+    
 
 
 # admin.site.register(Books)
@@ -236,6 +262,12 @@ class BookAllocationDetailAdmin(TempleRestrictedAdmin):
                         
                         master_inventory.stock -= obj.quantity
                         master_inventory.save()
+                        
+                        #checking if the inventory is low in stocks
+                        
+                        check_master_inventory_stock(master_inventory)
+                        
+                        
                     except MasterInventory.DoesNotExist:
                         messages.error(request, f"No inventory record found for {obj.book.book_name}.")
                         raise Exception("Inventory Record Not found")
@@ -253,6 +285,13 @@ class BookAllocationDetailAdmin(TempleRestrictedAdmin):
                         dist_book.save()
                         messages.success(request, f"Updated inventory for {obj.book.book_name}. New stock: {dist_book.book_stock}")
 
+                        notify_new_book_allocation(
+                            distributor = distributor_obj,
+                            book_name = obj.book.book_name,
+                            quantity = obj.quantity,
+                            temple= temple
+                            
+                        )
                         
                     except DistributorBooks.DoesNotExist :
                         DistributorBooks.objects.create(  
@@ -265,6 +304,15 @@ class BookAllocationDetailAdmin(TempleRestrictedAdmin):
                             book_category=obj.book.book_category,
                             book_stock=obj.quantity
                         )
+                        
+                        notify_new_book_allocation(
+                            distributor = distributor_obj,
+                            book_name = obj.book.book_name,
+                            quantity = obj.quantity,
+                            temple= temple
+                            
+                        )
+                        
                     messages.success(request, f"Added {obj.book.book_name} to distributor inventory. Stock: {obj.quantity}")
                     super().save_model(request, obj, form, change)
 
@@ -349,6 +397,7 @@ class DonationAdmin(TempleRestrictedAdmin):
 #             obj.temple = temple
             
 #         super().save_model(request, obj, form, change)
+
 
 
 

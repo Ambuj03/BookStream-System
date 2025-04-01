@@ -71,15 +71,21 @@ def mark_notification_as_read(notification_id):
     
 # Functions to load notification for admin and the distributor
 
-def get_admin_notifications(admin_id):
-    
-    admin_notification = Notification.objects.filter(user_id = admin_id)
+def get_admin_notifications(admin_user):
+    admin_id = admin_user.id
+    admin_notification = Notification.objects.filter(
+        user_type='admin',
+        user_id=admin_id
+    ).order_by('-created_at')
     
     return admin_notification
 
 def get_distributor_notifications(distributor_id):
     
-    distributor_notifications = Notification.objects.filter(user_id = distributor_id)
+    distributor_notifications = Notification.objects.filter(
+        user_type = 'distributor',
+        user_id = distributor_id
+    )
     return distributor_notifications
 
 

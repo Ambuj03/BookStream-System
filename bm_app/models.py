@@ -185,6 +185,9 @@ class BookAllocation(models.Model):
     class Meta:
         managed = False
         db_table = 'book_allocation'
+        
+    def __str__(self):
+        return f"{self.distributor}-Allocation Id: " + str(self.allocation_id)
 
 class BookAllocationDetail(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
@@ -197,6 +200,7 @@ class BookAllocationDetail(models.Model):
     class Meta:
         managed = False
         db_table = 'book_allocation_detail'
+        
 
 
 
