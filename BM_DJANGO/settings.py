@@ -155,3 +155,21 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Find your existing JAZZMIN_SETTINGS dictionary and add/modify these keys:
+JAZZMIN_SETTINGS = {
+    # Your existing settings...
+    
+    # Add this section
+    "custom_links": {
+        "bm_app": [
+            {
+                "name": "Notifications",
+                "url": "admin_notifications",
+                "icon": "fas fa-bell",
+                "new_window": False,
+            }
+        ]
+    },
+}
+
+
