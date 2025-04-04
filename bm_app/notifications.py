@@ -85,11 +85,11 @@ def get_distributor_notifications(distributor_id):
     distributor_notifications = Notification.objects.filter(
         user_type = 'distributor',
         user_id = distributor_id
-    )
+    ).order_by('-created_at')
     return distributor_notifications
 
 
-def cleanup_old_notifications(days = 45):
+def cleanup_old_notifications(days = 30):
     
     cutoff_date = timezone.now() -  timezone.timedelta(days = days)
     old_notifications = Notification.objects.filter(created_at__lt = cutoff_date)

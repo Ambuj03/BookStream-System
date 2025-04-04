@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'jazzmin',
     # 'grappelli',  
     'nested_admin',
+    'rangefilter',
+    'import_export',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -158,6 +160,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Find your existing JAZZMIN_SETTINGS dictionary and add/modify these keys:
 JAZZMIN_SETTINGS = {
     # Your existing settings...
+
+    "site_title": "Brihad Mridanga",
+    "site_header": "Brihad Mridanga",
+    "welcome_sign": "Hare Krsna",
+    #  "login_logo": 'jazzmin/img/logo.jpg',
+    #  /home/ambuj03/Desktop/BM_DJANGO/staticfiles/jazzmin/img
     
     # Add this section
     "custom_links": {

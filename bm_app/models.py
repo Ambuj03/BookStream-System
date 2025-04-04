@@ -99,6 +99,7 @@ class Customer(models.Model):
     customer_phone = models.CharField(max_length=15, blank=True, null=True)
     customer_city = models.CharField(max_length=50, blank=True, null=True)
     customer_remarks = models.TextField(blank=True, null=True)
+    Date = models.DateTimeField(default=timezone.now)
 
     class Meta:
         managed = False
