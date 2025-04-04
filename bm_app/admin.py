@@ -7,27 +7,58 @@ from django.shortcuts import render, redirect
 from django.db import transaction
 from django.contrib import messages
 from .sms import send_receipt_sms
+from django.core.paginator import Paginator
+from django.http import JsonResponse
 from .notifications import notify_new_book_allocation, mark_notification_as_read, get_admin_notifications, check_master_inventory_stock,check_distributor_stock
+
+#############################################################################
+# Importing third party pkgs for enhanced filtering and export functionality
+from rangefilter.filters import DateRangeFilter  # For advanced date range filtering
+from import_export import resources, fields  # Base import_export functionality
+from import_export.admin import ExportActionModelAdmin # Admin integration
+from import_export.widgets import ForeignKeyWidget  # For handling foreign keys in export
+
+#Defining a resourse class for each model we want to export
+# This tell django import-export how to handle model fields during export
+
+class DonationResource(resources.ModelResource):
+    #Handle the customer foreign key relationship properly in exports
+
+    customer_name = fields.Field(
+        column_name= 'customer_name',
+        attribute='customer',
+        widget=ForeignKeyWidget(Customer, 'customer_name')
+    )
+
+
+    class Meta:
+        model = Donation
+
+        # fields to include in export( excluding temple here)
+        ## try with temple too
+        fields = ('id', 'customer_name', 'donation_date', 'donation_amount' ,'donation_purpose')
+        export_order = fields    
+
+class CustomerResourse(resources.ModelResource):
+    class Meta:
+        model = Customer
+        exclude = ('temple','customer_id')
+
+class DistributorResource(resources.ModelResource):
+    class Meta:
+        model= Distributor
+        exclude = ('temple','distributor_id','user',)
         
 
-def admin_notifications_view(request):
-    notifications = get_admin_notifications(request.user)
-    
-    context = {
-        'notifications': notifications,
-        'title': 'Notifications',
-        'has_permission': True,
-        'site_header': admin.site.site_header,
-        'site_title': admin.site.site_title,
-        'index_title': admin.site.index_title,
-    }
-    
-    return render(request, 'admin/notifications.html', context)
+
+#############################################################################
 
 def mark_notification_read_view(request, notification_id):
-    mark_notification_as_read(notification_id)
-    return redirect('admin:index')  # Just redirect to admin index
-
+    try:
+        mark_notification_as_read(notification_id)
+        return JsonResponse({'success': True})  # Return JSON instead of redirect
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 
 class TempleRestrictedAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
@@ -48,7 +79,22 @@ class TempleRestrictedAdmin(admin.ModelAdmin):
             if db_field.name in ['customer', 'distributor', 'book']:
                 kwargs['queryset'] = db_field.related_model.objects.filter(temple=temple)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-    
+
+
+# We are modifying existing ModelAdmin classesto use these features
+# We'll create a base class that combibes TempleRestrcitedAdmin and ExportActionModelAdmin
+class TempleRestrictedExport(TempleRestrictedAdmin, ExportActionModelAdmin):
+    """
+    Base admin class that combines temple restrictions with import/export functionality
+    This reduces code duplication across model admins
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args,**kwargs)
+
+    list_per_page = 10
+
+
 
 @admin.register(Temple)
 class TempleAdmin(admin.ModelAdmin):
@@ -66,9 +112,12 @@ class TempleAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 @admin.register(Distributor)
-class DistributorAdmin(TempleRestrictedAdmin):
+class DistributorAdmin(TempleRestrictedExport):
 
+    resource_class = DistributorResource    
     list_display = ('distributor_name', 'distributor_email','view_receipts_link')
+    list_filter = ('distributor_name',)
+    list_per_page = 10
 
     def get_exclude(self, request, obj=None):
         if request.user.is_superuser:
@@ -133,6 +182,7 @@ class ReceiptAdmin(TempleRestrictedAdmin):
         'notification_sent', 'notification_status', 
         'notification_timestamp'
     )
+    list_per_page = 10
 
     def get_customer_name(self,obj):
         return obj.customer.customer_name
@@ -169,6 +219,8 @@ class BooksAdmin(TempleRestrictedAdmin):
     search_fields = ('book_name', 'book_author')
     list_filter = ('book_language', 'book_category', 'temple')
     ordering = ('book_name',)
+    list_per_page = 10
+
 
     def get_exclude(self, request, obj):
         if request.user.is_superuser:
@@ -184,8 +236,11 @@ class BooksAdmin(TempleRestrictedAdmin):
 
 @admin.register(MasterInventory)
 class MasterInventoryAdmin(TempleRestrictedAdmin):
+
     list_display = ('book', 'stock',)
     search_fields = ('book__book_name',)
+    list_per_page = 10  
+
     
     def get_exclude(self, request,obj):
         if request.user.is_superuser:
@@ -209,7 +264,11 @@ class MasterInventoryAdmin(TempleRestrictedAdmin):
 @admin.register(BookAllocation)
 class BookAllocationAdmin(TempleRestrictedAdmin):
     list_display = ('get_distributor_name', 'allocation_date','allocation_id')
-    
+    search_fields = ('distributor__distributor_name',)
+    list_filter =  ('distributor__distributor_name', 'allocation_date',)
+    list_per_page = 10
+
+
     def get_distributor_name(self, obj):
        return obj.distributor.distributor_name
     get_distributor_name.short_description = 'Distributor'
@@ -239,6 +298,10 @@ class BookAllocationAdmin(TempleRestrictedAdmin):
 @admin.register(BookAllocationDetail)
 class BookAllocationDetailAdmin(TempleRestrictedAdmin):
     list_display = ('allocation_id', 'get_book_name','quantity', 'price')
+    search_fields = ('allocation_id__allocation_id',)
+    list_filter = ('allocation_id__allocation_id',)
+    list_per_page = 10
+
     
     def get_book_name(self, obj):
         return obj.book.book_name
@@ -283,7 +346,7 @@ class BookAllocationDetailAdmin(TempleRestrictedAdmin):
                         
                         dist_book.book_stock += obj.quantity
                         dist_book.save()
-                        messages.success(request, f"Updated inventory for {obj.book.book_name}. New stock: {dist_book.book_stock}")
+                        messages.success(request, f"Updated inventory for {obj.book.book_name}. New stock: {dist_book.book_stock}, Distributor : {distributor_obj.distributor_name}")
 
                         notify_new_book_allocation(
                             distributor = distributor_obj,
@@ -313,7 +376,7 @@ class BookAllocationDetailAdmin(TempleRestrictedAdmin):
                             
                         )
                         
-                    messages.success(request, f"Added {obj.book.book_name} to distributor inventory. Stock: {obj.quantity}")
+                    messages.success(request, f"Added {obj.book.book_name} to distributor's inventory. Quantity: {obj.quantity}")
                     super().save_model(request, obj, form, change)
 
             except Exception as e:      
@@ -330,9 +393,14 @@ class BookAllocationDetailAdmin(TempleRestrictedAdmin):
     
 
 @admin.register(Customer)
-class CustomerAdmin(TempleRestrictedAdmin):
+class CustomerAdmin(TempleRestrictedExport):
+    resource_class = CustomerResourse
+
     list_display = ('customer_name', 'customer_phone','customer_city', 'customer_occupation')
-    search_fields = ('customer_name','customer_phone')
+    search_fields = ('customer_name','customer_phone', 'customer_city', 'customer_occupation')
+    list_filter = ('customer_city', 'customer_occupation')
+    list_per_page = 10
+    list_filter = (('Date', DateRangeFilter),)
     readonly_fields = ('customer_name','customer_phone','customer_city', 'customer_occupation','customer_remarks',)
     
     def get_exclude(self, request,obj):
@@ -347,26 +415,38 @@ class CustomerAdmin(TempleRestrictedAdmin):
             
         super().save_model(request, obj, form, change)
 
-@admin.register(Notification)
-class NotificationAdmin(TempleRestrictedAdmin):
-    list_display = ('user_type', 'message', 'status')
+# @admin.register(Notification)
+# class NotificationAdmin(TempleRestrictedAdmin):
+#     list_display = ('user_type', 'message', 'status')
 
-    def get_exclude(self, request,obj):
-        if request.user.is_superuser:
-            return []
-        return ['temple']
+#     def get_exclude(self, request,obj):
+#         if request.user.is_superuser:
+#             return []
+#         return ['temple']
 
-    def save_model(self, request, obj, form, change):
-        if not request.user.is_superuser:
-            temple = Temple.objects.get(admin=request.user)
-            obj.temple = temple
+#     def save_model(self, request, obj, form, change):
+#         if not request.user.is_superuser:
+#             temple = Temple.objects.get(admin=request.user)
+#             obj.temple = temple
             
-        super().save_model(request, obj, form, change)
+#         super().save_model(request, obj, form, change)
 
 #Find out why donation isn't visible
 @admin.register(Donation)
-class DonationAdmin(TempleRestrictedAdmin):
-    list_display = ('customer_id', 'donation_date', 'donation_amount')
+class DonationAdmin(TempleRestrictedExport):
+
+    resource_class = DonationResource
+
+    list_display = ('get_customer_name', 'donation_date', 'donation_amount', 'donation_purpose',)
+    search_fields = ('customer__customer_name',)
+    # bug both arent working togehthe
+    list_filter = (('donation_date', DateRangeFilter),)
+    list_per_page = 10
+
+
+    def get_customer_name(self, obj):
+        return obj.customer.customer_name if obj.customer else "No Customer"
+    get_customer_name.short_description = 'Customer'
 
     def get_exclude(self, request,obj):
         if request.user.is_superuser:
@@ -398,7 +478,7 @@ class DonationAdmin(TempleRestrictedAdmin):
             
 #         super().save_model(request, obj, form, change)
 
-
+#extending admin site to add my custom urls
 
 
 

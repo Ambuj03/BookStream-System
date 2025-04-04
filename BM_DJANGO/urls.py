@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from bm_app.admin import admin_notifications_view, mark_notification_read_view
+from bm_app.admin import mark_notification_read_view
+from bm_app.views import admin_notifications_view
+from django.contrib.admin.views.decorators import staff_member_required
 
 urlpatterns = [
     path('admin/notifications/', admin_notifications_view, name='admin_notifications'),

@@ -28,6 +28,8 @@ from .sms import send_receipt_sms
 
 from .notifications import get_distributor_notifications, mark_notification_as_read
 
+from django.contrib import admin
+from .admin import get_admin_notifications
 
 #Showing main page
 def main_page(request):
@@ -382,6 +384,32 @@ def get_unread_notification_count(request):
     count = get_distributor_notifications(distributor.distributor_id).filter(status = 'Unread').count()
     return JsonResponse({'count' : count})
 
+@login_required
+def admin_notifications_view(request):
+    notifications_list = get_admin_notifications(request.user)
+    
+    filter_param = request.GET.get('filter')
+    if filter_param == 'unread':
+        notifications_list = [n for n in notifications_list if n.status == 'Unread']
+    elif filter_param == 'read':
+        notifications_list = [n for n in notifications_list if n.status == 'Read']
+    
+    # Paginate notifications
+    paginator = Paginator(notifications_list, 6) 
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'notifications': page_obj,
+        'page_obj': page_obj,
+        'title': 'Notifications',
+        'has_permission': True,
+        'site_header': admin.site.site_header,
+        'site_title': admin.site.site_title,
+        'index_title': admin.site.index_title,
+    }
+    
+    return render(request, 'admin/notifications.html', context)
 
 
 
