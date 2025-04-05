@@ -37,7 +37,7 @@
         {% for book in page_obj %}
         <div class="col">
             <div class="card h-100 shadow-sm">
-                <div class="card-body">
+                <div class="card-body" id = "kard">
                     <h5 class="card-title">{{ book.book_name }}</h5>
                     <p class="card-text">
                         <small class="text-muted">Author: {{ book.book_author }}</small>
