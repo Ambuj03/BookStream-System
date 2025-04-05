@@ -5,3 +5,6 @@ sqlparse==0.5.3
 python-dotenv==1.0.0
 django-admin-rangefilter==0.13.2
 django-import-export==4.3.7
+celery==5.5.0
+redis==5.2.1
+django-celery-beat==2.7.0
