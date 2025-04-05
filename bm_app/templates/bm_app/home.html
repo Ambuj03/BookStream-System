@@ -46,7 +46,7 @@
                         <i class="fas fa-chart-bar fa-3x mb-3 text-info"></i>
                         <h5 class="card-title">Dashboard</h5>
                         <p class="card-text">View your distribution statistics</p>
-                        <a href="#" class="btn btn-info text-white">View Stats</a>
+                        <a href="javascript:void(0)" id="view-stats-btn" class="btn btn-info text-white">View Stats</a>
                     </div>
                 </div>
             </div>
@@ -91,6 +91,16 @@
     // Check when page loads and every 60 seconds
     document.addEventListener('DOMContentLoaded', function() {
         checkCardNotifications();
+
+         // Adding an event listener for the View Stats button
+
+        const statsButton = document.getElementById('view-stats-btn');
+        if(statsButton){
+            statsButton.addEventListener('click', function(){
+                alert('Feature coming soon :)');
+            });
+        }
+
     });
 </script>
 {% block extra_js %}{% endblock %}
