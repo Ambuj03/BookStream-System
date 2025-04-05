@@ -181,3 +181,23 @@ JAZZMIN_SETTINGS = {
 }
 
 
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'  # Use your timezone
+
+# Django Celery Beat Settings
+INSTALLED_APPS += ['django_celery_beat']
+
+# Add this after the other Celery settings
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'cleanup-old-notifications': {
+        'task': 'bm_app.tasks.cleanup_old_notifications',
+        'schedule': crontab(hour=0, minute=0),  # Run at midnight every day
+    },
+}
