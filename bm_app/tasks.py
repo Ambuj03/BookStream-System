@@ -6,7 +6,7 @@ from .models import Notification  # Assuming your model is named Notification
 @shared_task
 def cleanup_old_notifications():
     """Delete notifications older than 30 days"""
-    cutoff_date = timezone.now() - timedelta(days=4)
+    cutoff_date = timezone.now() - timedelta(days=30)
 
     print(f"{cutoff_date}")
 

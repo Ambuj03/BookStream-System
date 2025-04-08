@@ -18,7 +18,7 @@
             <!-- New Transaction Card -->
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 shadow-sm">
-                    <div class="card-body text-center">
+                    <div class="card-body text-center" id = "kard">
                         <i class="fas fa-exchange-alt fa-3x mb-3 text-primary"></i>
                         <h5 class="card-title">New Transaction</h5>
                         <p class="card-text">Record new book distributions</p>
@@ -30,7 +30,7 @@
             <!-- Books Card -->
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 shadow-sm">
-                    <div class="card-body text-center">
+                    <div class="card-body text-center" id = "kard">
                         <i class="fas fa-book fa-3x mb-3 text-success"></i>
                         <h5 class="card-title">Books</h5>
                         <p class="card-text">View Book Inventory</p>
@@ -42,19 +42,19 @@
             <!-- Dashboard Card -->
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 shadow-sm">
-                    <div class="card-body text-center">
+                    <div class="card-body text-center" id = "kard">
                         <i class="fas fa-chart-bar fa-3x mb-3 text-info"></i>
                         <h5 class="card-title">Dashboard</h5>
                         <p class="card-text">View your distribution statistics</p>
-                        <a href="#" class="btn btn-info text-white">View Stats</a>
+                        <a href="javascript:void(0)" id="view-stats-btn" class="btn btn-info text-white">View Stats</a>
                     </div>
                 </div>
             </div>
 
             <!-- Notifications Card -->
             <div class="col-md-6 col-lg-3">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body text-center">
+                <div class="card h-100 shadow-sm" id = "kard">
+                    <div class="card-body text-center" id = "kard">
                         <div class="position-relative d-inline-block mb-3">
                             <i class="fas fa-bell fa-3x text-warning"></i>
                             <span id="card-notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
@@ -91,6 +91,16 @@
     // Check when page loads and every 60 seconds
     document.addEventListener('DOMContentLoaded', function() {
         checkCardNotifications();
+
+         // Adding an event listener for the View Stats button
+
+        const statsButton = document.getElementById('view-stats-btn');
+        if(statsButton){
+            statsButton.addEventListener('click', function(){
+                alert('Feature coming soon :)');
+            });
+        }
+
     });
 </script>
 {% block extra_js %}{% endblock %}
