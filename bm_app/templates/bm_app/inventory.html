@@ -41,7 +41,6 @@ notification. {% endcomment %}
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Category</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody class = "quant">
@@ -53,15 +52,6 @@ notification. {% endcomment %}
                             <td>₹{{ item.book_price }}</td>
                             <td>{{ item.book_stock }}</td>
                             <td>{{ item.book_category}}</td>
-                            <td>
-                                <form method="POST" action="{% url 'delete_book' item.id %}" style="display: inline;" 
-                                      onsubmit="return confirm('Are you sure you want to delete this book?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </form>
-                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
