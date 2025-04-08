@@ -36,8 +36,8 @@ class DonationResource(resources.ModelResource):
 
         # fields to include in export( excluding temple here)
         ## try with temple too
-        fields = ('id', 'customer_name', 'donation_date', 'donation_amount' ,'donation_purpose')
-        export_order = fields    
+        fields = ('customer_name', 'donation_date', 'donation_amount' ,'donation_purpose')
+        export_order = fields   
 
 class CustomerResourse(resources.ModelResource):
     class Meta:
@@ -398,9 +398,8 @@ class CustomerAdmin(TempleRestrictedExport):
 
     list_display = ('customer_name', 'customer_phone','customer_city', 'customer_occupation')
     search_fields = ('customer_name','customer_phone', 'customer_city', 'customer_occupation')
-    list_filter = ('customer_city', 'customer_occupation')
+    list_filter = ('customer_city', 'customer_occupation','Date')   
     list_per_page = 10
-    list_filter = (('Date', DateRangeFilter),)
     readonly_fields = ('customer_name','customer_phone','customer_city', 'customer_occupation','customer_remarks',)
     
     def get_exclude(self, request,obj):
@@ -440,7 +439,7 @@ class DonationAdmin(TempleRestrictedExport):
     list_display = ('get_customer_name', 'donation_date', 'donation_amount', 'donation_purpose',)
     search_fields = ('customer__customer_name',)
     # bug both arent working togehthe
-    list_filter = (('donation_date', DateRangeFilter),)
+    list_filter = ('donation_date',)
     list_per_page = 10
 
 
