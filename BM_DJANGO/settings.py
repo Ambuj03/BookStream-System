@@ -30,13 +30,19 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '',).split(',')
+# ALLOWED_HOSTS = ('*',)
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'bm_app',
+    'jazzmin',
+    # 'grappelli',  
+    'nested_admin',
+    'rangefilter',
+    'import_export',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
 ]
+
+GRAPPELLI_ADMIN_TITLE = 'Bookstore Management'
 
 # Custom authentication backend 
 AUTHENTICATION_BACKENDS = [
@@ -149,3 +157,48 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Find your existing JAZZMIN_SETTINGS dictionary and add/modify these keys:
+JAZZMIN_SETTINGS = {
+    # Your existing settings...
+
+    "site_title": "Brihad Mridanga",
+    "site_header": "Brihad Mridanga",
+    "welcome_sign": "Hare Krsna",
+    #  "login_logo": 'jazzmin/img/logo.jpg',
+    #  /home/ambuj03/Desktop/BM_DJANGO/staticfiles/jazzmin/img
+    
+    # Add this section
+    "custom_links": {
+        "bm_app": [
+            {
+                "name": "Notifications",
+                "url": "admin_notifications",
+                "icon": "fas fa-bell",
+                "new_window": False,
+            }
+        ]
+    },
+}
+
+
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'  # Use your timezone
+
+# Django Celery Beat Settings
+INSTALLED_APPS += ['django_celery_beat']
+
+# Add this after the other Celery settings
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'cleanup-old-notifications': {
+        'task': 'bm_app.tasks.cleanup_old_notifications',
+        'schedule': crontab(hour=0, minute=0),  # Run at midnight every day
+    },
+}

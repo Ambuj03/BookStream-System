@@ -1,0 +1,93 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_list%}
+{%load custom_tags%}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}">
+  <!-- Add Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .title{
+        background-color: rgb(242, 242, 242);
+        padding: 1rem;
+        border-radius: 0.25rem;
+        margin-bottom: 1.5rem;
+    }
+    .receipt-books {
+        margin-left: 20px;
+        border-left: 2px solid #dee2e6;
+        padding-left: 20px;
+    }
+    .receipt-header {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .book-list {
+        margin: 1rem 0;
+        overflow-x: auto;
+    }
+    .receipt-header h3 {
+        color: #0d6efd;
+        margin-bottom: 1rem;
+    }
+    .receipt-header p {
+        line-height: 1.8;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="container-fluid">
+    <h1 class="title">{{ title }}</h1>
+    
+    {% for data in receipt_data %}
+        <div class="receipt-header">
+            <h3>Receipt{{ data.receipt.id }}</h3>
+            <p>
+                <strong>Customer:</strong> {{ data.receipt.customer.customer_name }}<br>
+                <strong>Total Amount:</strong> ₹{{ data.receipt.total_amount }}<br>
+                <strong>Payment Mode:</strong> {{ data.receipt.paymentMode }}<br>
+                <strong>Date:</strong> {{ data.receipt.date }}
+            </p>
+            
+            <div class="receipt-books">
+                <h4 class="mb-3">Books ({{ data.total_books }})</h4>
+                <div class="book-list">
+                    <table class="table table-hover table-striped table-bordered">
+                        <thead class="table-primary">
+                            <tr>
+                                <th scope="col">Book Name</th>
+                                <th scope="col" class="text-center">Quantity</th>
+                                <th scope="col" class="text-end">Price</th>
+                                <th scope="col" class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in data.books %}
+                            <tr>
+                                <td>{{ book.book_name }}</td>
+                                <td class="text-center">{{ book.quantity }}</td>
+                                <td class="text-end">₹{{ book.book_price }}</td>
+                                <td class="text-end">₹{{ book.book_price|multiply:book.quantity }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="alert alert-info" role="alert">
+            No receipts found for this distributor.
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Add Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+{% endblock %}

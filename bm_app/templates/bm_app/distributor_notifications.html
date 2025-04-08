@@ -1,0 +1,386 @@
+{% extends "bm_app/base.html" %}
+
+{% block content %}
+<div class="notifications-container">
+    <div class="notifications-header">
+        <div class="header-left">
+            <h1>Your Notifications</h1>
+        </div>
+        {% if notifications %}
+        <div class="header-right">
+            <div class="filter-options">
+                <select id="notification-filter" class="notification-select">
+                    <option value="all">All Notifications</option>
+                    <option value="unread">Unread Only</option>
+                    <option value="read">Read Only</option>
+                </select>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if notifications %}
+        <div class="notification-list">
+            {% for notification in notifications %}
+                <div class="notification-item {% if notification.status == 'Unread' %}unread{% endif %}" id="notification-{{ notification.notification_id }}" data-status="{{ notification.status|lower }}">
+                    <div class="notification-content">
+                        <div class="notification-icon">
+                            {% if notification.status == 'Unread' %}
+                                <span class="status-dot unread-dot"></span>
+                            {% else %}
+                                <span class="status-dot read-dot"></span>
+                            {% endif %}
+                        </div>
+                        <div class="notification-text">
+                            <p class="notification-message">{{ notification.message }}</p>
+                            <p class="notification-date">{{ notification.created_at }}</p>
+                        </div>
+                    </div>
+                    <div class="notification-actions">
+                        {% if notification.status == 'Unread' %}
+                            <button class="mark-read-btn" data-id="{{ notification.notification_id }}">Mark as Read</button>
+                        {% else %}
+                            <span class="read-status">Read</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination Controls -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="pagination-controls">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" class="pagination-link pagination-first" title="First page">&laquo;</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" class="pagination-link" title="Previous page">Previous</a>
+            {% else %}
+                <span class="pagination-link disabled">&laquo;</span>
+                <span class="pagination-link disabled">Previous</span>
+            {% endif %}
+            
+            <div class="pagination-pages">
+                {% for i in page_obj.paginator.page_range %}
+                    {% if page_obj.number == i %}
+                        <span class="pagination-link active">{{ i }}</span>
+                    {% elif i > page_obj.number|add:"-3" and i < page_obj.number|add:"3" %}
+                        <a href="?page={{ i }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" class="pagination-link">{{ i }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" class="pagination-link" title="Next page">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" class="pagination-link pagination-last" title="Last page">&raquo;</a>
+            {% else %}
+                <span class="pagination-link disabled">Next</span>
+                <span class="pagination-link disabled">&raquo;</span>
+            {% endif %}
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="no-notifications">
+            <div class="empty-icon">📭</div>
+            <p>You have no notifications at this time.</p>
+            <p class="empty-subtext">New notifications will appear here when available.</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .notifications-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eaeaea;
+    }
+    
+    .header-left {
+        display: flex;
+        align-items: baseline;
+    }
+    
+    .header-left h1 {
+        margin: 0;
+        font-size: 26px;
+        color: #333;
+    }
+    
+    .notification-count {
+        margin-left: 12px;
+        padding: 3px 10px;
+        background-color: #f0f7ff;
+        color: #4267B2;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    .notification-select {
+        padding: 8px 12px;
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    
+    .notification-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .notification-item {
+        padding: 18px 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 4px solid transparent;
+        transition: all 0.2s ease;
+    }
+    
+    .notification-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    }
+    
+    .notification-item.unread {
+        background-color: #f0f7ff;
+        border-left: 4px solid #4267B2;
+    }
+    
+    .notification-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        flex: 1;
+    }
+    
+    .notification-icon {
+        padding-top: 4px;
+    }
+    
+    .status-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+    
+    .unread-dot {
+        background-color: #4267B2;
+    }
+    
+    .read-dot {
+        background-color: #ccc;
+    }
+    
+    .notification-text {
+        flex: 1;
+    }
+    
+    .notification-message {
+        margin: 0 0 8px;
+        font-size: 15px;
+        line-height: 1.5;
+        color: #333;
+    }
+    
+    .notification-item.unread .notification-message {
+        font-weight: 600;
+    }
+    
+    .notification-date {
+        margin: 0;
+        color: #777;
+        font-size: 13px;
+    }
+    
+    .notification-actions {
+        min-width: 120px;
+        text-align: right;
+    }
+    
+    .mark-read-btn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 9px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+        font-weight: 500;
+    }
+    
+    .mark-read-btn:hover {
+        background-color: #3d8b40;
+    }
+    
+    .read-status {
+        color: #777;
+        font-size: 14px;
+        font-style: italic;
+    }
+    
+    .no-notifications {
+        padding: 40px;
+        text-align: center;
+        color: #666;
+    }
+    
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+    }
+    
+    .empty-subtext {
+        color: #999;
+        font-size: 14px;
+        margin-top: 8px;
+    }
+    
+    /* Pagination styles */
+    .pagination-controls {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .pagination-link {
+        padding: 8px 14px;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+        color: #4267B2;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        border: 1px solid #e5e5e5;
+    }
+    
+    .pagination-link:hover {
+        background-color: #e5e5e5;
+    }
+    
+    .pagination-link.active {
+        background-color: #4267B2;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .pagination-link.disabled {
+        color: #aaa;
+        cursor: not-allowed;
+        background-color: #f8f8f8;
+    }
+    
+    .pagination-pages {
+        display: flex;
+        gap: 5px;
+        margin: 0 5px;
+    }
+    
+    /* Responsive pagination */
+    @media (max-width: 600px) {
+        .pagination-controls {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mark as read functionality
+        const markReadButtons = document.querySelectorAll('.mark-read-btn');
+        markReadButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const notificationId = this.getAttribute('data-id');
+                markAsRead(notificationId);
+            });
+        });
+        
+        // Filter functionality
+        const filterSelect = document.getElementById('notification-filter');
+        if (filterSelect) {
+            // Set initial filter value from URL if present
+            const urlParams = new URLSearchParams(window.location.search);
+            const filterParam = urlParams.get('filter');
+            if (filterParam) {
+                filterSelect.value = filterParam;
+            }
+            
+            filterSelect.addEventListener('change', function() {
+                const filterValue = this.value;
+                // Redirect to first page with filter applied
+                window.location.href = '?page=1' + (filterValue !== 'all' ? '&filter=' + filterValue : '');
+            });
+        }
+        
+        function markAsRead(notificationId) {
+            // Get CSRF token from cookie
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            fetch(`/notifications/mark-read/${notificationId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ notification_id: notificationId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const notification = document.getElementById(`notification-${notificationId}`);
+                    notification.classList.remove('unread');
+                    notification.setAttribute('data-status', 'read');
+                    
+                    // Update dot
+                    const dot = notification.querySelector('.status-dot');
+                    dot.classList.remove('unread-dot');
+                    dot.classList.add('read-dot');
+                    
+                    // Update message style
+                    const message = notification.querySelector('.notification-message');
+                    message.style.fontWeight = 'normal';
+                    
+                    // Replace button with read status
+                    const actionDiv = notification.querySelector('.notification-actions');
+                    actionDiv.innerHTML = '<span class="read-status">Read</span>';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    });
+</script>
+{% endblock %}
