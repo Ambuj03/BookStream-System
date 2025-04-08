@@ -173,7 +173,7 @@ class ReceiptAdmin(TempleRestrictedAdmin):
         custom_urls = [
             path(
                 '<int:receipt_id>/receipts/', #changed from distributor_id 
-                self.admin_site.admin_view(self.receiptDetails_view),
+                self.admin_site.admin_view(self.receipt_details_view),
                 name='receipt-details',
             ),
         ]
@@ -184,7 +184,7 @@ class ReceiptAdmin(TempleRestrictedAdmin):
         return format_html('<a class="button" href="{}">View Receipts</a>', url)
     view_receipts_link.short_description = "Receipts"
     
-    def receiptDetails_view(self, request, receipt_id):
+    def receipt_details_view(self, request, receipt_id):
 
         receipt = self.get_object(request, receipt_id)
 
