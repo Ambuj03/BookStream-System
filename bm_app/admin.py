@@ -115,7 +115,7 @@ class TempleAdmin(admin.ModelAdmin):
 class DistributorAdmin(TempleRestrictedExport):
 
     resource_class = DistributorResource    
-    list_display = ('distributor_name', 'distributor_email','view_receipts_link')
+    list_display = ('distributor_name', 'distributor_email','distributor_phonenumber',)
     list_filter = ('distributor_name',)
     list_per_page = 10
 
@@ -124,56 +124,14 @@ class DistributorAdmin(TempleRestrictedExport):
             return []
         return ['temple','user']
     
-    # All stuff below is to load receipts, multiply tag in the html file isn't working as of now
-
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path(
-                '<int:distributor_id>/receipts/',
-                self.admin_site.admin_view(self.distributor_receipts_view),
-                name='distributor-receipts',
-            ),
-        ]
-        return custom_urls + urls
-    
-    def view_receipts_link(self, obj):
-        url = reverse('admin:distributor-receipts', args=[obj.distributor_id])
-        return format_html('<a class="button" href="{}">View Receipts</a>', url)
-    view_receipts_link.short_description = "Receipts"
-    
-    def distributor_receipts_view(self, request, distributor_id):
-        distributor = self.get_object(request, distributor_id)
-        receipts = Receipt.objects.filter(distributor=distributor)
-        
-        # Get receipt books for each receipt
-        receipt_data = []
-        for receipt in receipts:
-            receipt_books = ReceiptBooks.objects.filter(receipt=receipt)
-            receipt_data.append({
-                'receipt': receipt,
-                'books': receipt_books,
-                'total_books': receipt_books.count(),
-            })
-        
-        context = {
-            'distributor': distributor,
-            'receipt_data': receipt_data,
-            'opts': self.model._meta,
-            'has_change_permission': self.has_change_permission(request, distributor),
-            'title': f'Receipts for {distributor.distributor_name}',
-            'original': distributor,
-            'app_label': self.model._meta.app_label,
-        }
-        return render(request, 'admin/bm_app/distributor/receipts.html', context)
-    
 
 @admin.register(Receipt)
 class ReceiptAdmin(TempleRestrictedAdmin):
     list_display = (
         'get_customer_name', 'get_distributor_name', 
         'total_amount', 'get_donation_amount', 
-        'paymentMode', 'date', 'notification_status'
+        'paymentMode', 'date', 'notification_status',
+        'view_receipts_link'
     )
     list_filter = ('paymentMode', 'date')
     search_fields = ('customer__customer_name', 'distributor__distributor_name')
@@ -207,6 +165,48 @@ class ReceiptAdmin(TempleRestrictedAdmin):
         distributor_books = DistributorBooks.objects.filter(Distributor = obj.distributor)
         for book in distributor_books:
             check_distributor_stock(book)
+    
+    # All stuff below is to load receipts, multiply tag in the html file isn't working as of now
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                '<int:receipt_id>/receipts/', #changed from distributor_id 
+                self.admin_site.admin_view(self.receiptDetails_view),
+                name='receipt-details',
+            ),
+        ]
+        return custom_urls + urls
+    
+    def view_receipts_link(self, obj):
+        url = reverse('admin:receipt-details', args=[obj.receipt_id])
+        return format_html('<a class="button" href="{}">View Receipts</a>', url)
+    view_receipts_link.short_description = "Receipts"
+    
+    def receiptDetails_view(self, request, receipt_id):
+
+        receipt = self.get_object(request, receipt_id)
+
+        receipt_books = ReceiptBooks.objects.filter(receipt = receipt)
+        
+        # Get receipt books for each receipt
+        receipt_data = [{
+                'receipt': receipt,
+                'books': receipt_books,
+                'total_books': receipt_books.count(),
+            }]
+        
+        context = {
+            'title' : f'Receipt #{receipt.receipt_id} Details',
+            'receipt': receipt,
+            'receipt_data': receipt_data,
+            'opts': self.model._meta,
+            'has_change_permission': self.has_change_permission(request, receipt),
+            'original': receipt,
+            'app_label': self.model._meta.app_label,
+        }
+        return render(request, 'admin/bm_app/receipts.html', context)
     
 
 
