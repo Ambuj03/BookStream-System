@@ -313,6 +313,8 @@ class BookAllocationDetailAdmin(TempleRestrictedAdmin):
         if not request.user.is_superuser:
             temple = Temple.objects.get(admin = request.user)
             obj.temple = temple
+            book_price = Books.objects.get(temple = temple, book_id = obj.book_id)
+            obj.price = book_price.book_price
             
             try: 
                 
@@ -389,7 +391,7 @@ class BookAllocationDetailAdmin(TempleRestrictedAdmin):
     def get_exclude(self, request, obj):
         if request.user.is_superuser:
             return []
-        return ['temple'] 
+        return ['temple','price'] 
     
 
 @admin.register(Customer)
