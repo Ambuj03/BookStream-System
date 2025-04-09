@@ -83,7 +83,7 @@ class signup_form(UserCreationForm):
     def clean_distributor_email(self):
         email = self.cleaned_data.get('distributor_email')
         # RFC 5322 compliant email regex
-        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        pattern = r'^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$'
         if not re.match(pattern, email):
             raise forms.ValidationError("Please enter a valid email address.")
         return email
@@ -98,7 +98,7 @@ class signup_form(UserCreationForm):
             distributor_email=self.cleaned_data['distributor_email'],
             distributor_phonenumber=self.cleaned_data['distributor_phonenumber'],
             distributor_address=self.cleaned_data['distributor_address'],
-            distributor_age=self.cleaned_data['distributor_age'],
+            distributor_age=self.cleaned_data['distributor_birth_date'],
             temple=self.cleaned_data['temple']
         )
         return user
