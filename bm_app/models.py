@@ -12,8 +12,7 @@ class Temple(models.Model):
         return self.name
 
     class Meta:
-        managed = False
-        db_table = 'temple'
+        pass
 
 
 class BooksCategory(models.Model):
@@ -22,8 +21,7 @@ class BooksCategory(models.Model):
     bookscategory_name = models.CharField(unique=True, max_length=100)
 
     class Meta:
-        managed = False
-        db_table = 'books_category'
+        pass
         
     def __str__(self):
         return self.bookscategory_name
@@ -38,9 +36,7 @@ class Books(models.Model):
     book_category = models.ForeignKey(BooksCategory, on_delete=models.CASCADE, db_column='book_category', to_field='bookscategory_name', null=True, blank=True)
 
     class Meta:
-        managed = False
-        db_table = 'books'
-        verbose_name = 'Book'
+        pass
         
     def __str__(self):
         return self.book_name
@@ -60,8 +56,7 @@ class Distributor(models.Model):
         return self.distributor_name
 
     class Meta:
-        managed = False
-        db_table = 'distributor'
+        pass
 
 class MasterInventory(models.Model):
     inventory_id = models.AutoField(primary_key=True)
@@ -70,9 +65,7 @@ class MasterInventory(models.Model):
     stock = models.IntegerField(default=0)      
 
     class Meta:
-        managed = False
-        db_table = 'master_inventory'
-
+        pass
 
 class DistributorBooks(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
@@ -85,8 +78,7 @@ class DistributorBooks(models.Model):
     book_stock = models.IntegerField()
 
     class Meta:
-        managed = False
-        db_table = 'distributor_books'
+        pass
 
     def __str__(self):
         return self.book_name
@@ -102,8 +94,7 @@ class Customer(models.Model):
     Date = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        managed = False
-        db_table = 'customer'
+        pass
         
     def __str__(self):
         return self.customer_name
@@ -117,8 +108,7 @@ class Donation(models.Model):
     donation_purpose = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = False
-        db_table = 'donation'
+        pass
         
     def __str__(self):
         return str(self.customer.customer_name)
@@ -136,8 +126,7 @@ class Notification(models.Model):
     # see if you can delete these three
 
     class Meta:
-        managed = False
-        db_table = 'notification'
+        pass
 
 class Receipt(models.Model):
     PAYMENT_CHOICES = [
@@ -157,8 +146,7 @@ class Receipt(models.Model):
     notification_timestamp = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        managed = False
-        db_table = 'receipt'
+        pass
 
     def __str__(self):
         return str(self.distributor.distributor_name)
@@ -173,8 +161,7 @@ class ReceiptBooks(models.Model):
     
 
     class Meta:
-        managed = False
-        db_table = 'receipt_books'
+        pass
 
 class BookAllocation(models.Model):
     allocation_id = models.AutoField(primary_key=True)
@@ -184,8 +171,7 @@ class BookAllocation(models.Model):
     notes = models.TextField(null=True, blank=True)
 
     class Meta:
-        managed = False
-        db_table = 'book_allocation'
+        pass
         
     def __str__(self):
         return f"{self.distributor}-Allocation Id: " + str(self.allocation_id)
@@ -199,8 +185,7 @@ class BookAllocationDetail(models.Model):
     price = models.IntegerField()
 
     class Meta:
-        managed = False
-        db_table = 'book_allocation_detail'
+        pass
         
 
 

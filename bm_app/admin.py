@@ -481,5 +481,6 @@ class DonationAdmin(TempleRestrictedExport):
 
 #extending admin site to add my custom urls
 
+admin.site.register(BooksCategory)
 
 
