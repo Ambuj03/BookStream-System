@@ -98,7 +98,7 @@ class signup_form(UserCreationForm):
             distributor_email=self.cleaned_data['distributor_email'],
             distributor_phonenumber=self.cleaned_data['distributor_phonenumber'],
             distributor_address=self.cleaned_data['distributor_address'],
-            distributor_age=self.cleaned_data['distributor_age'],
+            distributor_age=self.cleaned_data['distributor_birth_date'],
             temple=self.cleaned_data['temple']
         )
         return user
