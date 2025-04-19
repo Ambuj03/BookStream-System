@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from bm_app.models import Temple
+from bm_app.models import *
 
 class TempleModelTests(TestCase):
     def setUp(self):
@@ -26,3 +26,25 @@ class TempleModelTests(TestCase):
     def test_temple_str_method(self):
         """Test the string representation of temple objects"""
         self.assertEqual(str(self.test_temple), 'Test Temple')
+
+
+class BooksModelTest(TestCase):
+
+    def setUp(self):
+        self.test_user = User.objects.create_user(
+            username='testadmin',
+            email='testadmin@example.com',
+            password='password123'
+        )
+
+        self.test_book = Books.objects.create(
+            book_name = "Bhagavad Gitopanishad",
+            book_author = "ACBSP",
+            book_language = "English",
+            book_price = 300,
+            book_category = "BBT",
+            temple_id = 1
+        )
+
+    def test_booK_creation(self):
+        self.assertEqual(self.test_book.book_name, "Bhagavad Gitopanishad")
