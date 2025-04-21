@@ -279,14 +279,6 @@ class BookAllocationAdmin(TempleRestrictedAdmin):
             temple = Temple.objects.get(admin = request.user)
             obj.temple = temple
             
-            #write the logic here for inventory automation here try!!
-            
-            query = BookAllocationDetail.objects.filter(allocation_id = obj.allocation_id)
-            for objects in query :
-                distributorBooks = DistributorBooks(distributor_id = "obj.distributor_id", book_name = 
-                                "objects.book.book_name", book_author = "objects.book.book_author", 
-                                book_language = "objects.book.book_language", book_price = "objects.price", 
-                                book_category = "objects.book.book_category", book_stock = "objects.quantity")
         super().save_model(request, obj, form, change)
         
     def get_exclude(self, request, obj):

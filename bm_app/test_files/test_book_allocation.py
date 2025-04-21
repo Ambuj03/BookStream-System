@@ -73,11 +73,17 @@ class InventoryAutomationTests(TestCase):
     #see if the distributorbook table is getting updates with the same entries or not
 
     def test_book_allocation_flow(self):
-# Test that DistributorBooks was automatically created
+        # Test that DistributorBooks was automatically created
         distributor_books = DistributorBooks.objects.filter(
             distributor_id=self.test_distributor.distributor_id
         )
 
         self.assertEqual(distributor_books.count(), 1)
+
+    """ Test that DistributorBooks entries are created when BookAllocationDetail is saved.
+        NOTE: This test is incomplete because the actual creation logic is in the admin 
+        save_model() method, not in model signals or methods.
+        This test requires admin functionality that can't be easily simulated
+    """
 
     
