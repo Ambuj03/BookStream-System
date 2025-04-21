@@ -1,5 +1,5 @@
 
-# Brihad Mridanga - Book Distribution Management System
+# Book Distribution Management System
 
 A comprehensive Django-based application for managing book inventory and distribution activities, built with a focus on ease of use and efficiency.
 
