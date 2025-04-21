@@ -37,14 +37,30 @@ class BooksModelTest(TestCase):
             password='password123'
         )
 
+        self.test_temple = Temple.objects.create(
+            name='Test Temple',
+            location='Test Location',
+            admin=self.test_user
+        )
+
+        self.test_book_category = BooksCategory.objects.create(
+            bookscategory_name = "test_category_name",
+            temple_id = self.test_temple.temple_id,
+        )
+
         self.test_book = Books.objects.create(
             book_name = "Bhagavad Gitopanishad",
             book_author = "ACBSP",
             book_language = "English",
             book_price = 300,
-            book_category = "BBT",
-            temple_id = 1
+            book_category = self.test_book_category,
+            temple_id = self.test_temple.temple_id
         )
 
-    def test_booK_creation(self):
+    def test_book_creation(self):
         self.assertEqual(self.test_book.book_name, "Bhagavad Gitopanishad")
+        self.assertEqual(self.test_book.book_author , "ACBSP")
+    
+    def test_book_query(self):
+        english_books = Books.objects.filter(book_language = "English")
+        self.assertEqual(english_books.count(), 1)
