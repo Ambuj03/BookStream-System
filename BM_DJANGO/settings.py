@@ -162,8 +162,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 JAZZMIN_SETTINGS = {
     # Your existing settings...
 
-    "site_title": "Brihad Mridanga",
-    "site_header": "Brihad Mridanga",
+    "site_title": "Brihat Mridanga",
+    "site_header": "Brihat Mridanga",
     "welcome_sign": "Hare Krsna",
     #  "login_logo": 'jazzmin/img/logo.jpg',
     #  /home/ambuj03/Desktop/BM_DJANGO/staticfiles/jazzmin/img
@@ -202,3 +202,8 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(hour=0, minute=0),  # Run at midnight every day
     },
 }
+
+# Security related settings before deployment
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
