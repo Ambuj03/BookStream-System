@@ -1,4 +1,5 @@
 # Byte-compiled / cached files
+BM_DJANGO/__pycache__/
 __pycache__/
 *.py[cod]
 

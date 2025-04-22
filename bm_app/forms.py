@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 import re # regex
+from django.core.validators import RegexValidator
 
 
 #Transaction Form***************************************************************
@@ -16,16 +17,21 @@ def validate_indian_phone(value):
     if not re.match(r"^[6789]\d{9}$", value):
         raise ValidationError("Enter a valid Indian phone number (starting with 6,7,8,9).")
 
+name_validator = RegexValidator(
+    regex = '^[a-zA-Z ]+$',
+    message = 'It must contain only letters and spaces.'
+)
+
 class transaction_form(forms.ModelForm):
     donation_amount = forms.IntegerField()
-    donation_purpose = forms.CharField(max_length=30)
-    customer_name = forms.CharField(max_length=20)
+    donation_purpose = forms.CharField(max_length=30, validators=[name_validator])
+    customer_name = forms.CharField(max_length=20, validators = [name_validator])
     customer_phone = forms.CharField(
         widget=forms.TextInput(attrs={'type': 'tel'}),
         validators=[validate_indian_phone]
     )
-    customer_occupation = forms.CharField(max_length=20)
-    customer_city = forms.CharField(max_length=15)
+    customer_occupation = forms.CharField(max_length=20, validators = [name_validator])
+    customer_city = forms.CharField(max_length=15, validators=[name_validator])
     remarks = forms.CharField(widget=forms.Textarea, required=False, max_length= 150)
 
     class Meta:
@@ -63,7 +69,7 @@ class signup_form(UserCreationForm):
         return password
     
     # Additional fields for Distributor
-    distributor_name = forms.CharField(max_length=20)
+    distributor_name = forms.CharField(max_length=20, validators= [name_validator])
     distributor_email = forms.EmailField()
     distributor_phonenumber = forms.CharField(max_length=10)
     distributor_address = forms.CharField(widget=forms.Textarea, required=False, max_length=150)

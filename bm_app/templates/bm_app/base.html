@@ -18,17 +18,31 @@
     {% if request.user.is_authenticated %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'home' %}">Brihad Mridanga</a>
+            <a class="navbar-brand" href="{% url 'home' %}">Brihat Mridanga</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" 
+                           href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'inventory' %}">My Inventory</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'inventory' %}active{% endif %}" 
+                           href="{% url 'inventory' %}">My Inventory</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'new_transaction' %}active{% endif %}" 
+                           href="{% url 'new_transaction' %}">New Transaction</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'books' %}active{% endif %}" 
+                           href="{% url 'books' %}">Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'distributor_notifications' %}active{% endif %}" 
+                           href="{% url 'distributor_notifications' %}">Notifications</a>
                     </li>
                 </ul>
                 <div class="navbar-nav">
