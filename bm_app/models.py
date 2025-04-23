@@ -36,7 +36,7 @@ class Books(models.Model):
     book_category = models.ForeignKey(BooksCategory, on_delete=models.CASCADE, db_column='book_category', to_field='bookscategory_name', null=True, blank=True)
 
     class Meta:
-        pass
+        verbose_name = 'book'
         
     def __str__(self):
         return self.book_name
@@ -65,7 +65,8 @@ class MasterInventory(models.Model):
     stock = models.IntegerField(default=0)      
 
     class Meta:
-        pass
+        verbose_name = 'Master Inventory'
+        verbose_name_plural = 'Master Inventory'
 
 class DistributorBooks(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
