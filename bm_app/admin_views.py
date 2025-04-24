@@ -1,10 +1,13 @@
 from django.contrib.admin.views.decorators import staff_member_required
-from .models import Books, MasterInventory, Distributor, Customer, Receipt, ReceiptBooks
+from .models import Books, MasterInventory, Distributor, BooksCategory, Customer, Receipt, ReceiptBooks
 from django.shortcuts import render
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
 from datetime import timedelta
+
+from django.http import JsonResponse
+from django.db.models import Sum, F
 
 @staff_member_required
 def admin_dashboard(request):
@@ -49,64 +52,132 @@ def admin_dashboard(request):
 
 @staff_member_required
 def get_monthly_distribution_data(request):
-    from django.db import connection
     
-    end_date = timezone.now()
+    # Get data for last 90 days
+    end_date = timezone.now().date()
     start_date = end_date - timedelta(days=90)
     
-    # Use manual SQL to get around DB timezone/date extraction issues
-    with connection.cursor() as cursor:
-        cursor.execute("""
-            SELECT 
-                EXTRACT(YEAR FROM r.date) as year,
-                EXTRACT(MONTH FROM r.date) as month,
-                SUM(rb.quantity) as total
-            FROM 
-                bm_app_receiptbooks rb
-                JOIN bm_app_receipt r ON rb.receipt_id = r.receipt_id
-            WHERE
-                r.date >= %s AND r.date <= %s
-            GROUP BY 
-                EXTRACT(YEAR FROM r.date),
-                EXTRACT(MONTH FROM r.date)
-            ORDER BY 
-                year, month
-        """, [start_date, end_date])
-        
-        rows = cursor.fetchall()
+    # Group by month using Django's ORM
+    monthly_data = (
+        ReceiptBooks.objects
+        .filter(receipt__date__gte=start_date, receipt__date__lte=end_date)
+        .annotate(month=TruncMonth('receipt__date'))
+        .values('month')
+        .annotate(total=Sum('quantity'))
+        .order_by('month')
+    )
     
-    print(f"Raw SQL results: {rows}")
+    # Format for Chart.js
+    labels = []
+    data = []
     
-    # If no data or SQL also failed, provide sample data
-    if not rows:
-        # Use hardcoded sample data for now
+    # If we got data, format it properly
+    if monthly_data:
+        for item in monthly_data:
+            month_date = item['month']
+            month_name = month_date.strftime('%b %Y')  # Format like "Apr 2025"
+            labels.append(month_name)
+            data.append(item['total'])
+    else:
+        # Fallback to sample data if no results
         labels = ['Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025']
         data = [15, 22, 18, 20]
-        print("Using sample data")
-    else:
-        labels = []
-        data = []
-        months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                 
-        for row in rows:
-            year = int(row[0])
-            month_idx = int(row[1]) - 1
-            month_name = months[month_idx]
-            labels.append(f"{month_name} {year}")
-            data.append(row[2])
     
     chart_data = {
-    'labels': labels,
-    'datasets': [{
-        'label': 'Books Distributed',
-        'data': data,
-        'backgroundColor': 'rgba(26, 61, 102, 0.7)',
-        'borderColor': '#1a3d66',
-        'borderWidth': 1
-    }]
-}
+        'labels': labels,
+        'datasets': [{
+            'label': 'Books Distributed',
+            'data': data,
+            'backgroundColor': 'rgba(26, 61, 102, 0.7)',
+            'borderColor': '#1a3d66',
+            'borderWidth': 1
+        }]
+    }
     
-    from django.http import JsonResponse
     return JsonResponse(chart_data)
 
+
+@staff_member_required
+def get_top_distributors(request):
+    
+    #getting top 10 distributors
+    top_distributors = (ReceiptBooks.objects
+        .values('receipt__distributor__distributor_name')
+        .annotate(total = Sum('quantity'))
+        .order_by('-total')[:10]
+    )
+
+    labels = []
+    data = []
+
+    # if top_distributors:
+    for item in top_distributors:
+        distributor_name = item['receipt__distributor__distributor_name']
+        labels.append(distributor_name)
+        data.append(item['total'])
+
+    chart_data = {
+        'labels' : labels,
+        'datasets' : [{
+            'label' : 'Books Distributed',
+            'data' : data,
+
+        }]
+    }
+
+    return JsonResponse(chart_data)
+
+
+@staff_member_required
+def get_top_categories(request):
+    # Get total quantity of books distributed
+    total_books = ReceiptBooks.objects.aggregate(total=Sum('quantity'))['total'] or 0
+    
+    # Use book_name to match with Books table and get categories
+    categories_data = []
+    total_matched = 0  # Track total books matched to categories
+    
+    # Only showing the two categories
+    for category in BooksCategory.objects.all():
+        # Find all books in this category
+        books_in_category = Books.objects.filter(book_category=category).values_list('book_name', flat=True)
+        
+        # Find distribution numbers for these books
+        quantity = ReceiptBooks.objects.filter(book_name__in=books_in_category).aggregate(
+            total=Sum('quantity')
+        )['total'] or 0
+        
+        total_matched += quantity
+        
+        categories_data.append({
+            'name': category.bookscategory_name,
+            'quantity': quantity
+        })
+    
+    # Calculate percentages based on matched totals (not total_books)
+    for item in categories_data:
+        if total_matched > 0:
+            item['percentage'] = round((item['quantity'] / total_matched) * 100, 1)
+        else:
+            item['percentage'] = 0
+    
+    # Prepare chart data
+    labels = [item['name'] for item in categories_data]
+    data = [item['percentage'] for item in categories_data]
+    
+    # Use sample data if nothing found
+    if not data:
+        labels = ['Category 1', 'Category 2']
+        data = [60, 40]
+    
+    chart_data = {
+        'labels': labels,
+        'datasets': [{
+            'data': data,
+            'backgroundColor': ['#1a3d66', '#38a169'],
+            'borderColor': '#ffffff',
+            'borderWidth': 2
+        }]
+    }
+    
+    return JsonResponse(chart_data)
