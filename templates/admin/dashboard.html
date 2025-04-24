@@ -1,13 +1,18 @@
 {% extends "admin/base_site.html" %}
 {% load i18n static %}
 
+{% block title %}Dashboard - Brihad Mridanga{% endblock %}
+
 {% block extrahead %}
 {{ block.super }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 
     .dashboard-container {
         padding: 15px;
-        margin-top: -70px; /* Move content up to reduce header space */
+        margin-top: -80px; /* Move content up to reduce header space */
     }
     .stats-row {
         display: flex;
@@ -107,14 +112,14 @@
             <div class="chart-container">
                 <h4>Monthly Distribution Trend</h4>
                 <!-- Chart will go here -->
-                <div id="distributionChart" style="height: 280px;"></div>
+                <canvas id="distributionChart" style="height: 280px;"></canvas>
             </div>
         </div>
         <div class="col-md-6">
             <div class="chart-container">
                 <h4>Top Distributors</h4>
                 <!-- Chart will go here -->
-                <div id="distributorsChart" style="height: 280px;"></div>
+                <canvas id="distributorsChart" style="height: 280px;"></canvas>
             </div>
         </div>
     </div>
@@ -124,16 +129,50 @@
             <div class="chart-container">
                 <h4>Book Categories</h4>
                 <!-- Chart will go here -->
-                <div id="categoriesChart" style="height: 280px;"></div>
+                <canvas id="categoriesChart" style="height: 280px;"></canvas>
             </div>
         </div>
         <div class="col-md-6">
             <div class="chart-container">
                 <h4>Revenue & Donations</h4>
                 <!-- Chart will go here -->
-                <div id="revenueChart" style="height: 280px;"></div>
-            </div>
+                <canvas id="revenueChart" style="height: 280px;"></canvas>            </div>
         </div>
     </div>
 </div>
+{% endblock %}
+{% block extrajs %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Log the raw API response
+    fetch('/admin/api/monthly-distribution-data/')
+        .then(response => {
+            console.log("API Status:", response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log("API Data:", data);
+            console.log("Labels:", data.labels);
+            console.log("Datasets:", data.datasets);
+            console.log("Data points:", data.datasets[0].data);
+            
+            // Continue with chart creation
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error loading distribution data:', error));
+});
+</script>
 {% endblock %}

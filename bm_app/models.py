@@ -50,7 +50,7 @@ class Distributor(models.Model):
     distributor_phonenumber = models.CharField(db_column='distributor_phoneNumber', max_length=15)
     distributor_address = models.TextField(blank=True, null=True)
     distributor_age = models.DateField(blank=True, null=True)
-    created_at = models.DateField(auto_now_add=True, null=True, blank=True)
+    created_at = models.DateField(default=timezone.now, null=True, blank=True)
 
     def __str__(self):
         return self.distributor_name
@@ -104,7 +104,7 @@ class Donation(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
     donation_id = models.AutoField(primary_key=True)
     customer = models.ForeignKey(Customer, on_delete=models.RESTRICT, null=True, blank=True)
-    donation_date = models.DateField(auto_now_add=True, null=True, blank=True)
+    donation_date = models.DateField(default=timezone.now, null=True, blank=True)
     donation_amount = models.IntegerField()
     donation_purpose = models.CharField(max_length=100, blank=True, null=True)
 
@@ -139,7 +139,7 @@ class Receipt(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, db_column='customer_id')
     donation = models.ForeignKey(Donation, on_delete=models.CASCADE, db_column='donation_id', null=True)
     distributor = models.ForeignKey(Distributor, on_delete=models.CASCADE, db_column='distributor_id')
-    date = models.DateField(auto_now_add=True, null=True)
+    date = models.DateField(default=timezone.now, null=True)
     paymentMode = models.CharField(max_length=6, choices=PAYMENT_CHOICES, null=True, db_column='paymentMode')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True)
     notification_sent = models.BooleanField(default=False)
@@ -168,7 +168,7 @@ class BookAllocation(models.Model):
     allocation_id = models.AutoField(primary_key=True)
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
     distributor = models.ForeignKey(Distributor, on_delete=models.CASCADE)
-    allocation_date = models.DateField(auto_now_add=True)
+    allocation_date = models.DateField(default=timezone.now)
     notes = models.TextField(null=True, blank=True)
 
     class Meta:
