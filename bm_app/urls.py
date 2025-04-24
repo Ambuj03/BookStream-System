@@ -18,7 +18,7 @@ urlpatterns = [
     path('delete-book/<int:book_id>/', delete_book, name='delete_book'), 
     path('api/books/', books_api, name='books_api'),
     path('api/distributor-books/', get_distributor_books, name='get_distributor_books'),
-    
+
     # notification related urls
     path('notifications/', distributor_notifications, name = 'distributor_notifications'),
     path('notifications/mark-read/<int:notification_id>/', mark_notification_read, name = 'mark_notification_read'),

@@ -19,11 +19,12 @@ from django.urls import path, include
 from bm_app.admin import mark_notification_read_view
 from bm_app.views import admin_notifications_view
 from django.contrib.admin.views.decorators import staff_member_required
+from bm_app import admin_views
 
 urlpatterns = [
     path('admin/notifications/', admin_notifications_view, name='admin_notifications'),
     path('admin/notifications/mark-read/<int:notification_id>/', mark_notification_read_view, name='mark_notification_read'),
+    path('admin/dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),
     path('admin/', admin.site.urls),
     path('',include('bm_app.urls')),
-    path('_nested_admin/', include('nested_admin.urls')),
 ]

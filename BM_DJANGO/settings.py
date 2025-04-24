@@ -164,7 +164,9 @@ JAZZMIN_SETTINGS = {
 
     "site_title": "Brihat Mridanga",
     "site_header": "Brihat Mridanga",
+    "site_brand" : "Brihat Mridanga",
     "welcome_sign": "Hare Krsna",
+    
     #  "login_logo": 'jazzmin/img/logo.jpg',
     #  /home/ambuj03/Desktop/BM_DJANGO/staticfiles/jazzmin/img
     
@@ -172,11 +174,20 @@ JAZZMIN_SETTINGS = {
     "custom_links": {
         "bm_app": [
             {
+                "name": "Dashboard", 
+                "url": "admin_dashboard", 
+                "icon": "fas fa-chart-line",
+            },
+            
+            {
+
                 "name": "Notifications",
                 "url": "admin_notifications",
                 "icon": "fas fa-bell",
                 "new_window": False,
+
             }
+
         ]
     },
 }

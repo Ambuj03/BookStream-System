@@ -1,0 +1,139 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+
+    .dashboard-container {
+        padding: 15px;
+        margin-top: -70px; /* Move content up to reduce header space */
+    }
+    .stats-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        justify-content: space-between;
+    }
+    .stats-card {
+        background: white;
+        border-radius: 4px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        height: 100%; /* Equal height */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+    .stats-number {
+        font-size: 1.7rem;
+        font-weight: bold;
+        color: #1a3d66;
+        margin-bottom: 5px;
+    }
+    .stats-title {
+        color: #666;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+    .text-muted {
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+    .dashboard-header {
+        margin-bottom: 15px;
+    }
+    .chart-container {
+        background: white;
+        border-radius: 4px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        height: 350px; /* Fixed height for charts */
+    }
+    h1 {
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>{% trans "Dashboard" %}</h1>
+    </div>
+    
+    <!-- Stats Cards in a single row with equal heights -->
+    <div class="row stats-row">
+        <div class="col">
+            <div class="stats-card">
+                <div class="stats-title">Books in Inventory</div>
+                <div class="stats-number">{{ total_inventory }}</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stats-card">
+                <div class="stats-title">Books Distributed</div>
+                <div class="stats-number">{{ total_distributed }}</div>
+                <div class="text-muted">Last 30 days: {{ recent_distributed }}</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stats-card">
+                <div class="stats-title">Distributors</div>
+                <div class="stats-number">{{ distributor_count }}</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stats-card">
+                <div class="stats-title">Revenue</div>
+                <div class="stats-number">₹{{ total_revenue }}</div>
+                <div class="text-muted">Last 30 days: ₹{{ recent_revenue }}</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stats-card">
+                <div class="stats-title">Customers</div>
+                <div class="stats-number">{{ customer_count }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Placeholder for charts -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h4>Monthly Distribution Trend</h4>
+                <!-- Chart will go here -->
+                <div id="distributionChart" style="height: 280px;"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h4>Top Distributors</h4>
+                <!-- Chart will go here -->
+                <div id="distributorsChart" style="height: 280px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h4>Book Categories</h4>
+                <!-- Chart will go here -->
+                <div id="categoriesChart" style="height: 280px;"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h4>Revenue & Donations</h4>
+                <!-- Chart will go here -->
+                <div id="revenueChart" style="height: 280px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
