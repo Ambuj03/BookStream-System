@@ -206,7 +206,7 @@ class ReceiptAdmin(TempleRestrictedAdmin):
             'original': receipt,
             'app_label': self.model._meta.app_label,
         }
-        return render(request, 'admin/bm_app/receipts.html', context)
+        return render(request, 'admin/receipts.html', context)
     
 
 
