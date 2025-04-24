@@ -181,3 +181,82 @@ def get_top_categories(request):
     }
     
     return JsonResponse(chart_data)
+
+@staff_member_required
+def get_revenue_data(request):
+    # Get data for last 6 months
+    end_date = timezone.now().date()
+    start_date = end_date - timedelta(days=180)
+    
+    # Get monthly book sales revenue and donation revenue
+    book_revenue = (
+        ReceiptBooks.objects
+        .filter(receipt__date__gte=start_date)
+        .annotate(month=TruncMonth('receipt__date'))
+        .values('month')
+        .annotate(revenue=Sum(F('quantity') * F('book_price')))
+        .order_by('month')
+    )
+    
+    donation_revenue = (
+        Receipt.objects
+        .filter(date__gte=start_date)
+        .filter(donation__isnull=False)
+        .annotate(month=TruncMonth('date'))
+        .values('month')
+        .annotate(revenue=Sum('donation'))
+        .order_by('month')
+    )
+    
+    # Combine data by month - use datetime objects as keys instead of strings
+    months_data = {}
+    
+    for item in book_revenue:
+        month_date = item['month']  # This is a datetime object
+        if month_date not in months_data:
+            months_data[month_date] = {'book_revenue': 0, 'donation_revenue': 0}
+        months_data[month_date]['book_revenue'] = float(item['revenue'])
+    
+    for item in donation_revenue:
+        month_date = item['month']  # This is a datetime object
+        if month_date not in months_data:
+            months_data[month_date] = {'book_revenue': 0, 'donation_revenue': 0}
+        months_data[month_date]['donation_revenue'] = float(item['revenue'])
+    
+    # Sort chronologically by date
+    sorted_months = sorted(months_data.keys())
+    
+    # Prepare chart data with chronologically sorted months
+    labels = [month.strftime('%b %Y') for month in sorted_months]
+    book_data = [months_data[month]['book_revenue'] for month in sorted_months]
+    donation_data = [months_data[month]['donation_revenue'] for month in sorted_months]
+    
+    # Use sample data if empty
+    if not labels:
+        labels = ['Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025']
+        book_data = [1200, 1500, 1300, 1700]
+        donation_data = [500, 700, 600, 900]
+    
+    chart_data = {
+        'labels': labels,
+        'datasets': [
+            {
+                'label': 'Book Revenue',
+                'data': book_data,
+                'backgroundColor': 'rgba(26, 61, 102, 0.7)',
+                'borderColor': '#1a3d66',
+                'borderWidth': 1,
+                'order': 1
+            },
+            {
+                'label': 'Donations',
+                'data': donation_data,
+                'backgroundColor': 'rgba(56, 161, 105, 0.7)',
+                'borderColor': '#38a169',
+                'borderWidth': 1,
+                'order': 1
+            }
+        ]
+    }
+    
+    return JsonResponse(chart_data)
