@@ -123,7 +123,6 @@
             </div>
         </div>
     </div>
-    
     <div class="row">
         <div class="col-md-6">
             <div class="chart-container">
@@ -136,7 +135,7 @@
             <div class="chart-container">
                 <h4>Revenue & Donations</h4>
                 <!-- Chart will go here -->
-                <canvas id="revenueChart" style="height: 280px;"></canvas>            </div>
+                <canvas id="revenueChart" style="height: 280px;"></canvas>   
         </div>
     </div>
 </div>
@@ -151,11 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            console.log("API Data:", data);
-            console.log("Labels:", data.labels);
-            console.log("Datasets:", data.datasets);
-            console.log("Data points:", data.datasets[0].data);
-            
             // Continue with chart creation
             const ctx = document.getElementById('distributionChart').getContext('2d');
             new Chart(ctx, {
@@ -173,6 +167,65 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         })
         .catch(error => console.error('Error loading distribution data:', error));
+
+    fetch('/admin/api/top-distributors-data/')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('distributorsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',  // Horizontal bar chart
+                data: data,
+                options: {
+                    indexAxis: 'y',     // Required for horizontal bar in Chart.js v3+
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Books Distributed'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Distributor'
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error loading distributors data:', error));
+
+    fetch('/admin/api/top-categories-data/')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('categoriesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error loading categories data:', error));
+
 });
 </script>
 {% endblock %}

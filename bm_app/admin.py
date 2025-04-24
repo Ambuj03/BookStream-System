@@ -215,7 +215,7 @@ class ReceiptAdmin(TempleRestrictedAdmin):
 @admin.register(Books)
 class BooksAdmin(TempleRestrictedAdmin):
    
-    list_display = ('book_name', 'book_author', 'book_language', 'book_price')
+    list_display = ('book_name', 'book_author', 'book_language', 'book_price','book_category')
     search_fields = ('book_name', 'book_author')
     list_filter = ('book_language', 'book_category', 'temple')
     ordering = ('book_name',)
