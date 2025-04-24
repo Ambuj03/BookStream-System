@@ -30,6 +30,7 @@ urlpatterns = [
     path('admin/api/monthly-distribution-data/', admin_views.get_monthly_distribution_data, name='monthly_distribution_data'),
     path('admin/api/top-distributors-data/', admin_views.get_top_distributors, name='top_distributors_data'),
     path('admin/api/top-categories-data/', admin_views.get_top_categories, name='top_categories_data'),
+    path('admin/api/revenue-data/', admin_views.get_revenue_data, name='revenue_data'),
 
     path('admin/', admin.site.urls),
     path('',include('bm_app.urls')),
