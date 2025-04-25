@@ -47,7 +47,7 @@ def admin_dashboard(request):
         'recent_revenue' : recent_revenue,
     }
 
-    return render(request, 'admin/dashboard.html', context)
+    return render(request, 'admin/admin_dashboard.html', context)
 
 
 @staff_member_required
