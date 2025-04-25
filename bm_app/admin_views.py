@@ -53,9 +53,9 @@ def admin_dashboard(request):
 @staff_member_required
 def get_monthly_distribution_data(request):
     
-    # Get data for last 90 days
+    # Get data for last 120 days
     end_date = timezone.now().date()
-    start_date = end_date - timedelta(days=90)
+    start_date = end_date - timedelta(days=120)
     
     # Group by month using Django's ORM
     monthly_data = (
