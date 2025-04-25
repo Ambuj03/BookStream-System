@@ -1,0 +1,226 @@
+{% extends "bm_app/base.html" %}
+{% load static %}
+
+
+{% block title %}Dashboard - Brihad Mridanga{% endblock %}
+
+{% block extrahead %}
+{{block.super}}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2>Distributor Dashboard</h2>
+    <p>Welcome back, {{ request.user.username }}! Here's an overview of your distribution activities.</p>
+
+    <!-- Summary Stats Cards -->
+    <div class="row stats-row">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h5>Total Books Distributed</h5>
+                <div class="stat-value">{{ total_distributed|default:"0" }}</div>
+                <p>All time</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h5>Books Distributed (30 days)</h5>
+                <div class="stat-value">{{ recent_distributed|default:"0" }}</div>
+                <p>Last 30 days</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h5>Total Revenue Generated</h5>
+                <div class="stat-value">₹{{ total_revenue|default:"0" }}</div>
+                <p>All time</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h5>Recent Revenue</h5>
+                <div class="stat-value">₹{{ recent_revenue|default:"0" }}</div>
+                <p>Last 30 days</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h4>Monthly Distribution Trend</h4>
+                <canvas id="distributionChart" style="height: 280px;"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h4>Books by Category</h4>
+                <canvas id="categoriesChart" style="height: 280px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h4>Monthly Revenue</h4>
+                <canvas id="revenueChart" style="height: 280px;"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h4>Top Books Distributed</h4>
+                <canvas id="topBooksChart" style="height: 280px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Chart 1: Distribution Trend
+    // This fetches data from your API endpoint and creates a line chart showing books distributed per month
+    fetch('/api/distributor/monthly-distribution/')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Books Distributed'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error loading distribution data:', error);
+            // Display a message or fallback visualization
+            document.getElementById('distributionChart').innerHTML = 
+                '<div class="text-center p-3">Unable to load chart data. Please try again later.</div>';
+        });
+
+    // Chart 2: Categories
+    // Creates a doughnut chart showing distribution of books by category
+    fetch('/api/distributor/categories/')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('categoriesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error loading categories data:', error);
+            document.getElementById('categoriesChart').innerHTML = 
+                '<div class="text-center p-3">Unable to load chart data. Please try again later.</div>';
+        });
+
+    // Chart 3: Revenue Trend
+    // Creates a bar chart showing revenue generated per month
+    fetch('/api/distributor/revenue/')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Revenue (₹)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error loading revenue data:', error);
+            document.getElementById('revenueChart').innerHTML = 
+                '<div class="text-center p-3">Unable to load chart data. Please try again later.</div>';
+        });
+
+    // Chart 4: Top Books
+    // Creates a horizontal bar chart showing top books distributed
+    fetch('/api/distributor/top-books/')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('topBooksChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    indexAxis: 'y', // This makes the bars horizontal
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Books Distributed'
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error loading top books data:', error);
+            document.getElementById('topBooksChart').innerHTML = 
+                '<div class="text-center p-3">Unable to load chart data. Please try again later.</div>';
+        });
+});
+</script>
+{% endblock %}
