@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 '<div class="text-center p-3">Unable to load chart data. Please try again later.</div>';
         });
 
-    /*
+    
     // Chart 2: Categories
     // Creates a doughnut chart showing distribution of books by category
     fetch('/api/distributor/categories/')
@@ -130,9 +130,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
+                    aspectRatio:2,
                     plugins: {
                         legend: {
-                            position: 'bottom'
+                            position: 'right',
                         },
                         tooltip: {
                             callbacks: {
@@ -141,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             }
                         }
-                    }
+                    },
                 }
             });
         })
@@ -150,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('categoriesChart').innerHTML = 
                 '<div class="text-center p-3">Unable to load chart data. Please try again later.</div>';
         });
-    */
+    
 
     // Chart 3: Revenue Trend
     // Creates a bar chart showing revenue generated per month
@@ -188,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 '<div class="text-center p-3">Unable to load chart data. Please try again later.</div>';
         });
 
-        /*
+        
     // Chart 4: Top Books
     // Creates a horizontal bar chart showing top books distributed
     fetch('/api/distributor/top-books/')
@@ -201,13 +202,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 options: {
                     indexAxis: 'y', // This makes the bars horizontal
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
                     scales: {
                         x: {
                             beginAtZero: true,
                             title: {
                                 display: true,
                                 text: 'Books Distributed'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Book Name'
                             }
                         }
                     }
@@ -219,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('topBooksChart').innerHTML = 
                 '<div class="text-center p-3">Unable to load chart data. Please try again later.</div>';
         });
-        */
+        
 });
 </script>
 {% endblock %}

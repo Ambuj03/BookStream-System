@@ -158,6 +158,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+
+                    layout: {
+                        padding: {
+                            bottom: 25  // Extra space for labels
+                        }
+                    },
+
                     scales: {
                         y: {
                             beginAtZero: true
@@ -179,6 +186,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     indexAxis: 'y',     // Required for horizontal bar in Chart.js v3+
                     responsive: true,
                     maintainAspectRatio: false,
+
+                    layout: {
+                        padding: {
+                            bottom: 25  // Extra space for labels
+                        }
+                    },
+
                     scales: {
                         x: {
                             beginAtZero: true,
@@ -209,9 +223,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+
+                    layout: {
+                        padding: {
+                            bottom: 25  // Extra space for labels
+                        }
+                    },
+                    
                     plugins: {
                         legend: {
-                            position: 'bottom'
+                            position: 'right'
                         },
                         tooltip: {
                             callbacks: {
@@ -237,6 +258,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+
+                    layout: {
+                        padding: {
+                            bottom: 25  // Extra space for labels
+                        }
+                    },
+                    
                     scales: {
                         y: {
                             beginAtZero: true,

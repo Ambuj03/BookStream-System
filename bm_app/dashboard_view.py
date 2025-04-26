@@ -169,8 +169,80 @@ def get_revenue_data(request):
 @never_cache
 def get_top_categories(request):
 
-    categories_date = []
+    current_distributor = Distributor.objects.get(user = request.user)
+
+    categories_data = []
     total_matched = 0
 
     for category in BooksCategory.objects.all():
-        books_in_this_cat = Books.objects.filter()
+        books_in_this_cat = Books.objects.filter(book_category = category).values_list('book_name', flat= True)
+
+        quantity = (ReceiptBooks.objects
+                    .filter(receipt__distributor = current_distributor, book_name__in = books_in_this_cat)
+                    .aggregate(total = Sum('quantity'))['total'] or 0
+                    )
+        total_matched += quantity
+
+        categories_data.append({
+            'name' : category.bookscategory_name,
+            'quantity' : quantity
+        })
+
+
+    #Calculating percentage now
+
+    for item in categories_data:
+        if total_matched > 0:
+            item['percentage'] = round((item['quantity'] / total_matched) * 100, 1)
+        else :
+            item['percentage']  = 0
+
+    
+    #Now preparing chart data
+
+    labels = [item['name'] for item in categories_data]
+    data  = [item['percentage'] for item in categories_data]
+
+    chart_data = {
+        'labels': labels,
+        'datasets': [{
+            'data': data,
+            'backgroundColor': ['#1a3d66', '#38a169'],
+            'borderColor': '#ffffff',
+            'borderWidth': 2
+        }]
+    }
+
+    return JsonResponse(chart_data)
+
+
+@login_required
+@never_cache
+def get_top_books(request):
+
+    current_distributor = Distributor.objects.get(user = request.user)
+
+    top_books = (ReceiptBooks.objects
+                .filter(receipt__distributor = current_distributor)
+                .values('book_name')
+                .annotate(total = Sum('quantity'))
+                .order_by('-total')[:5]
+                 )
+    
+    labels = []
+    data = []
+
+    for item in top_books:
+        labels.append(item['book_name'])
+        data.append(item['total'])
+
+    chart_data = {
+        'labels' : labels,
+        'datasets' : [{
+            'label' : 'Books Distributed',
+            'data' : data,
+
+        }]
+    }
+
+    return JsonResponse(chart_data)
