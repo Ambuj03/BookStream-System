@@ -61,13 +61,32 @@
     h1 {
         margin-bottom: 20px;
     }
-</style>
+    .filter-container {
+        padding: 8px 15px 15px;
+    }
+    
+    .form-select-sm {
+        padding-right: .5rem;
+        min-width: 100px;
+    }
+
+    </style>
 {% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
-    <div class="dashboard-header">
+    <!-- Dashboard Header with Filter Dropdown -->
+    <div class="dashboard-header d-flex justify-content-between align-items-center mb-3">
         <h1>{% trans "Dashboard" %}</h1>
+        <div class="filter-container">
+            <label for="timeFilter" class="me-2">Time Range:</label>
+            <select id="timeFilter" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                <option value="30">Last Month</option>
+                <option value="90">Last 3 Months</option>
+                <option value="180" selected>Last 6 Months</option>
+                <option value="365">Last Year</option>
+            </select>
+        </div>
     </div>
     
     <!-- Stats Cards in a single row with equal heights -->
@@ -143,28 +162,53 @@
 {% block extrajs %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Log the raw API response
-    fetch('/admin/api/monthly-distribution-data/')
-        .then(response => {
-            console.log("API Status:", response.status);
-            return response.json();
-        })
+
+    let charts = {
+        distribution: null,
+        distributors: null,
+        categories: null,
+        revenue: null
+    };
+    
+    // Initial load with default value (6 months)
+    loadAllCharts(180);
+    
+    // Add event listener to the dropdown
+    document.getElementById('timeFilter').addEventListener('change', function() {
+        const days = this.value;
+        loadAllCharts(days);
+    });
+    
+    function loadAllCharts(days) {
+        // Load all charts with the selected time range
+        loadDistributionChart(days);
+        loadDistributorsChart(days);
+        loadCategoriesChart(days);
+        loadRevenueChart(days);
+    }
+
+    // Chart 1: Monthly Distribution
+    function loadDistributionChart(days) {
+        fetch(`/admin/api/monthly-distribution-data/?days=${days}`) // <-- Fixed: Using backticks instead of single quotes
+        .then(response => response.json())
         .then(data => {
-            // Continue with chart creation
             const ctx = document.getElementById('distributionChart').getContext('2d');
-            new Chart(ctx, {
+            
+            if (charts.distribution) {
+                charts.distribution.destroy();
+            }
+            
+            charts.distribution = new Chart(ctx, {
                 type: 'line',
                 data: data,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-
                     layout: {
                         padding: {
-                            bottom: 25  // Extra space for labels
+                            bottom: 25
                         }
                     },
-
                     scales: {
                         y: {
                             beginAtZero: true
@@ -174,25 +218,31 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         })
         .catch(error => console.error('Error loading distribution data:', error));
+    }
 
-    fetch('/admin/api/top-distributors-data/')
+    // Chart 2: Top Distributors
+    function loadDistributorsChart(days) {
+        fetch(`/admin/api/top-distributors-data/?days=${days}`)
         .then(response => response.json())
         .then(data => {
             const ctx = document.getElementById('distributorsChart').getContext('2d');
-            new Chart(ctx, {
+            
+            if (charts.distributors) {
+                charts.distributors.destroy();
+            }
+            
+            charts.distributors = new Chart(ctx, {
                 type: 'bar',  // Horizontal bar chart
                 data: data,
                 options: {
                     indexAxis: 'y',     // Required for horizontal bar in Chart.js v3+
                     responsive: true,
                     maintainAspectRatio: false,
-
                     layout: {
                         padding: {
-                            bottom: 25  // Extra space for labels
+                            bottom: 25
                         }
                     },
-
                     scales: {
                         x: {
                             beginAtZero: true,
@@ -212,24 +262,30 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         })
         .catch(error => console.error('Error loading distributors data:', error));
+    }
 
-    fetch('/admin/api/top-categories-data/')
+    // Chart 3: Categories
+    function loadCategoriesChart(days) {
+        fetch(`/admin/api/top-categories-data/?days=${days}`)
         .then(response => response.json())
         .then(data => {
             const ctx = document.getElementById('categoriesChart').getContext('2d');
-            new Chart(ctx, {
+            
+            if (charts.categories) {
+                charts.categories.destroy();
+            }
+            
+            charts.categories = new Chart(ctx, {
                 type: 'doughnut',
                 data: data,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-
                     layout: {
                         padding: {
-                            bottom: 25  // Extra space for labels
+                            bottom: 25
                         }
                     },
-                    
                     plugins: {
                         legend: {
                             position: 'right'
@@ -246,25 +302,30 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         })
         .catch(error => console.error('Error loading categories data:', error));
+    }
 
-
-    fetch('/admin/api/revenue-data/')
+    // Chart 4: Revenue
+    function loadRevenueChart(days) {
+        fetch(`/admin/api/revenue-data/?days=${days}`)
         .then(response => response.json())
         .then(data => {
             const ctx = document.getElementById('revenueChart').getContext('2d');
-            new Chart(ctx, {
+            
+            if (charts.revenue) {
+                charts.revenue.destroy();
+            }
+            
+            charts.revenue = new Chart(ctx, {
                 type: 'bar',
                 data: data,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-
                     layout: {
                         padding: {
-                            bottom: 25  // Extra space for labels
+                            bottom: 25
                         }
                     },
-                    
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -296,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         })
         .catch(error => console.error('Error loading revenue data:', error));
-
+    }
 });
 </script>
 {% endblock %}

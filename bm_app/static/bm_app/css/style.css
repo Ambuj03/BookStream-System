@@ -111,3 +111,30 @@
     margin-left: -5px;
     margin-right: -5px;
 }
+
+/* #Chart_filter css */
+/* Time Filter Dropdown Styles */
+.dashboard-header {
+    margin-bottom: 1.5rem;
+}
+
+.filter-container {
+    background-color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+}
+
+.form-select-sm {
+    padding-right: 2rem;
+    min-width: 150px;
+    font-size: 0.875rem;
+}
+
+label.me-2 {
+    margin-right: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+}

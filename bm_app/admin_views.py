@@ -53,9 +53,11 @@ def admin_dashboard(request):
 @staff_member_required
 def get_monthly_distribution_data(request):
     
-    # Get data for last 120 days
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
     end_date = timezone.now().date()
-    start_date = end_date - timedelta(days=120)
+    start_date = end_date - timedelta(days=days)
     
     # Group by month using Django's ORM
     monthly_data = (
@@ -94,9 +96,16 @@ def get_monthly_distribution_data(request):
 
 @staff_member_required
 def get_top_distributors(request):
+
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
+    end_date = timezone.now().date()
+    start_date = end_date - timedelta(days=days)
     
     #getting top 10 distributors
     top_distributors = (ReceiptBooks.objects
+        .filter(receipt__date__gte = start_date, receipt__date__lte = end_date)
         .values('receipt__distributor__distributor_name')
         .annotate(total = Sum('quantity'))
         .order_by('-total')[:10]
@@ -125,6 +134,13 @@ def get_top_distributors(request):
 
 @staff_member_required
 def get_top_categories(request):
+
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
+    end_date = timezone.now().date()
+    start_date = end_date - timedelta(days=days)
+
     # Use book_name to match with Books table and get categories
     categories_data = []
     total_matched = 0  # Track total books matched to categories
@@ -135,9 +151,10 @@ def get_top_categories(request):
         books_in_category = Books.objects.filter(book_category=category).values_list('book_name', flat=True)
         
         # Find distribution numbers for these books
-        quantity = ReceiptBooks.objects.filter(book_name__in=books_in_category).aggregate(
-            total=Sum('quantity')
+        quantity = (ReceiptBooks.objects.filter(receipt__date__gte = start_date, receipt__date__lte = end_date ,book_name__in=books_in_category)
+        .aggregate(total=Sum('quantity')
         )['total'] or 0
+        )
         
         total_matched += quantity
         
@@ -176,14 +193,17 @@ def get_top_categories(request):
 
 @staff_member_required
 def get_revenue_data(request):
-    # Get data for last 6 months
+    
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
     end_date = timezone.now().date()
-    start_date = end_date - timedelta(days=180)
+    start_date = end_date - timedelta(days=days)
     
     # Get monthly book sales revenue and donation revenue
     book_revenue = (
         ReceiptBooks.objects
-        .filter(receipt__date__gte=start_date)
+        .filter(receipt__date__gte = start_date, receipt__date__lte = end_date)
         .annotate(month=TruncMonth('receipt__date'))
         .values('month')
         .annotate(revenue=Sum(F('quantity') * F('book_price')))

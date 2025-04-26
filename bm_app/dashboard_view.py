@@ -59,9 +59,11 @@ def get_monthly_distribution_data(request):
         
     current_distributor = Distributor.objects.get(user = request.user)
 
-    #data for last 120 days
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
     end_date = timezone.now().date()
-    start_date = end_date - timedelta(days = 120)
+    start_date = end_date - timedelta(days=days)
 
     #grouping data by month
     monthly_data = (
@@ -104,13 +106,15 @@ def get_revenue_data(request):
 
     current_distributor = Distributor.objects.get(user = request.user)
 
-    #Data for last 6months
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
     end_date = timezone.now().date()
-    start_date = end_date - timedelta(days=180) 
+    start_date = end_date - timedelta(days=days) 
 
     book_revenue = (Receipt.objects
                     .filter(distributor = current_distributor,
-                            date__gte = start_date)
+                            date__gte=start_date, date__lte = end_date)
                     .annotate(month = TruncMonth('date'))
                     .values('month')
                     .annotate(revenue = Sum('total_amount'))
@@ -171,6 +175,12 @@ def get_top_categories(request):
 
     current_distributor = Distributor.objects.get(user = request.user)
 
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
+    end_date = timezone.now().date()
+    start_date = end_date - timedelta(days=days) 
+
     categories_data = []
     total_matched = 0
 
@@ -178,7 +188,9 @@ def get_top_categories(request):
         books_in_this_cat = Books.objects.filter(book_category = category).values_list('book_name', flat= True)
 
         quantity = (ReceiptBooks.objects
-                    .filter(receipt__distributor = current_distributor, book_name__in = books_in_this_cat)
+                    .filter(receipt__distributor = current_distributor, 
+                            book_name__in = books_in_this_cat,
+                            receipt__date__gte=start_date, receipt__date__lte = end_date)
                     .aggregate(total = Sum('quantity'))['total'] or 0
                     )
         total_matched += quantity
@@ -222,8 +234,15 @@ def get_top_books(request):
 
     current_distributor = Distributor.objects.get(user = request.user)
 
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
+    end_date = timezone.now().date()
+    start_date = end_date - timedelta(days=days) 
+
     top_books = (ReceiptBooks.objects
-                .filter(receipt__distributor = current_distributor)
+                .filter(receipt__distributor = current_distributor,
+                        receipt__date__gte=start_date, receipt__date__lte = end_date)
                 .values('book_name')
                 .annotate(total = Sum('quantity'))
                 .order_by('-total')[:5]
