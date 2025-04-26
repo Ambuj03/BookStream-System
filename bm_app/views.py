@@ -411,9 +411,3 @@ def admin_notifications_view(request):
     
     return render(request, 'admin/notifications.html', context)
 
-
-
-
-
-
-

@@ -3,6 +3,7 @@ from .views import inventory_view, main_page, login_page, signup_page
 from .views import home_page, new_transaction_view, logout_view,books_view, add_books, add_custom_books, delete_book, get_distributor_books
 from .views import books_api
 from .views import distributor_notifications, mark_notification_read, get_unread_notification_count
+from .dashboard_view import dashboard, get_monthly_distribution_data,get_top_books, get_revenue_data, get_top_categories
 
 urlpatterns = [
     path('', main_page, name='main'),
@@ -18,6 +19,13 @@ urlpatterns = [
     path('delete-book/<int:book_id>/', delete_book, name='delete_book'), 
     path('api/books/', books_api, name='books_api'),
     path('api/distributor-books/', get_distributor_books, name='get_distributor_books'),
+
+    #dashboard urls
+    path('home/dashboard/', dashboard, name = 'dashboard'),
+    path('api/distributor/monthly-distribution/',get_monthly_distribution_data, name = 'monthly_distribution_data'),
+    path('api/distributor/revenue/',get_revenue_data, name = 'revenue_data'),
+    path('api/distributor/categories/',get_top_categories, name = 'top_categories_data'),
+    path('api/distributor/top-books/',get_top_books, name = 'top_books_data'),
 
     # notification related urls
     path('notifications/', distributor_notifications, name = 'distributor_notifications'),

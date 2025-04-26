@@ -29,16 +29,20 @@
                            href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'inventory' %}active{% endif %}" 
-                           href="{% url 'inventory' %}">My Inventory</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'new_transaction' %}active{% endif %}" 
                            href="{% url 'new_transaction' %}">New Transaction</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'inventory' %}active{% endif %}" 
+                           href="{% url 'inventory' %}">My Inventory</a>
+                    </li>                   
+                    <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'books' %}active{% endif %}" 
                            href="{% url 'books' %}">Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+                           href="{% url 'dashboard' %}">Dashboard</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'distributor_notifications' %}active{% endif %}" 
@@ -62,6 +66,6 @@
     <!-- Make sure jQuery and other scripts are loaded -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
-    {% block extra_js %}{% endblock %}
+    {% block extrajs %}{% endblock %}
 </body>
 </html>

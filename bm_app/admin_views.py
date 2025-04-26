@@ -47,15 +47,17 @@ def admin_dashboard(request):
         'recent_revenue' : recent_revenue,
     }
 
-    return render(request, 'admin/dashboard.html', context)
+    return render(request, 'admin/admin_dashboard.html', context)
 
 
 @staff_member_required
 def get_monthly_distribution_data(request):
     
-    # Get data for last 90 days
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
     end_date = timezone.now().date()
-    start_date = end_date - timedelta(days=90)
+    start_date = end_date - timedelta(days=days)
     
     # Group by month using Django's ORM
     monthly_data = (
@@ -72,16 +74,11 @@ def get_monthly_distribution_data(request):
     data = []
     
     # If we got data, format it properly
-    if monthly_data:
-        for item in monthly_data:
-            month_date = item['month']
-            month_name = month_date.strftime('%b %Y')  # Format like "Apr 2025"
-            labels.append(month_name)
-            data.append(item['total'])
-    else:
-        # Fallback to sample data if no results
-        labels = ['Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025']
-        data = [15, 22, 18, 20]
+    for item in monthly_data:
+        month_date = item['month']
+        month_name = month_date.strftime('%b %Y')  # Format like "Apr 2025"
+        labels.append(month_name)
+        data.append(item['total'])
     
     chart_data = {
         'labels': labels,
@@ -99,9 +96,16 @@ def get_monthly_distribution_data(request):
 
 @staff_member_required
 def get_top_distributors(request):
+
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
+    end_date = timezone.now().date()
+    start_date = end_date - timedelta(days=days)
     
     #getting top 10 distributors
     top_distributors = (ReceiptBooks.objects
+        .filter(receipt__date__gte = start_date, receipt__date__lte = end_date)
         .values('receipt__distributor__distributor_name')
         .annotate(total = Sum('quantity'))
         .order_by('-total')[:10]
@@ -130,9 +134,13 @@ def get_top_distributors(request):
 
 @staff_member_required
 def get_top_categories(request):
-    # Get total quantity of books distributed
-    total_books = ReceiptBooks.objects.aggregate(total=Sum('quantity'))['total'] or 0
-    
+
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
+    end_date = timezone.now().date()
+    start_date = end_date - timedelta(days=days)
+
     # Use book_name to match with Books table and get categories
     categories_data = []
     total_matched = 0  # Track total books matched to categories
@@ -143,9 +151,10 @@ def get_top_categories(request):
         books_in_category = Books.objects.filter(book_category=category).values_list('book_name', flat=True)
         
         # Find distribution numbers for these books
-        quantity = ReceiptBooks.objects.filter(book_name__in=books_in_category).aggregate(
-            total=Sum('quantity')
+        quantity = (ReceiptBooks.objects.filter(receipt__date__gte = start_date, receipt__date__lte = end_date ,book_name__in=books_in_category)
+        .aggregate(total=Sum('quantity')
         )['total'] or 0
+        )
         
         total_matched += quantity
         
@@ -168,7 +177,7 @@ def get_top_categories(request):
     # Use sample data if nothing found
     if not data:
         labels = ['Category 1', 'Category 2']
-        data = [60, 40]
+        data = [0, 0]
     
     chart_data = {
         'labels': labels,
@@ -184,14 +193,17 @@ def get_top_categories(request):
 
 @staff_member_required
 def get_revenue_data(request):
-    # Get data for last 6 months
+    
+    #getting days from frontend via api
+    days = int(request.GET.get('days' , 180))
+
     end_date = timezone.now().date()
-    start_date = end_date - timedelta(days=180)
+    start_date = end_date - timedelta(days=days)
     
     # Get monthly book sales revenue and donation revenue
     book_revenue = (
         ReceiptBooks.objects
-        .filter(receipt__date__gte=start_date)
+        .filter(receipt__date__gte = start_date, receipt__date__lte = end_date)
         .annotate(month=TruncMonth('receipt__date'))
         .values('month')
         .annotate(revenue=Sum(F('quantity') * F('book_price')))
@@ -204,7 +216,7 @@ def get_revenue_data(request):
         .filter(donation__isnull=False)
         .annotate(month=TruncMonth('date'))
         .values('month')
-        .annotate(revenue=Sum('donation'))
+        .annotate(revenue=Sum('donation__donation_amount'))
         .order_by('month')
     )
     
@@ -234,8 +246,8 @@ def get_revenue_data(request):
     # Use sample data if empty
     if not labels:
         labels = ['Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025']
-        book_data = [1200, 1500, 1300, 1700]
-        donation_data = [500, 700, 600, 900]
+        book_data = [0, 0, 0, 0]
+        donation_data = [0, 0, 0, 0]
     
     chart_data = {
         'labels': labels,
