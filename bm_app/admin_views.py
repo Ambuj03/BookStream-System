@@ -72,16 +72,11 @@ def get_monthly_distribution_data(request):
     data = []
     
     # If we got data, format it properly
-    if monthly_data:
-        for item in monthly_data:
-            month_date = item['month']
-            month_name = month_date.strftime('%b %Y')  # Format like "Apr 2025"
-            labels.append(month_name)
-            data.append(item['total'])
-    else:
-        # Fallback to sample data if no results
-        labels = ['Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025']
-        data = [15, 22, 18, 20]
+    for item in monthly_data:
+        month_date = item['month']
+        month_name = month_date.strftime('%b %Y')  # Format like "Apr 2025"
+        labels.append(month_name)
+        data.append(item['total'])
     
     chart_data = {
         'labels': labels,
@@ -130,9 +125,6 @@ def get_top_distributors(request):
 
 @staff_member_required
 def get_top_categories(request):
-    # Get total quantity of books distributed
-    total_books = ReceiptBooks.objects.aggregate(total=Sum('quantity'))['total'] or 0
-    
     # Use book_name to match with Books table and get categories
     categories_data = []
     total_matched = 0  # Track total books matched to categories
@@ -168,7 +160,7 @@ def get_top_categories(request):
     # Use sample data if nothing found
     if not data:
         labels = ['Category 1', 'Category 2']
-        data = [60, 40]
+        data = [0, 0]
     
     chart_data = {
         'labels': labels,
@@ -204,7 +196,7 @@ def get_revenue_data(request):
         .filter(donation__isnull=False)
         .annotate(month=TruncMonth('date'))
         .values('month')
-        .annotate(revenue=Sum('donation'))
+        .annotate(revenue=Sum('donation__donation_amount'))
         .order_by('month')
     )
     
@@ -234,8 +226,8 @@ def get_revenue_data(request):
     # Use sample data if empty
     if not labels:
         labels = ['Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025']
-        book_data = [1200, 1500, 1300, 1700]
-        donation_data = [500, 700, 600, 900]
+        book_data = [0, 0, 0, 0]
+        donation_data = [0, 0, 0, 0]
     
     chart_data = {
         'labels': labels,

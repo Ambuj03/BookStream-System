@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             const ctx = document.getElementById('distributionChart').getContext('2d');
             new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: data,
                 options: {
                     responsive: true,
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data: data,
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
                     plugins: {
                         legend: {
                             position: 'bottom'
@@ -150,6 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('categoriesChart').innerHTML = 
                 '<div class="text-center p-3">Unable to load chart data. Please try again later.</div>';
         });
+    */
 
     // Chart 3: Revenue Trend
     // Creates a bar chart showing revenue generated per month
@@ -162,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data: data,
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -187,6 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 '<div class="text-center p-3">Unable to load chart data. Please try again later.</div>';
         });
 
+        /*
     // Chart 4: Top Books
     // Creates a horizontal bar chart showing top books distributed
     fetch('/api/distributor/top-books/')

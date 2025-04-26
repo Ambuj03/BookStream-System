@@ -3,7 +3,7 @@ from .views import inventory_view, main_page, login_page, signup_page
 from .views import home_page, new_transaction_view, logout_view,books_view, add_books, add_custom_books, delete_book, get_distributor_books
 from .views import books_api
 from .views import distributor_notifications, mark_notification_read, get_unread_notification_count
-from .dashboard_view import dashboard, get_monthly_distribution_data
+from .dashboard_view import dashboard, get_monthly_distribution_data, get_revenue_data
 
 urlpatterns = [
     path('', main_page, name='main'),
@@ -23,6 +23,7 @@ urlpatterns = [
     #dashboard urls
     path('home/dashboard/', dashboard, name = 'dashboard'),
     path('api/distributor/monthly-distribution/',get_monthly_distribution_data, name = 'monthly_distribution_data'),
+    path('api/distributor/revenue/',get_revenue_data, name = 'revenue_data'),
 
     # notification related urls
     path('notifications/', distributor_notifications, name = 'distributor_notifications'),
