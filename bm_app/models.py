@@ -87,7 +87,7 @@ class DistributorBooks(models.Model):
 class Customer(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
     customer_id = models.AutoField(primary_key=True)
-    customer_name = models.CharField(max_length=100)
+    customer_name = models.CharField(max_length=100, null = True, blank = True)
     customer_occupation = models.CharField(max_length=100, blank=True, null=True)
     customer_phone = models.CharField(max_length=15, blank=True, null=True)
     customer_city = models.CharField(max_length=50, blank=True, null=True)
@@ -105,7 +105,7 @@ class Donation(models.Model):
     donation_id = models.AutoField(primary_key=True)
     customer = models.ForeignKey(Customer, on_delete=models.RESTRICT, null=True, blank=True)
     donation_date = models.DateField(default=timezone.now, null=True, blank=True)
-    donation_amount = models.IntegerField()
+    donation_amount = models.IntegerField(blank= True,null = True)
     donation_purpose = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:

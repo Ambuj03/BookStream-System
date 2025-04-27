@@ -23,15 +23,15 @@ name_validator = RegexValidator(
 )
 
 class transaction_form(forms.ModelForm):
-    donation_amount = forms.IntegerField()
-    donation_purpose = forms.CharField(max_length=30, validators=[name_validator])
-    customer_name = forms.CharField(max_length=20, validators = [name_validator])
+    donation_amount = forms.IntegerField(required=False)
+    donation_purpose = forms.CharField(max_length=30, validators=[name_validator], required=False)
+    customer_name = forms.CharField(max_length=20, validators = [name_validator], required=False)
     customer_phone = forms.CharField(
         widget=forms.TextInput(attrs={'type': 'tel'}),
-        validators=[validate_indian_phone]
+        validators=[validate_indian_phone], required= False
     )
-    customer_occupation = forms.CharField(max_length=20, validators = [name_validator])
-    customer_city = forms.CharField(max_length=15, validators=[name_validator])
+    customer_occupation = forms.CharField(max_length=20, validators = [name_validator], required=False)
+    customer_city = forms.CharField(max_length=15, validators=[name_validator], required=False)
     remarks = forms.CharField(widget=forms.Textarea, required=False, max_length= 150)
 
     class Meta:
