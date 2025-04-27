@@ -53,6 +53,10 @@ class signup_form(UserCreationForm):
     # - password1
     # - password2
 
+    def __init__(self, *args, **kwargs):
+        super(signup_form, self).__init__(*args, **kwargs)
+        self.fields['username'].help_text = "Required. 15 characters or fewer. Letters and numbers only."
+
     def clean_username(self):
         username = self.cleaned_data.get('username')
 
