@@ -274,7 +274,7 @@ class CustomAuthenticationForm(AuthenticationForm):
         if len(username) > 15:
             raise ValidationError("Username should be fewer than 15 Characters")
         if not username.isalnum():
-            raise ValidationError("Username must contain only letters and numbers.")
+            raise ValidationError("Username must contain only letters and numbers, No spaces.")
         return username 
     
     def clean_password(self):

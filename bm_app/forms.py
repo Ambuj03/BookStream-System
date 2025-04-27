@@ -9,6 +9,8 @@ from django.core.exceptions import ValidationError
 import re # regex
 from django.core.validators import RegexValidator
 
+from django.utils import timezone
+
 
 #Transaction Form***************************************************************
 
@@ -63,14 +65,8 @@ class signup_form(UserCreationForm):
         if len(username) > 15:
             raise ValidationError("Username should be fewer than 15 Characters")
         if not username.isalnum():
-            raise ValidationError("Username must contain only letters and numbers.")
+            raise ValidationError("Username must contain only letters and numbers, No spaces.")
         return username 
-    
-    def clean_password(self):
-        password = self.cleaned_data.get('password')
-        if len(password) < 8:
-            raise ValidationError("Password must contain atleast 8 characters")
-        return password
     
     # Additional fields for Distributor
     distributor_name = forms.CharField(max_length=20, validators= [name_validator])
@@ -97,6 +93,12 @@ class signup_form(UserCreationForm):
         if not re.match(pattern, email):
             raise forms.ValidationError("Please enter a valid email address.")
         return email
+    
+    def clean_distributor_birth_date(self):
+        birth_date = self.cleaned_data.get('distributor_birth_date')
+        if birth_date > timezone.now().date():
+            raise forms.ValidationError("Birth date cannot be in the future.")
+        return birth_date
 
     def save(self, commit=True):
         user = super().save(commit=True)
