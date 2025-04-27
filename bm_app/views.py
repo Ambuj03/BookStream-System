@@ -31,6 +31,9 @@ from .notifications import get_distributor_notifications, mark_notification_as_r
 from django.contrib import admin
 from .admin import get_admin_notifications
 
+def landing_page(request):
+    return render(request, 'bm_app/home1.html', {})
+
 #Showing main page
 def main_page(request):
     return render(request,'bm_app/main.html',{})
@@ -271,7 +274,7 @@ class CustomAuthenticationForm(AuthenticationForm):
         if len(username) > 15:
             raise ValidationError("Username should be fewer than 15 Characters")
         if not username.isalnum():
-            raise ValidationError("Username must contain only letters and numbers.")
+            raise ValidationError("Username must contain only letters and numbers, No spaces.")
         return username 
     
     def clean_password(self):

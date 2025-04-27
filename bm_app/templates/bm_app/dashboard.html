@@ -53,32 +53,40 @@
 
     <!-- Charts Row 1 -->
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6 col-12 mb-4">
             <div class="chart-container">
                 <h4>Monthly Distribution Trend</h4>
-                <canvas id="distributionChart" style="height: 280px;"></canvas>
+                <div class="chart-wrapper">
+                    <canvas id="distributionChart"></canvas>
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 col-12 mb-4">
             <div class="chart-container">
                 <h4>Top Books Distributed</h4>
-                <canvas id="topBooksChart" style="height: 280px;"></canvas>
+                <div class="chart-wrapper">
+                    <canvas id="topBooksChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Charts Row 2 -->
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6 col-12 mb-4">
             <div class="chart-container">
                 <h4>Monthly Revenue</h4>
-                <canvas id="revenueChart" style="height: 280px;"></canvas>
+                <div class="chart-wrapper">
+                    <canvas id="revenueChart"></canvas>
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 col-12 mb-4">
             <div class="chart-container">
                 <h4>Books by Category</h4>
-                <canvas id="categoriesChart" style="height: 280px;"></canvas>
+                <div class="chart-wrapper">
+                    <canvas id="categoriesChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -100,6 +108,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initial load with default value (6 months)
     loadAllCharts(180);
+
+    // Add after your loadAllCharts(180) call
+    window.addEventListener('resize', function() {
+        setTimeout(function() {
+            loadAllCharts(document.getElementById('timeFilter').value);
+        }, 200);
+    }); 
     
     // Add event listener to the dropdown
     document.getElementById('timeFilter').addEventListener('change', function() {
@@ -131,8 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: data,
                     options: {
                         responsive: true,
-                        maintainAspectRatio: true,
-                        aspectRatio:2,
+                        maintainAspectRatio: false,
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -145,9 +159,15 @@ document.addEventListener('DOMContentLoaded', function() {
                                 title: {
                                     display: true,
                                     text: 'Month'
+                                },
+                                ticks: {
+                                    maxRotation: 90, // Better handling of labels on small screens
+                                    autoSkip: true,
+                                    maxTicksLimit: window.innerWidth < 768 ? 6 : 12 // Fewer ticks on mobile
                                 }
                             }
-                        }
+                        },
+                        
                     }
                 });
             })
@@ -174,8 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: data,
                     options: {
                         responsive: true,
-                        maintainAspectRatio: true,
-                        aspectRatio: 2,
+                        maintainAspectRatio: false,
                         plugins: {
                             legend: {
                                 position: 'right',
@@ -214,8 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: data,
                     options: {
                         responsive: true,
-                        maintainAspectRatio: true,
-                        aspectRatio: 2,
+                        maintainAspectRatio: false,
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -258,8 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     options: {
                         indexAxis: 'y', // This makes the bars horizontal
                         responsive: true,
-                        maintainAspectRatio: true,
-                        aspectRatio: 2,
+                        maintainAspectRatio: false,
                         scales: {
                             x: {
                                 beginAtZero: true,
@@ -269,9 +286,28 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             },
                             y: {
-                                title: {
-                                    display: true,
-                                    text: 'Book Name'
+                                ticks: {
+                                    // Add this for better text wrapping on y-axis labels
+                                    callback: function(value) {
+                                        // Limit to ~20 chars on mobile, more on desktop
+                                        const maxLength = window.innerWidth < 1400 ? 20 : 30;
+                                        const label = this.getLabelForValue(value);
+                                        
+                                        if (label.length > maxLength) {
+                                            return label.substr(0, maxLength) + '...';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    // Show full title in tooltip
+                                    title: function(context) {
+                                        return context[0].label;
+                                    }
                                 }
                             }
                         }

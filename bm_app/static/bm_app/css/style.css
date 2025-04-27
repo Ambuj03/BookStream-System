@@ -138,3 +138,50 @@ label.me-2 {
     font-weight: 500;
     color: #495057;
 }
+
+/* Making the charts responsive for mobile phones*/
+
+.chart-wrapper {
+    position: relative;
+    height: 300px;
+    max-height: 500px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .chart-wrapper {
+        height: 400px;
+        margin-bottom: 25px;
+    }
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    .filter-container {
+        margin-top: 10px;
+        width: 100%;
+    }
+    #timeFilter {
+        width: 100%;
+    }
+    .chart-container {
+        padding: 15px; /* More internal padding */
+        margin-bottom: 25px; /* Space between chart containers */
+    }
+    
+    .stat-card {
+        margin-bottom: 15px; /* More space between stat cards */
+    }
+    
+    .dashboard-container {
+        padding: 10px; /* Additional padding for the whole container */
+    }
+    
+    h4 {
+        font-size: 1.1rem; /* Slightly smaller headings on mobile */
+        margin-bottom: 15px; /* More space below headings */
+    }
+}

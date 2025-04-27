@@ -9,6 +9,8 @@ from django.core.exceptions import ValidationError
 import re # regex
 from django.core.validators import RegexValidator
 
+from django.utils import timezone
+
 
 #Transaction Form***************************************************************
 
@@ -23,15 +25,15 @@ name_validator = RegexValidator(
 )
 
 class transaction_form(forms.ModelForm):
-    donation_amount = forms.IntegerField()
-    donation_purpose = forms.CharField(max_length=30, validators=[name_validator])
-    customer_name = forms.CharField(max_length=20, validators = [name_validator])
+    donation_amount = forms.IntegerField(required=False)
+    donation_purpose = forms.CharField(max_length=30, validators=[name_validator], required=False)
+    customer_name = forms.CharField(max_length=20, validators = [name_validator], required=False)
     customer_phone = forms.CharField(
         widget=forms.TextInput(attrs={'type': 'tel'}),
-        validators=[validate_indian_phone]
+        validators=[validate_indian_phone], required= False
     )
-    customer_occupation = forms.CharField(max_length=20, validators = [name_validator])
-    customer_city = forms.CharField(max_length=15, validators=[name_validator])
+    customer_occupation = forms.CharField(max_length=20, validators = [name_validator], required=False)
+    customer_city = forms.CharField(max_length=15, validators=[name_validator], required=False)
     remarks = forms.CharField(widget=forms.Textarea, required=False, max_length= 150)
 
     class Meta:
@@ -53,20 +55,18 @@ class signup_form(UserCreationForm):
     # - password1
     # - password2
 
+    def __init__(self, *args, **kwargs):
+        super(signup_form, self).__init__(*args, **kwargs)
+        self.fields['username'].help_text = "Required. 15 characters or fewer. Letters and numbers only."
+
     def clean_username(self):
         username = self.cleaned_data.get('username')
 
         if len(username) > 15:
             raise ValidationError("Username should be fewer than 15 Characters")
         if not username.isalnum():
-            raise ValidationError("Username must contain only letters and numbers.")
+            raise ValidationError("Username must contain only letters and numbers, No spaces.")
         return username 
-    
-    def clean_password(self):
-        password = self.cleaned_data.get('password')
-        if len(password) < 8:
-            raise ValidationError("Password must contain atleast 8 characters")
-        return password
     
     # Additional fields for Distributor
     distributor_name = forms.CharField(max_length=20, validators= [name_validator])
@@ -93,6 +93,12 @@ class signup_form(UserCreationForm):
         if not re.match(pattern, email):
             raise forms.ValidationError("Please enter a valid email address.")
         return email
+    
+    def clean_distributor_birth_date(self):
+        birth_date = self.cleaned_data.get('distributor_birth_date')
+        if birth_date > timezone.now().date():
+            raise forms.ValidationError("Birth date cannot be in the future.")
+        return birth_date
 
     def save(self, commit=True):
         user = super().save(commit=True)

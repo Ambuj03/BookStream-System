@@ -198,7 +198,7 @@ class ReceiptAdmin(TempleRestrictedAdmin):
             }]
         
         context = {
-            'title' : f'Receipt #{receipt.receipt_id} Details',
+            'title' : f'Receipt Details',
             'receipt': receipt,
             'receipt_data': receipt_data,
             'opts': self.model._meta,
