@@ -31,6 +31,9 @@ from .notifications import get_distributor_notifications, mark_notification_as_r
 from django.contrib import admin
 from .admin import get_admin_notifications
 
+def landing_page(request):
+    return render(request, 'bm_app/home1.html', {})
+
 #Showing main page
 def main_page(request):
     return render(request,'bm_app/main.html',{})
