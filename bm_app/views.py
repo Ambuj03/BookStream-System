@@ -140,12 +140,12 @@ def new_transaction_view(request):
                                 book_price = dist_book.book_price,
                             )
                             
-                            success, message = send_receipt_sms(receipt)
-                            
                             # Update stock
                             dist_book.book_stock -= quantity
                             dist_book.save()
                             
+                        success, message = send_receipt_sms(receipt)
+
                         return JsonResponse({
                             'success': True,
                             'redirect_url': reverse('home')
