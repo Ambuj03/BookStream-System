@@ -1,18 +1,166 @@
 {% extends "bm_app/base.html" %}
 {% load static %}
 
-{% block title %}Welcome - Brihad Mridanga{% endblock %}
+{% block title %}Brihad Mridanga{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="text-center">
-        <h1 class="display-4 mb-4">Brihat Mridanga</h1>
-        <p class="lead mb-5">Manage your book inventory and distribution effortlessly.</p>
-        
-        <div class="d-grid gap-2 d-md-block">
-            <a href="{% url 'login' %}" class="btn btn-primary btn-lg mx-2">Login</a>
-            <a href="{% url 'signup' %}" class="btn btn-success btn-lg mx-2">Signup</a>
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <div class="logo-placeholder">Brihad Mridanga</div>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="{% url 'signup' %}" class="btn btn-primary me-2">Sign Up</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary">Login</a>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+    </nav>
+
+    <!-- Rest of your content here -->
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-container">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Manage Your Book Distribution and Inventory Swiftly  </h1>
+                        <p class="hero-subtitle">Streamline your book distribution management process with our comprehensive inventory system designed for efficiency and accuracy.</p>
+                        <div class="hero-cta">
+                            <a href={%url 'signup' %} class="btn btn-primary">Get Started</a>
+                            <a href="#features" class="btn btn-outline">Learn More</a>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <!-- You'll add your image here with: -->
+                            <img src="{% static 'logo.jpg' %}" alt="Book Distribution System"> 
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section - Updated layout -->
+        <section id="features" class="section">
+            <div class="container">
+                <h2 class="section-title">Our Features</h2>
+                <div class="features-container">
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                </svg>
+                            </div>
+                            <h3 class="feature-title">Inventory Management</h3>
+                            <p>Maintain a complete record of your book inventory with automatic updates as transactions occur.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                    <path d="M9 14h6"></path>
+                                    <path d="M9 10h6"></path>
+                                    <path d="M9 18h6"></path>
+                                </svg>
+                            </div>
+                            <h3 class="feature-title">Transaction Management</h3>
+                            <p>Easily record and manage all your book distributions with our intuitive transaction system.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 20V10"></path>
+                                    <path d="M18 20V4"></path>
+                                    <path d="M6 20v-4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="feature-title">Analytics & Reports</h3>
+                            <p>Get detailed insights about your book distribution activities with advanced analytics and reports.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                </svg>
+                            </div>
+                            <h3 class="feature-title">Notifications</h3>
+                            <p>Stay updated with real-time notifications about important inventory changes and transactions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section - Text only now -->
+        <section id="about" class="section about">
+            <div class="container">
+                <h2 class="section-title">About Brihad Mridanga</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Brihad Mridanga is a comprehensive book inventory management system designed to help organization to streamline their book distribution process. Our platform provides powerful tools to efficiently manage inventory, track distributions, and analyze performance.</p>
+                        <br>
+                        <p>Founded with the mission to make book distribution management effortless, we continue to innovate and improve our system based on user feedback and industry best practices.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Brihad Mridanga</h3>
+                    <p>Efficient book inventory management for your distribution needs. We help organization to streamline their book distribution process with our comprehensive solution.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <ul class="footer-contact-info">
+                        <li><a href="mailto:info@brihadmridanga.com">info@brihadmridanga.com</a></li>
+                        <li><a href="tel:+1234567890">+1 (234) 567-890</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2023 Brihad Mridanga. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Only keep the scroll detection JavaScript - remove menu toggle code
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 10) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
 {% endblock %}
