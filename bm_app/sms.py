@@ -13,6 +13,9 @@ TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
 
 def send_receipt_sms(receipt):
+
+    from .models import ReceiptBooks
+
     if not receipt.customer or not receipt.customer.customer_phone:
         return False, "No customer phone available"
     
@@ -22,15 +25,39 @@ def send_receipt_sms(receipt):
     if not phone.startswith('+'):
         phone = f"+91{phone}"
         
-        #EDIT MESSAGE BODY to include book details etc self
+    
+    receipt_books = ReceiptBooks.objects.filter(receipt_id = receipt.receipt_id)
+
+    #EDIT MESSAGE BODY to include book details etc self
+    book_details = ""
+    for idx, rb in enumerate(receipt_books, 1):
+        book_details += f"{idx}. {rb.book_name} x {rb.quantity} - ₹{rb.quantity * rb.book_price}\n"
+    
+
+    #for trial limited length twilio account
+
     message_body = (
-        f"Thank you for your purchase. {receipt.customer.customer_name}!\n\n"
-        f"Receipt #{receipt.receipt_id}\n"
-        f"Date: {receipt.date.strftime('%d-%m-%Y')}\n"
-        f"Amount: ₹{receipt.total_amount}\n"
-        f"Distributor: {receipt.distributor.distributor_name}\n\n"
-        f"Thank you for supporting {receipt.temple.name}."
+        f"Dear {receipt.customer.customer_name},\n\n"
+        f"Thank you for your purchase from {receipt.temple.name}!\n\n"
+        f"RECEIPT #{receipt.receipt_id}\n"
+        f"Date: {receipt.date.strftime('%d-%m-%Y')}\n\n"
+        f"Total: ₹{receipt.total_amount}\n\n"
+        f"Hare Krishna! 🙏"
     )
+
+    #Use this with pro twilio acc
+    # message_body = (
+    #     f"Dear {receipt.customer.customer_name},\n\n"
+    #     f"Thank you for your purchase from {receipt.temple.name}!\n\n"
+    #     f"RECEIPT #{receipt.receipt_id}\n"
+    #     f"Date: {receipt.date.strftime('%d-%m-%Y')}\n\n"
+    #     f"ITEMS:\n{book_details}\n"
+    #     f"Total: ₹{receipt.total_amount}\n\n"
+    #     f"Our best wishes for your spiritual journey. For any queries please contact your distributor: {receipt.distributor.distributor_name}.\n\n"
+    #     f"Hare Krishna! 🙏"
+    # )
+
+    print(message_body)
     
     try:
         message = client.messages.create(
