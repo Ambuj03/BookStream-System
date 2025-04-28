@@ -83,6 +83,12 @@ class DistributorBooks(models.Model):
 
     def __str__(self):
         return self.book_name
+    
+    def save(self, *args, **kwargs):
+        if(self.book_stock) <= 0 :
+            self.delete()
+            return
+        super().save(*args, **kwargs)
 
 class Customer(models.Model):
     temple = models.ForeignKey(Temple, on_delete=models.PROTECT)
