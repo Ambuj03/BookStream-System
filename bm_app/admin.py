@@ -36,7 +36,7 @@ class DonationResource(resources.ModelResource):
 
         # fields to include in export( excluding temple here)
         ## try with temple too
-        fields = ('id', 'customer_name', 'donation_date', 'donation_amount' ,'donation_purpose')
+        fields = ('customer_name', 'donation_date', 'donation_amount' ,'donation_purpose')
         export_order = fields    
 
 class CustomerResourse(resources.ModelResource):

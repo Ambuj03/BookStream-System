@@ -5,6 +5,7 @@ from .views import books_api, landing_page
 from .views import distributor_notifications, mark_notification_read, get_unread_notification_count
 from .dashboard_view import dashboard, get_monthly_distribution_data,get_top_books, get_revenue_data, get_top_categories
 from .transaction_view import transaction_history_view
+from .profile_view import view_profile, edit_profile, change_password, profile_dashboard
 
 urlpatterns = [
     path('home1/', landing_page, name = "landing"),
@@ -23,7 +24,7 @@ urlpatterns = [
     path('api/distributor-books/', get_distributor_books, name='get_distributor_books'),
 
     #Transaction History
-    path('home/transaction_history', transaction_history_view, name = 'transaction_history'),
+    path('home/transaction_history/', transaction_history_view, name = 'transaction_history'),
 
     #dashboard urls
     path('home/dashboard/', dashboard, name = 'dashboard'),
@@ -36,4 +37,11 @@ urlpatterns = [
     path('home/notifications/', distributor_notifications, name = 'distributor_notifications'),
     path('notifications/mark-read/<int:notification_id>/', mark_notification_read, name = 'mark_notification_read'),
     path('notifications/count', get_unread_notification_count, name = 'unread_notification_count'),
+
+    #Profile related stuff
+    path('profile/dashboard/', profile_dashboard, name='profile_dashboard'),
+    path('home/view_profile/', view_profile, name = 'view_profile'),
+    path('home/edit_profile/', edit_profile, name = 'edit_profile'),
+    path('home/change_password/', change_password, name = 'change_password'),
+
 ]
