@@ -101,7 +101,11 @@ class signup_form(UserCreationForm):
         return birth_date
 
     def save(self, commit=True):
-        user = super().save(commit=True)
+        user = super().save(commit=False)
+
+        user.email = self.cleaned_data['distributor_email']
+
+        user.save()
         
         # Create Distributor and link it to User
         distributor = Distributor.objects.create(

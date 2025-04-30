@@ -8,6 +8,11 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
+#For password reset
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
+
 
 @login_required
 @never_cache
@@ -31,8 +36,7 @@ def view_profile(request):
 @login_required
 @never_cache
 def edit_profile(request):
-    distributor = Distributor.objects.get(user=request.user)
-    
+    distributor = Distributor.objects.get(user=request.user)    
     if request.method == 'POST':
         form = DistributorProfileForm(request.POST, instance=distributor)
         if form.is_valid():
@@ -73,3 +77,11 @@ def change_password(request):
     context = {'form': form}
     return render(request, 'bm_app/profile_temps/change_password.html', context)
 
+
+# Password Reset Stuff
+
+class ResetPasswordView(PasswordResetView):
+    template_name = 'bm_app/pass_reset/password_reset.html'
+    email_template_name = 'bm_app/pass_reset/password_reset_email.html'
+    subject_template_name = 'bm_app/pass_reset/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')

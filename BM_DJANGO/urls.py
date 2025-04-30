@@ -20,6 +20,9 @@ from bm_app.admin import mark_notification_read_view
 from bm_app.views import admin_notifications_view
 from django.contrib.admin.views.decorators import staff_member_required
 from bm_app import admin_views
+from bm_app.profile_view import ResetPasswordView
+from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     path('admin/notifications/', admin_notifications_view, name='admin_notifications'),
@@ -34,4 +37,14 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('',include('bm_app.urls')),
+
+    #For passwordReset
+    path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(
+        template_name='bm_app/pass_reset/password_reset_done.html'), name='password_reset_done'),
+    path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name='bm_app/pass_reset/password_reset_confirm.html'), name='password_reset_confirm'),
+    path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='bm_app/pass_reset/password_reset_complete.html'), name='password_reset_complete'),
+
 ]
