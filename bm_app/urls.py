@@ -4,6 +4,7 @@ from .views import home_page, new_transaction_view, logout_view,books_view, add_
 from .views import books_api, landing_page
 from .views import distributor_notifications, mark_notification_read, get_unread_notification_count
 from .dashboard_view import dashboard, get_monthly_distribution_data,get_top_books, get_revenue_data, get_top_categories
+from .transaction_view import transaction_history_view
 
 urlpatterns = [
     path('home1/', landing_page, name = "landing"),
@@ -21,6 +22,9 @@ urlpatterns = [
     path('api/books/', books_api, name='books_api'),
     path('api/distributor-books/', get_distributor_books, name='get_distributor_books'),
 
+    #Transaction History
+    path('home/transaction_history', transaction_history_view, name = 'transaction_history'),
+
     #dashboard urls
     path('home/dashboard/', dashboard, name = 'dashboard'),
     path('api/distributor/monthly-distribution/',get_monthly_distribution_data, name = 'monthly_distribution_data'),
@@ -29,7 +33,7 @@ urlpatterns = [
     path('api/distributor/top-books/',get_top_books, name = 'top_books_data'),
 
     # notification related urls
-    path('notifications/', distributor_notifications, name = 'distributor_notifications'),
+    path('home/notifications/', distributor_notifications, name = 'distributor_notifications'),
     path('notifications/mark-read/<int:notification_id>/', mark_notification_read, name = 'mark_notification_read'),
     path('notifications/count', get_unread_notification_count, name = 'unread_notification_count'),
 ]

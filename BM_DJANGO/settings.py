@@ -204,7 +204,6 @@ CELERY_TIMEZONE = 'UTC'  # Use your timezone
 # Django Celery Beat Settings
 INSTALLED_APPS += ['django_celery_beat']
 
-# Add this after the other Celery settings
 from celery.schedules import crontab
 
 CELERY_BEAT_SCHEDULE = {

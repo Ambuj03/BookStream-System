@@ -39,7 +39,7 @@ def main_page(request):
     return render(request,'bm_app/main.html',{})
 
 # showing home page
-@login_required(login_url="login")
+@login_required(login_url="main")
 @never_cache
 def home_page(request):
     print(f"DEBUG: User Authenticated: {request.user.is_authenticated}")  # Debug
@@ -48,7 +48,7 @@ def home_page(request):
 
 
 
-@login_required(login_url="login")
+@login_required(login_url="main")
 @never_cache
 def books_api(request):
     # APi endpoint to get all the books.
@@ -70,7 +70,7 @@ def books_api(request):
 
 # New Transaction form  
 
-@login_required(login_url="login")
+@login_required(login_url="main")
 @never_cache
 def new_transaction_view(request):
     try:
@@ -164,7 +164,7 @@ def new_transaction_view(request):
     except Distributor.DoesNotExist:
         return redirect('login')
 
-@login_required(login_url='login')
+@login_required(login_url='main')
 @never_cache
 def books_view(request):
 
@@ -191,7 +191,7 @@ def books_view(request):
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='main')
 @never_cache
 def inventory_view(request):
 
@@ -217,8 +217,9 @@ def inventory_view(request):
         
 #     return render(request, 'bm_app/subpage/addBbtBooks.html', {'form' : form})
 
-def add_books(request):
-                
+@login_required(login_url='main')
+@never_cache
+def add_books(request):    
     distributor = Distributor.objects.get(user = request.user)
 
     if request.method == 'POST':
@@ -249,7 +250,7 @@ def delete_book(request, book_id):
     
     
 
-@login_required(login_url='login')
+@login_required(login_url='main')
 @never_cache
 def add_custom_books(request): 
 
@@ -317,6 +318,7 @@ def logout_view(request):
     return redirect('main')
 
 @login_required
+@never_cache
 def get_distributor_books(request):
     try:
         distributor = Distributor.objects.get(user=request.user)
@@ -348,6 +350,7 @@ def get_distributor_books(request):
 # View for notifiations
 
 @login_required
+@never_cache
 def distributor_notifications(request):
     
     # add try and except if required
@@ -371,6 +374,7 @@ def distributor_notifications(request):
         })
         
 @login_required
+@never_cache
 def mark_notification_read(request, notification_id):
     if request.method == 'POST':
         try:
@@ -381,6 +385,7 @@ def mark_notification_read(request, notification_id):
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 @login_required
+@never_cache
 def get_unread_notification_count(request):
     
     distributor = Distributor.objects.get(user = request.user)
@@ -388,6 +393,7 @@ def get_unread_notification_count(request):
     return JsonResponse({'count' : count})
 
 @login_required
+@never_cache
 def admin_notifications_view(request):
     notifications_list = get_admin_notifications(request.user)
     
@@ -413,4 +419,5 @@ def admin_notifications_view(request):
     }
     
     return render(request, 'admin/notifications.html', context)
+
 
