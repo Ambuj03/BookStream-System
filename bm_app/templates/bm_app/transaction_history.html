@@ -1,8 +1,144 @@
 {% extends "bm_app/base.html"%}
+{% load static %}
 
-{% block title %}Transaction History- Brihad Mridanga{% endblock %}
+{% block title %}Transaction History - Brihad Mridanga{% endblock %}
 
 {% block content %}
-
+<div class="container mt-4">
+    <h2 class="mb-4">Transaction History</h2>
     
+    <!-- Filters Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form class="row g-3" method="get">
+                <div class="col-md-4">
+                    <label for="dateFrom" class="form-label">From Date</label>
+                    <input type="date" class="form-control" id="dateFrom" name="date_from" value="{{ filters.date_from|default_if_none:'' }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="dateTo" class="form-label">To Date</label>
+                    <input type="date" class="form-control" id="dateTo" name="date_to" value="{{ filters.date_to|default_if_none:'' }}">
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">Filter</button>
+                    <a href="{% url 'transaction_history' %}" class="btn btn-outline-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Transactions Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Transaction ID</th>
+                            <th>Books</th>
+                            <th>Total Amount</th>
+                            <th>Customer</th>
+                            <th>Payment Mode</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if transactions %}
+                            {% for transaction in transactions %}
+                                <tr>
+                                    <td>{{ transaction.date|date:"d M Y" }}</td>
+                                    <td>{{ transaction.receipt_id }}</td>
+                                    <td>
+                                        <div>
+                                            <button class="btn btn-sm btn-link p-0 text-decoration-none" 
+                                                    type="button" 
+                                                    data-bs-toggle="collapse" 
+                                                    data-bs-target="#books-{{ transaction.receipt_id }}" 
+                                                    aria-expanded="false">
+                                                {{ transaction.books_count }} Book(s) <i class="fas fa-chevron-down ms-1"></i>
+                                            </button>
+                                            <div class="collapse mt-2" id="books-{{ transaction.receipt_id }}">
+                                                <div class="card card-body p-2">
+                                                    <ul class="list-group list-group-flush">
+                                                        {% for book in transaction.books %}
+                                                        <li class="list-group-item py-2 d-flex justify-content-between align-items-center">
+                                                            <span>{{ book.book_name }}</span>
+                                                            <span>
+                                                                <span class="badge bg-secondary">{{ book.quantity }} units</span>
+                                                                <span class="ms-2">₹{{ book.book_price }}</span>
+                                                            </span>
+                                                        </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>₹{{ transaction.total_amount }}</td>
+                                    <td>{{ transaction.customer.customer_name }}</td>
+                                    <td>{{ transaction.paymentMode }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4">No transactions found</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if transactions.has_other_pages %}
+<nav aria-label="Transaction pagination" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if transactions.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if filtered_params %}&{{ filtered_params }}{% endif %}">&laquo; First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ transactions.previous_page_number }}{% if filtered_params %}&{{ filtered_params }}{% endif %}">Previous</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo; First</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+        {% endif %}
+        
+        {% for num in transactions.paginator.page_range %}
+            {% if transactions.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > transactions.number|add:'-3' and num < transactions.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if filtered_params %}&{{ filtered_params }}{% endif %}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if transactions.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ transactions.next_page_number }}{% if filtered_params %}&{{ filtered_params }}{% endif %}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ transactions.paginator.num_pages }}{% if filtered_params %}&{{ filtered_params }}{% endif %}">Last &raquo;</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">Last &raquo;</span>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Make sure Bootstrap JS is included for the collapse functionality -->
 {% endblock %}

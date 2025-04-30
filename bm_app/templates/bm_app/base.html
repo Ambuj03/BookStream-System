@@ -48,6 +48,10 @@
                         <a class="nav-link {% if request.resolver_match.url_name == 'distributor_notifications' %}active{% endif %}" 
                            href="{% url 'distributor_notifications' %}">Notifications</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'transaction_history' %}active{% endif %}" 
+                           href="{% url 'transaction_history' %}">Transaction History</a>
+                    </li>
                 </ul>
                 <div class="navbar-nav">
                     <a class="nav-link" href="{% url 'logout' %}">
