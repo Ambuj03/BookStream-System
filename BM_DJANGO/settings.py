@@ -38,11 +38,22 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '',).split(',')
 
 INSTALLED_APPS = [
     'bm_app',
+
+    #Themes
     'jazzmin',
     # 'grappelli',  
+
+    #OAUTH
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
+    #Admin Panel stuff
     'nested_admin',
     'rangefilter',
     'import_export',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,10 +67,22 @@ GRAPPELLI_ADMIN_TITLE = 'Bookstore Management'
 
 # Custom authentication backend 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',  # Keep the default backend
+    'django.contrib.auth.backends.ModelBackend',  
       # Add your custom backend
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+#OAUTH setting
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.getenv('client_id'),
+            'secret': os.getenv('secret'),
+        }
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -69,6 +92,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'BM_DJANGO.urls'

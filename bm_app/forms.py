@@ -137,3 +137,8 @@ class DistributorProfileForm(forms.ModelForm):
             'distributor_age': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
+
+class SimpleProfileForm(forms.ModelForm):
+    class Meta:
+        models = Distributor
+        fields = ['distributor_phonenumber', 'temple', 'distributor_age', 'distributor_address']

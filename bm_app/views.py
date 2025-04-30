@@ -31,6 +31,37 @@ from .notifications import get_distributor_notifications, mark_notification_as_r
 from django.contrib import admin
 from .admin import get_admin_notifications
 
+from .forms import SimpleProfileForm
+#Complete profile view for oAuth
+@login_required
+def complete_profile(request):
+    #checking if distributor has a profile already
+
+    try:
+        distributor = Distributor.objects.get(user = request.user)
+
+        #checking if the profile is complete
+        return redirect('home')
+    
+    except Distributor.DoesNotExist:
+        distributor = Distributor(
+            user = request.user,
+            distributor_name = request.user.get_full_name(),
+            distributor_email = request.user.email,
+        )
+
+    if request.method == 'POST':
+        form = SimpleProfileForm(request.POST, instance = distributor)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = SimpleProfileForm(instance = distributor)
+
+    return render(request, 'bm_app/OAuth/complete_profile.html', {'form' : form})
+
+
+
 def landing_page(request):
     return render(request, 'bm_app/home1.html', {})
 
