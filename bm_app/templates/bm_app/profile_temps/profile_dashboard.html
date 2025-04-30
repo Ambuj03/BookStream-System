@@ -1,0 +1,67 @@
+{% extends 'bm_app/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Profile Dashboard</h2>
+
+    {% if messages %}
+        <div class="mb-3">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %} 
+    
+    <div class="row g-4">
+        <!-- View Profile Card -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center d-flex flex-column">
+                    <i class="fas fa-id-card fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">View Profile</h5>
+                    <p class="card-text">View your personal information and account details.</p>
+                    <a href="{% url 'view_profile' %}" class="btn btn-primary mt-auto">View Profile</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Edit Profile Card -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center d-flex flex-column">
+                    <i class="fas fa-user-edit fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Edit Profile</h5>
+                    <p class="card-text">Update your personal information and contact details.</p>
+                    <a href="{% url 'edit_profile' %}" class="btn btn-primary mt-auto">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Change Password Card -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center d-flex flex-column">
+                    <i class="fas fa-key fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Change Password</h5>
+                    <p class="card-text">Update your account password to maintain security.</p>
+                    <a href="{% url 'change_password' %}" class="btn btn-primary mt-auto">Change Password</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Logout Card -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center d-flex flex-column">
+                    <i class="fas fa-sign-out-alt fa-3x mb-3 text-danger"></i>
+                    <h5 class="card-title">Logout</h5>
+                    <p class="card-text">Sign out from your current session.</p>
+                    <a href="{% url 'logout' %}" class="btn btn-danger mt-auto">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

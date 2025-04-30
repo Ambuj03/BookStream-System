@@ -1,0 +1,86 @@
+{% extends 'bm_app/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Edit Profile</h2>
+            </div>
+            <hr>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="{{ form.distributor_name.id_for_label }}" class="form-label">{{ form.distributor_name.label }}</label>
+                                {{ form.distributor_name }}
+                                {% if form.distributor_name.errors %}
+                                    <div class="text-danger mt-1">
+                                        {{ form.distributor_name.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" value="{{ distributor.distributor_email }}" disabled>
+                                <small class="text-muted">Contact admin to change email address</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="{{ form.distributor_phonenumber.id_for_label }}" class="form-label">{{ form.distributor_phonenumber.label }}</label>
+                                {{ form.distributor_phonenumber }}
+                                {% if form.distributor_phonenumber.errors %}
+                                    <div class="text-danger mt-1">
+                                        {{ form.distributor_phonenumber.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.distributor_age.id_for_label }}" class="form-label">{{ form.distributor_age.label }}</label>
+                                {{ form.distributor_age }}
+                                {% if form.distributor_age.errors %}
+                                    <div class="text-danger mt-1">
+                                        {{ form.distributor_age.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.distributor_address.id_for_label }}" class="form-label">{{ form.distributor_address.label }}</label>
+                            {{ form.distributor_address }}
+                            {% if form.distributor_address.errors %}
+                                <div class="text-danger mt-1">
+                                    {{ form.distributor_address.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'view_profile' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Back
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

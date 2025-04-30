@@ -114,4 +114,22 @@ class signup_form(UserCreationForm):
             temple=self.cleaned_data['temple']
         )
         return user
+    
+
+class DistributorProfileForm(forms.ModelForm):
+    class Meta:
+        model = Distributor
+        fields = ['distributor_name', 'distributor_phonenumber', 'distributor_address', 'distributor_age']
+        labels = {
+            'distributor_name': 'Name',
+            'distributor_phonenumber': 'Phone Number',
+            'distributor_address': 'Address',
+            'distributor_age': 'Date of Birth',
+        }
+        widgets = {
+            'distributor_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'distributor_phonenumber': forms.TextInput(attrs={'class': 'form-control'}),
+            'distributor_address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'distributor_age': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
 

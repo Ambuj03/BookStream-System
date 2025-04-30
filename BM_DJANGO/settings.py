@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'BM_DJANGO.wsgi.application'
 
 
 # Authentication Settings
-LOGIN_URL = 'login'  # Where to redirect if user isn't logged in
+LOGIN_URL = 'main'  # Where to redirect if user isn't logged in
 LOGIN_REDIRECT_URL = 'home'  # Where to redirect after successful login
 LOGOUT_REDIRECT_URL = 'main'  # Where to redirect after logout
 
