@@ -123,6 +123,16 @@ class DistributorAdmin(TempleRestrictedExport):
         if request.user.is_superuser:
             return []
         return ['temple','user']
+
+    def save_model(self, request, obj, form, change):
+
+        if change and 'distributor_email' in form.changed_data:
+            if obj.user:
+                obj.user.email = obj.distributor_email
+                obj.user.save()
+                messages.success(request, f"Email updated for both distributor and user accounts.")
+
+        return super().save_model(request, obj, form, change)
     
 
 @admin.register(Receipt)
