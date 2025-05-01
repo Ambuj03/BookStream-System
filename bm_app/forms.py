@@ -137,3 +137,20 @@ class DistributorProfileForm(forms.ModelForm):
             'distributor_age': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
+
+class SimpleProfileForm(forms.ModelForm):
+    class Meta:
+        model = Distributor
+        fields = ['temple', 'distributor_phonenumber', 'distributor_address', 'distributor_age']
+        labels = {
+            'temple' : 'Temple',
+            'distributor_phonenumber': 'Phone Number',
+            'distributor_address': 'Address',
+            'distributor_age': 'Date of Birth',
+        }
+        widgets = {
+            'temple': forms.Select(attrs={'class': 'form-control'}),
+            'distributor_phonenumber': forms.TextInput(attrs={'class': 'form-control'}),
+            'distributor_address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'distributor_age': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }

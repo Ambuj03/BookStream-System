@@ -34,15 +34,28 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '',).split(',')
 # ALLOWED_HOSTS = ('*',)
 
 
-# Application definition
+SITE_ID = 2
 
+# Application definition
 INSTALLED_APPS = [
     'bm_app',
+
+    #Themes
     'jazzmin',
     # 'grappelli',  
+
+    #OAUTH
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
+    #Admin Panel stuff
     'nested_admin',
     'rangefilter',
     'import_export',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,10 +69,26 @@ GRAPPELLI_ADMIN_TITLE = 'Bookstore Management'
 
 # Custom authentication backend 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',  # Keep the default backend
+    'django.contrib.auth.backends.ModelBackend',  
       # Add your custom backend
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+#OAUTH setting
+ACCOUNT_LOGIN_METHODS = {'email'}  # Allow login with email only
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+
+        'SCOPE' :['profile','email'], 
+
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -69,6 +98,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'allauth.account.middleware.AccountMiddleware',
+    'bm_app.custom_middleware.ProfileCompletionMiddleware',
 ]
 
 ROOT_URLCONF = 'BM_DJANGO.urls'
@@ -94,7 +126,7 @@ WSGI_APPLICATION = 'BM_DJANGO.wsgi.application'
 
 # Authentication Settings
 LOGIN_URL = 'main'  # Where to redirect if user isn't logged in
-LOGIN_REDIRECT_URL = 'home'  # Where to redirect after successful login
+LOGIN_REDIRECT_URL = 'complete_profile'  # Where to redirect after successful login
 LOGOUT_REDIRECT_URL = 'main'  # Where to redirect after logout
 
 

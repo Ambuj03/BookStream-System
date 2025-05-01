@@ -1,5 +1,6 @@
 {% extends "bm_app/base.html" %}
 {% load widget_tweaks %}
+{% load socialaccount %}
 
 {% block title %}Login{% endblock %}
 
@@ -10,6 +11,8 @@
             <div class="card shadow">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Login</h2>
+                    
+                    <!-- Regular login form -->
                     <form method="post">
                         {% csrf_token %}
                         
@@ -39,14 +42,53 @@
                             </div>
                             {% endif %}
                         </div>
-                        <div class="d-grid">
+                        <div class="d-grid mb-3">
                             <button type="submit" class="btn btn-primary">Login</button>
                         </div>
-                        <a href="{% url 'password_reset' %}"><i>Forgot Password?</i></a>
                     </form>
+                    
+                    <!-- Account management links -->
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="remember_me" id="id_remember_me" class="form-check-input">
+                        <label for="id_remember_me" class="form-check-label">Remember me</label>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-4">
+                        <a href="{% url 'password_reset' %}" class="text-decoration-none">
+                            <small><i class="fas fa-key me-1"></i>Forgot Password?</small>
+                        </a>
+                        <a href="{% url 'signup' %}" class="text-decoration-none">
+                            <small><i class="fas fa-user-plus me-1"></i>Sign up</small>
+                        </a>
+                    </div>
+                    
+                    <!-- Social login section -->
+                    <div class="text-center mb-3">
+                        <div class="divider d-flex align-items-center mb-3">
+                            <span class="text-muted small mx-2">OR CONTINUE WITH</span>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-danger">
+                                <i class="fab fa-google me-2"></i>Sign in with Google
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .divider {
+        position: relative;
+        text-align: center;
+    }
+    .divider::before, .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #dee2e6;
+    }
+</style>
 {% endblock %}

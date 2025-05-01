@@ -45,6 +45,10 @@ def edit_profile(request):
             return redirect('view_profile')
     else:
         form = DistributorProfileForm(instance=distributor)
+
+    # Adding boots classes, could be addedin html too
+    for field_name, field in form.fields.items():
+        field.widget.attrs['class'] = 'form-control'
     
     context = {
         'form': form,

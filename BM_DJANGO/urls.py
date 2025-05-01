@@ -20,11 +20,17 @@ from bm_app.admin import mark_notification_read_view
 from bm_app.views import admin_notifications_view
 from django.contrib.admin.views.decorators import staff_member_required
 from bm_app import admin_views
+from bm_app.views import complete_profile
 from bm_app.profile_view import ResetPasswordView
 from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
+
+    #OAuth thing
+    path('accounts/', include('allauth.urls')),
+    path('complete-profile/', complete_profile, name='complete_profile'),
+
     path('admin/notifications/', admin_notifications_view, name='admin_notifications'),
     path('admin/notifications/mark-read/<int:notification_id>/', mark_notification_read_view, name='mark_notification_read'),
     

@@ -31,6 +31,38 @@ from .notifications import get_distributor_notifications, mark_notification_as_r
 from django.contrib import admin
 from .admin import get_admin_notifications
 
+from .forms import SimpleProfileForm
+#Complete profile view for oAuth
+@login_required
+def complete_profile(request):
+    #checking if distributor has a profile already
+
+    try:
+        distributor = Distributor.objects.get(user = request.user)
+
+        if distributor.distributor_phonenumber and distributor.temple:
+        #checking if the profile is complete
+            return redirect('home')
+    
+    except Distributor.DoesNotExist:
+        distributor = Distributor(
+            user = request.user,
+            distributor_name = request.user.get_full_name(),
+            distributor_email = request.user.email,
+        )
+
+    if request.method == 'POST':
+        form = SimpleProfileForm(request.POST, instance = distributor)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = SimpleProfileForm(instance = distributor)
+
+    return render(request, 'bm_app/OAuth/complete_profile.html', {'form' : form})
+
+
+
 def landing_page(request):
     return render(request, 'bm_app/home1.html', {})
 
@@ -268,6 +300,8 @@ def add_custom_books(request):
 
 # Writing a class inheriting Authentication form for field validation
 
+from django import forms
+
 class CustomAuthenticationForm(AuthenticationForm):
     def clean_username(self):
         username = self.cleaned_data.get('username')
@@ -283,6 +317,9 @@ class CustomAuthenticationForm(AuthenticationForm):
         if len(password) < 8:
             raise ValidationError("Password must contain atleast 8 characters")
         return password
+    
+    remember_me = forms.BooleanField(required=False, 
+                                     widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
 def login_page(request):
     if request.method == "POST":
@@ -293,6 +330,13 @@ def login_page(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request,user)
+
+                # Handle "Remember Me"
+                if not form.cleaned_data.get('remember_me'):
+                    # Session expires when browser closes
+                    request.session.set_expiry(0)
+                # else use the default expiry from settings (2 weeks)
+
                 return redirect('home')
         else:
             return render(request, 'bm_app/login.html', {'form': form})
