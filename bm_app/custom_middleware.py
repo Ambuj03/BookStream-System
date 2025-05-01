@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from bm_app.models import Distributor
 
 
 class ProfileCompletionMiddleware:
@@ -22,11 +23,10 @@ class ProfileCompletionMiddleware:
         #check if the user has complete distributor profile or not
 
         try:
-            from bm_app.models import Distributor
             distributor = Distributor.objects.get(user = request.user)
 
-            if not distributor.distributor_phonenumber and distributor.distributor_address :
-                return redirect('complete-profile')
+            if not distributor.distributor_phonenumber or not distributor.temple :
+                return redirect('complete_profile')
             
         except Distributor.DoesNotExist:
             #user doesnt have a dist profile yet
