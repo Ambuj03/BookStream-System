@@ -300,6 +300,8 @@ def add_custom_books(request):
 
 # Writing a class inheriting Authentication form for field validation
 
+from django import forms
+
 class CustomAuthenticationForm(AuthenticationForm):
     def clean_username(self):
         username = self.cleaned_data.get('username')
@@ -315,6 +317,9 @@ class CustomAuthenticationForm(AuthenticationForm):
         if len(password) < 8:
             raise ValidationError("Password must contain atleast 8 characters")
         return password
+    
+    remember_me = forms.BooleanField(required=False, 
+                                     widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
 def login_page(request):
     if request.method == "POST":
@@ -325,6 +330,13 @@ def login_page(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request,user)
+
+                # Handle "Remember Me"
+                if not form.cleaned_data.get('remember_me'):
+                    # Session expires when browser closes
+                    request.session.set_expiry(0)
+                # else use the default expiry from settings (2 weeks)
+
                 return redirect('home')
         else:
             return render(request, 'bm_app/login.html', {'form': form})
