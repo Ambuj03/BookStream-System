@@ -104,6 +104,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'allauth.account.middleware.AccountMiddleware',
+    'bm_app.custom_middleware.ProfileCompletionMiddleware',
 ]
 
 ROOT_URLCONF = 'BM_DJANGO.urls'
