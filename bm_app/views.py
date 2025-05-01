@@ -40,8 +40,9 @@ def complete_profile(request):
     try:
         distributor = Distributor.objects.get(user = request.user)
 
+        if distributor.distributor_phonenumber and distributor.temple:
         #checking if the profile is complete
-        return redirect('home')
+            return redirect('home')
     
     except Distributor.DoesNotExist:
         distributor = Distributor(

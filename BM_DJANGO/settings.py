@@ -34,8 +34,9 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '',).split(',')
 # ALLOWED_HOSTS = ('*',)
 
 
-# Application definition
+SITE_ID = 2
 
+# Application definition
 INSTALLED_APPS = [
     'bm_app',
 
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     # 'grappelli',  
 
     #OAUTH
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -73,13 +75,21 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 #OAUTH setting
-SITE_ID = 1
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
-        'APP': {
-            'client_id': os.getenv('client_id'),
-            'secret': os.getenv('secret'),
+
+        'SCOPE' :['profile','email'], 
+
+        'AUTH_PARAMS': {
+            'access_type': 'online',
         }
     }
 }
@@ -119,7 +129,7 @@ WSGI_APPLICATION = 'BM_DJANGO.wsgi.application'
 
 # Authentication Settings
 LOGIN_URL = 'main'  # Where to redirect if user isn't logged in
-LOGIN_REDIRECT_URL = 'home'  # Where to redirect after successful login
+LOGIN_REDIRECT_URL = 'complete_profile'  # Where to redirect after successful login
 LOGOUT_REDIRECT_URL = 'main'  # Where to redirect after logout
 
 
