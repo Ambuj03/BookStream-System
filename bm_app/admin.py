@@ -115,7 +115,7 @@ class TempleAdmin(admin.ModelAdmin):
 class DistributorAdmin(TempleRestrictedExport):
 
     resource_class = DistributorResource    
-    list_display = ('distributor_name', 'distributor_email','distributor_phonenumber',)
+    list_display = ('distributor_name', 'distributor_email','distributor_phonenumber', 'view_inventory_link',)
     list_filter = ('distributor_name',)
     list_per_page = 10
 
@@ -133,6 +133,54 @@ class DistributorAdmin(TempleRestrictedExport):
                 messages.success(request, f"Email updated for both distributor and user accounts.")
 
         return super().save_model(request, obj, form, change)
+    
+
+    #Extra link to view distributors inventory ( Apply pagination carefully)
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                'inventory/<int:distributor_id>/',  
+                self.admin_site.admin_view(self.Inventory_details_view),
+                name='inventory-details',
+            ),
+        ]
+        return custom_urls + urls
+    
+    def view_inventory_link(self, obj):
+        url = reverse('admin:inventory-details', args=[obj.distributor_id])
+        return format_html('<a class="button" href="{}">View Inventory</a>', url)
+    view_inventory_link.short_description = "View Inventory"
+    
+
+    def Inventory_details_view(self, request, distributor_id):
+        try:
+            distributor = Distributor.objects.get(distributor_id=distributor_id)
+            distributor_books = DistributorBooks.objects.filter(distributor=distributor)
+            
+            paginator = Paginator(distributor_books, 10)
+            page_number = request.GET.get("page", 1)
+            page_obj = paginator.get_page(page_number)
+
+            inventory_data = {
+                'distributor': distributor,
+                'books' : page_obj,
+                'total_books': distributor_books.count(),
+            }
+            
+            context = {
+                'title': f'Inventory Details',
+                'inventory_data': inventory_data,
+                'page_obj': page_obj,
+                'opts': self.model._meta,
+                'has_change_permission': self.has_change_permission(request),
+                'app_label': self.model._meta.app_label,
+            }
+            return render(request, 'admin/inventory_detail.html', context)
+        except Distributor.DoesNotExist:
+            messages.error(request, "Distributor not found")
+            return redirect('admin:bm_app_distributor_changelist')
+
     
 
 @admin.register(Receipt)
@@ -191,19 +239,23 @@ class ReceiptAdmin(TempleRestrictedAdmin):
     
     def view_receipts_link(self, obj):
         url = reverse('admin:receipt-details', args=[obj.receipt_id])
-        return format_html('<a class="button" href="{}">View Receipts</a>', url)
-    view_receipts_link.short_description = "Receipts"
+        return format_html('<a class="button" href="{}">View Receipt</a>', url)
+    view_receipts_link.short_description = "Receipt"
     
     def receipt_details_view(self, request, receipt_id):
 
         receipt = self.get_object(request, receipt_id)
 
         receipt_books = ReceiptBooks.objects.filter(receipt = receipt)
+
+        paginator = Paginator(receipt_books, 10)
+        page_number = request.GET.get("page", 1)
+        page_obj = paginator.get_page(page_number)
         
         # Get receipt books for each receipt
         receipt_data = [{
                 'receipt': receipt,
-                'books': receipt_books,
+                'books': page_obj,
                 'total_books': receipt_books.count(),
             }]
         
@@ -211,6 +263,7 @@ class ReceiptAdmin(TempleRestrictedAdmin):
             'title' : f'Receipt Details',
             'receipt': receipt,
             'receipt_data': receipt_data,
+            'page_obj' : page_obj,
             'opts': self.model._meta,
             'has_change_permission': self.has_change_permission(request, receipt),
             'original': receipt,
@@ -484,6 +537,5 @@ class DonationAdmin(TempleRestrictedExport):
 #extending admin site to add my custom urls
 
 admin.site.register(BooksCategory)
-
 
 

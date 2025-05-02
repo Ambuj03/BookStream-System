@@ -1,0 +1,131 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .inventory-container {
+        padding: 20px;
+        background: #fff;
+        border-radius: 4px;
+        margin: 20px 0;
+    }
+    
+    .inventory-header {
+        margin-bottom: 30px;
+    }
+    
+    .inventory-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    
+    .inventory-table th {
+        background: #417690;
+        color: white;
+        padding: 12px;
+        text-align: left;
+    }
+    
+    .inventory-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .inventory-table tr:hover {
+        background-color: #f5f5f5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="inventory-container">
+        <div class="inventory-header">
+            <h1>{{ title }}</h1>
+            <hr>
+            <h3>Distributor: {{ inventory_data.distributor.distributor_name }}</h3>
+            <h3>Total Books: {{ inventory_data.total_books }}</h3>
+        </div>
+
+        <table class="inventory-table">
+            <thead>
+                <tr>
+                    <th>Book Name</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>Language</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in inventory_data.books %}
+                <tr>
+                    <td>{{ book.book_name }}</td>
+                    <td>{{ book.book_author }}</td>
+                    <td>{{ book.book_category }}</td>
+                    <td>{{ book.book_language }}</td>
+                    <td>₹{{ book.book_price }}</td>
+                    <td>{{ book.book_stock }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">No books found in inventory</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="margin-top: 20px;">
+            <a href="{% url 'admin:bm_app_distributor_changelist' %}" class="button">← Back to Distributors</a>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}
