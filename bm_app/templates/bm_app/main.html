@@ -4,9 +4,7 @@
 {% block title %}Brihat Mridanga{% endblock %}
 
 {%block extra_css%}
-
 <link rel="stylesheet" href="{%static 'bm_app/css/landing.css'%}">
-
 {%endblock%}
 
 {% block content %}
@@ -52,7 +50,7 @@
                         <h1 class="hero-title">Manage Your Book Distribution and Inventory Swiftly  </h1>
                         <p class="hero-subtitle">Streamline your book distribution management process with our comprehensive inventory system designed for efficiency and accuracy.</p>
                         <div class="hero-cta">
-                            <a href={%url 'signup' %} class="btn btn-primary">Get Started</a>
+                            <a href={%url 'login' %} class="btn btn-primary">Get Started</a>
                             <a href="#features" class="btn btn-outline">Learn More</a>
                         </div>
                     </div>
@@ -84,7 +82,7 @@
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1-2-2h2"></path>
                                     <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
                                     <path d="M9 14h6"></path>
                                     <path d="M9 10h6"></path>
@@ -143,11 +141,19 @@
                     <h3>Brihat Mridanga</h3>
                     <p>Efficient book inventory management for your distribution needs. We help organization to streamline their book distribution process with our comprehensive solution.</p>
                 </div>
-                <div class="footer-column">
+                <div class="footer-column contact">
                     <h3>Contact</h3>
                     <ul class="footer-contact-info">
                         <li><a href="mailto:info@brihadmridanga.com">info@brihadmridanga.com</a></li>
                         <li><a href="tel:+1234567890">+1 (234) 567-890</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-contact-info">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#about">About</a></li>
                     </ul>
                 </div>
             </div>
