@@ -11,7 +11,8 @@ from django.contrib.auth import update_session_auth_hash
 #For password reset
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetView
-from django.contrib.messages.views import SuccessMessageMixin
+from django.utils.decorators import method_decorator
+
 
 
 @login_required
@@ -83,7 +84,7 @@ def change_password(request):
 
 
 # Password Reset Stuff
-
+@method_decorator(never_cache, name='dispatch')
 class ResetPasswordView(PasswordResetView):
     template_name = 'bm_app/pass_reset/password_reset.html'
     email_template_name = 'bm_app/pass_reset/password_reset_email.html'
