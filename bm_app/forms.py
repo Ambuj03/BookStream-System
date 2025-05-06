@@ -47,6 +47,11 @@ class transaction_form(forms.ModelForm):
         self.distributor = distributor
         super(transaction_form, self).__init__(*args, **kwargs)
 
+    def clean_donation_amount(self):
+        amount = self.cleaned_data.get('donation_amount')
+
+        if(amount < 0):
+            raise ValidationError("Amount cannot be negative.")
 
 #SIGNUP FORM*******************************************************************
 class signup_form(UserCreationForm):

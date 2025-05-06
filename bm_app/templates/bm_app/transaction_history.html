@@ -89,7 +89,7 @@
             </div>
             
             <!-- Pagination -->
-            {% if transactions.has_other_pages %}
+{% if transactions.has_other_pages %}
 <nav aria-label="Transaction pagination" class="mt-4">
     <ul class="pagination justify-content-center">
         {% if transactions.has_previous %}
@@ -140,5 +140,4 @@
     </div>
 </div>
 
-<!-- Make sure Bootstrap JS is included for the collapse functionality -->
 {% endblock %}

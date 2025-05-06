@@ -188,7 +188,7 @@ class ReceiptAdmin(TempleRestrictedAdmin):
     list_display = (
         'get_customer_name', 'get_distributor_name', 
         'total_amount', 'get_donation_amount', 
-        'paymentMode', 'date', 'notification_status',
+        'paymentMode', 'date', 'notification_status_new',
         'view_receipts_link'
     )
     list_filter = ('paymentMode', 'date')
@@ -199,6 +199,10 @@ class ReceiptAdmin(TempleRestrictedAdmin):
         'notification_timestamp'
     )
     list_per_page = 10
+
+    def notification_status_new(self, obj):
+        return obj.notification_status
+    notification_status_new.short_description = 'SMS Status'
 
     def get_customer_name(self,obj):
         return obj.customer.customer_name
@@ -471,23 +475,7 @@ class CustomerAdmin(TempleRestrictedExport):
             
         super().save_model(request, obj, form, change)
 
-# @admin.register(Notification)
-# class NotificationAdmin(TempleRestrictedAdmin):
-#     list_display = ('user_type', 'message', 'status')
 
-#     def get_exclude(self, request,obj):
-#         if request.user.is_superuser:
-#             return []
-#         return ['temple']
-
-#     def save_model(self, request, obj, form, change):
-#         if not request.user.is_superuser:
-#             temple = Temple.objects.get(admin=request.user)
-#             obj.temple = temple
-            
-#         super().save_model(request, obj, form, change)
-
-#Find out why donation isn't visible
 @admin.register(Donation)
 class DonationAdmin(TempleRestrictedExport):
 
@@ -517,25 +505,8 @@ class DonationAdmin(TempleRestrictedExport):
         super().save_model(request, obj, form, change)
 
 
-# Think about registering this
-# @admin.register(DistributorBooks)
-# class DistributorBooksAdmin(TempleRestrictedAdmin):
-#     list_display = ('distributor_id', 'book_name', 'book_stock',)
-
-#     def get_exclude(self, request,obj):
-#         if request.user.is_superuser:
-#             return []
-#         return ['temple']
-
-#     def save_model(self, request, obj, form, change):
-#         if not request.user.is_superuser:
-#             temple = Temple.objects.get(admin=request.user)
-#             obj.temple = temple
-            
-#         super().save_model(request, obj, form, change)
-
-#extending admin site to add my custom urls
 
 admin.site.register(BooksCategory)
+# admin.site.register(Notification) See if needed or not
 
 
