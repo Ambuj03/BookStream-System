@@ -188,7 +188,7 @@ class ReceiptAdmin(TempleRestrictedAdmin):
     list_display = (
         'get_customer_name', 'get_distributor_name', 
         'total_amount', 'get_donation_amount', 
-        'paymentMode', 'date', 'notification_status',
+        'paymentMode', 'date', 'notification_status_new',
         'view_receipts_link'
     )
     list_filter = ('paymentMode', 'date')
@@ -199,6 +199,10 @@ class ReceiptAdmin(TempleRestrictedAdmin):
         'notification_timestamp'
     )
     list_per_page = 10
+
+    def notification_status_new(self, obj):
+        return obj.notification_status
+    notification_status_new.short_description = 'SMS Status'
 
     def get_customer_name(self,obj):
         return obj.customer.customer_name
