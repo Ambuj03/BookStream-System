@@ -49,9 +49,16 @@ class transaction_form(forms.ModelForm):
 
     def clean_donation_amount(self):
         amount = self.cleaned_data.get('donation_amount')
-
-        if(amount < 0):
+        
+        # If amount is None (empty field), return None as it's allowed to be empty
+        if amount is None:
+            return amount
+            
+        # Now we can safely check if it's negative
+        if amount < 0:
             raise ValidationError("Amount cannot be negative.")
+            
+        return amount
 
 #SIGNUP FORM*******************************************************************
 class signup_form(UserCreationForm):
