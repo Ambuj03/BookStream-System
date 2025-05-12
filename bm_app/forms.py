@@ -166,3 +166,22 @@ class SimpleProfileForm(forms.ModelForm):
             'distributor_address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'distributor_age': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
+
+    def clean_distributor_phonenumber(self):
+        phone = self.cleaned_data.get('distributor_phonenumber')
+        if not re.match(r'^[6789]\d{9}$', phone):
+            raise forms.ValidationError("Enter valid Indian phone number.")
+        return phone
+    
+    def clean_distributor_age(self):
+        birth_date = self.cleaned_data.get('distributor_age')
+        if birth_date and birth_date > timezone.now().date():
+            raise forms.ValidationError("Birth date cannot be in the future.")
+        return birth_date
+        
+    def clean_temple(self):
+        temple = self.cleaned_data.get('temple')
+        if not temple:
+            raise forms.ValidationError("Please select a temple.")
+        return temple
+        
