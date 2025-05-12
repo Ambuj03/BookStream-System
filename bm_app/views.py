@@ -62,12 +62,10 @@ def complete_profile(request):
     return render(request, 'bm_app/OAuth/complete_profile.html', {'form' : form})
 
 
-
-def landing_page(request):
-    return render(request, 'bm_app/home1.html', {})
-
 #Showing main page
 def main_page(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     return render(request,'bm_app/main.html',{})
 
 # showing home page
@@ -322,6 +320,10 @@ class CustomAuthenticationForm(AuthenticationForm):
                                      widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
 def login_page(request):
+
+    if request.user.is_authenticated:
+        return redirect('home')
+
     if request.method == "POST":
         form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():

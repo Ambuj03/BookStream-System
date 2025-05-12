@@ -1,14 +1,13 @@
 from django.urls import path
 from .views import inventory_view, main_page, login_page, signup_page
 from .views import home_page, new_transaction_view, logout_view,books_view, add_books, add_custom_books, delete_book, get_distributor_books
-from .views import books_api, landing_page
+from .views import books_api
 from .views import distributor_notifications, mark_notification_read, get_unread_notification_count
 from .dashboard_view import dashboard, get_monthly_distribution_data,get_top_books, get_revenue_data, get_top_categories
 from .transaction_view import transaction_history_view
 from .profile_view import view_profile, edit_profile, change_password, profile_dashboard
 
 urlpatterns = [
-    path('home1/', landing_page, name = "landing"),
     path('', main_page, name='main'),
     path('login/', login_page, name='login'),
     path('signup/', signup_page, name='signup'),
