@@ -81,12 +81,11 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
-
         # 'APP': {
         #     'client_id': 'your-client-id',
         #     'secret': 'your-secret-key',
         # },
-
+      
         'SCOPE' :['profile','email'], 
 
         'AUTH_PARAMS': {
