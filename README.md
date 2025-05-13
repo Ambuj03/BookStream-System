@@ -110,7 +110,9 @@ In a new terminal window (with your virtualenv activated), run:
 Contributions are welcome! Please fork the repository and submit a pull request for any enhancements or bug fixes.
 
 ## 📄 License
-Will be registered soon !!!
+
+This project is licensed under the MIT License.
+See the [LICENSE](./LICENSE) file for details.
 
 ## 📬 Contact
 For any inquiries or feedback, please contact [Ambuj Mishra] at [mishraambuj8269@gmail.com].
