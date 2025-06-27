@@ -34,7 +34,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '',).split(',')
 # ALLOWED_HOSTS = ('*',)
 
 
-SITE_ID = 4
+SITE_ID = 5
 
 # Application definition
 INSTALLED_APPS = [
@@ -250,9 +250,9 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 # Security related settings before deployment
-# CSRF_COOKIE_SECURE = False
-# SESSION_COOKIE_SECURE = False
-# SECURE_SSL_REDIRECT = False
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
 
 # email configs
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
