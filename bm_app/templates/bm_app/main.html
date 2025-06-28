@@ -1,724 +1,474 @@
 {% extends "bm_app/base.html" %}
 {% load static %}
 
-{% block title %}Brihat Mridanga{% endblock %}
+{% block title %}Brihat Mridanga - Book Distribution System{% endblock %}
 
 {%block extra_css%}
-<link rel="stylesheet" href="{%static 'bm_app/css/landing.css'%}">
 <link rel="stylesheet" href="{%static 'bm_app/css/landing-3d.css'%}">
-<style>
-    /* Override original styles for consistency */
-    body {
-        background: var(--surface-primary) !important;
-    }
-    
-    .container {
-        max-width: 1200px !important;
-    }
-    
-    /* Ensure proper stacking */
-    .navbar {
-        z-index: 1000 !important;
-    }
-    
-    /* Enhanced hero container */
-    .hero-container {
-        align-items: center !important;
-        gap: 4rem !important;
-    }
-    
-    /* Feature grid improvements */
-    .features-grid {
-        gap: 2rem !important;
-    }
-    
-    /* Ensure smooth transitions everywhere */
-    .feature-card,
-    .btn,
-    .nav-link,
-    .hero-image,
-    .section-title {
-        transition: all var(--transition-normal) !important;
-    }
-</style>
 {%endblock%}
 
 {% block content %}
-    <!-- Bootstrap Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <div class="logo-placeholder">Brihat Mridanga</div>
-            </a>
+<!-- Modern Navigation -->
+<nav class="modern-nav">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <h2>Brihat Mridanga</h2>
+        </div>
+        
+        <div class="nav-menu" id="nav-menu">
+            <ul class="nav-list">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <a href="{% url 'login' %}" class="login-btn">Sign In</a>
+                <a href="{% url 'login' %}" class="cta-btn">Get Started</a>
+            </div>
+        </div>
+
+        <div class="nav-toggle" id="nav-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="home" class="hero-section">
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span>✨ Spiritual Book Distribution Made Simple</span>
+            </div>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-                    data-bs-target="#navbarNav" aria-controls="navbarNav" 
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <h1 class="hero-title">
+                Transform Your Book Distribution with 
+                <span class="highlight">Divine Efficiency</span>
+            </h1>
             
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#home">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
-                    </li>
-                </ul>
-                <div class="d-flex">
-                    <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+            <p class="hero-description">
+                Streamline sacred book distribution with our comprehensive management system. 
+                Track inventory, manage transactions, and spread spiritual knowledge with unprecedented ease.
+            </p>
+            
+            <div class="hero-actions">
+                <a href="{% url 'login' %}" class="primary-button">
+                    <span>Start Your Journey</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="#features" class="secondary-button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5,3 19,12 5,21"/>
+                    </svg>
+                    <span>Learn More</span>
+                </a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat">
+                    <h3>10K+</h3>
+                    <p>Books Distributed</p>
+                </div>
+                <div class="stat">
+                    <h3>500+</h3>
+                    <p>Active Users</p>
+                </div>
+                <div class="stat">
+                    <h3>99.9%</h3>
+                    <p>Uptime</p>
                 </div>
             </div>
         </div>
-    </nav>
-
-    <!-- Rest of your content here -->
-    <main>
-        <!-- Hero Section -->
-        <section id="home" class="hero">
-            <!-- 3D Background Canvas -->
-            <canvas id="heroCanvas" class="three-canvas"></canvas>
-            
-            <div class="container">
-                <div class="hero-container">
-                    <div class="hero-content">
-                        <h1 class="hero-title scroll-reveal" data-text="Manage Your Book Distribution and Inventory Swiftly">Manage Your Book Distribution and Inventory Swiftly  </h1>
-                        <p class="hero-subtitle scroll-reveal">Streamline your book distribution management process with our comprehensive inventory system designed for efficiency and accuracy.</p>
-                        <div class="hero-cta scroll-reveal">
-                            <a href={%url 'login' %} class="btn btn-primary">Get Started</a>
-                            <a href="#features" class="btn btn-outline">Learn More</a>
-                        </div>
-                    </div>
-                    <div class="hero-image">
-                        <!-- You'll add your image here with: -->
-                            <img src="{% static 'logo.jpg' %}" alt="Book Distribution System"> 
-                    </div>
+        
+        <div class="hero-visual">
+            <div class="image-container">
+                <div class="floating-card card-1">
+                    <div class="card-icon">📚</div>
+                    <span>Inventory</span>
+                </div>
+                <div class="floating-card card-2">
+                    <div class="card-icon">📊</div>
+                    <span>Analytics</span>
+                </div>
+                <div class="floating-card card-3">
+                    <div class="card-icon">🔔</div>
+                    <span>Alerts</span>
+                </div>
+                
+                <div class="main-image">
+                    <img src="{% static 'logo.jpg' %}" alt="Srila Prabhupada" />
+                    <div class="image-glow"></div>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
+</section>
 
-        <!-- Features Section - Enhanced with 3D effects -->
-        <section id="features" class="section features-3d-container">
-            <!-- 3D Features Background -->
-            <canvas id="featuresCanvas" class="three-canvas"></canvas>
-            
-            <div class="container">
-                <h2 class="section-title scroll-reveal">Our Features</h2>
-                <div class="features-container">
-                    <div class="features-grid">
-                        <div class="feature-card feature-card-3d scroll-reveal" data-tilt>
-                            <div class="feature-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                                </svg>
-                            </div>
-                            <h3 class="feature-title">Inventory Management</h3>
-                            <p>Maintain a complete record of your book inventory with automatic updates as transactions occur.</p>
-                        </div>
-                        <div class="feature-card feature-card-3d scroll-reveal" data-tilt>
-                            <div class="feature-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1-2-2h2"></path>
-                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                                    <path d="M9 14h6"></path>
-                                    <path d="M9 10h6"></path>
-                                    <path d="M9 18h6"></path>
-                                </svg>
-                            </div>
-                            <h3 class="feature-title">Transaction Management</h3>
-                            <p>Easily record and manage all your book distributions with our intuitive transaction system.</p>
-                        </div>
-                        <div class="feature-card feature-card-3d scroll-reveal" data-tilt>
-                            <div class="feature-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 20V10"></path>
-                                    <path d="M18 20V4"></path>
-                                    <path d="M6 20v-4"></path>
-                                </svg>
-                            </div>
-                            <h3 class="feature-title">Analytics & Reports</h3>
-                            <p>Get detailed insights about your book distribution activities with advanced analytics and reports.</p>
-                        </div>
-                        <div class="feature-card feature-card-3d scroll-reveal" data-tilt>
-                            <div class="feature-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                                </svg>
-                            </div>
-                            <h3 class="feature-title">Notifications</h3>
-                            <p>Stay updated with real-time notifications about important inventory changes and transactions.</p>
-                        </div>
-                    </div>
-                </div>
+<!-- Features Section -->
+<section id="features" class="features-section">
+    <!-- Animated Background Elements -->
+    <div class="features-bg">
+        <div class="bg-pattern"></div>
+        <div class="floating-elements">
+            <div class="element element-1"></div>
+            <div class="element element-2"></div>
+            <div class="element element-3"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="section-header scroll-animate">
+            <div class="section-badge enhanced-badge">
+                <div class="badge-shine"></div>
+                🚀 Powerful Features
             </div>
-        </section>
+            <h2>Everything You Need for Spiritual Book Distribution</h2>
+            <p>Our comprehensive suite of tools helps you manage every aspect of book distribution efficiently and effectively.</p>
+        </div>
 
-        <!-- About Section - Text only now -->
-        <section id="about" class="section about">
+        <div class="features-grid">
+            <div class="feature-card enhanced-feature-card scroll-animate" data-delay="0">
+                <div class="card-glow"></div>
+                <div class="feature-icon enhanced-icon">
+                    <div class="icon-bg"></div>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                    <div class="icon-pulse"></div>
+                </div>
+                <h3>Smart Inventory Management</h3>
+                <p>Real-time tracking of book stock levels with automated alerts when inventory runs low.</p>
+                <div class="feature-number">01</div>
+            </div>
+
+            <div class="feature-card enhanced-feature-card scroll-animate" data-delay="100">
+                <div class="card-glow"></div>
+                <div class="feature-icon enhanced-icon">
+                    <div class="icon-bg"></div>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                        <path d="M9 14h6M9 10h6M9 18h6"/>
+                    </svg>
+                    <div class="icon-pulse"></div>
+                </div>
+                <h3>Transaction Recording</h3>
+                <p>Effortlessly record book distributions with digital receipts and comprehensive transaction history.</p>
+                <div class="feature-number">02</div>
+            </div>
+
+            <div class="feature-card enhanced-feature-card scroll-animate" data-delay="200">
+                <div class="card-glow"></div>
+                <div class="feature-icon enhanced-icon">
+                    <div class="icon-bg"></div>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20V10M18 20V4M6 20v-4"/>
+                    </svg>
+                    <div class="icon-pulse"></div>
+                </div>
+                <h3>Advanced Analytics</h3>
+                <p>Gain insights into distribution patterns, popular books, and performance metrics.</p>
+                <div class="feature-number">03</div>
+            </div>
+
+            <div class="feature-card enhanced-feature-card scroll-animate" data-delay="300">
+                <div class="card-glow"></div>
+                <div class="feature-icon enhanced-icon">
+                    <div class="icon-bg"></div>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <div class="icon-pulse"></div>
+                </div>
+                <h3>Smart Notifications</h3>
+                <p>Stay informed with intelligent alerts about low stock, pending tasks, and important milestones.</p>
+                <div class="feature-number">04</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="about-section">
             <div class="container">
-                <h2 class="section-title scroll-reveal">About Brihat Mridanga</h2>
-                <div class="about-content scroll-reveal">
+                <div class="about-content">
                     <div class="about-text">
-                        <p>Brihat Mridanga is a comprehensive book inventory management system designed to help organization to streamline their book distribution process. Our platform provides powerful tools to efficiently manage inventory, track distributions, and analyze performance.</p>
-                        <br>
-                        <p>Founded with the mission to make book distribution management effortless, we continue to innovate and improve our system based on user feedback and industry best practices.</p>
+                <div class="section-badge">📖 Our Mission</div>
+                <h2>Spreading Spiritual Knowledge Through Technology</h2>
+                <p>
+                    Brihat Mridanga is more than just a book distribution system—it's a digital tool designed to serve the noble mission of spreading spiritual wisdom. Inspired by the teachings and vision of His Divine Grace A.C. Bhaktivedanta Swami Prabhupada, our platform helps devotees and organizations efficiently manage the distribution of transcendental literature.
+                </p>
+                <p>
+                    We understand that every book distributed is a seed of spiritual transformation. That's why we've created a system that handles the administrative complexities, allowing you to focus on what matters most—connecting souls with timeless spiritual wisdom.
+                </p>
                     </div>
                 </div>
             </div>
         </section>
-    </main>
+
+<!-- CTA Section -->
+<section id="contact" class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Ready to Transform Your Book Distribution?</h2>
+            <p>Join hundreds of temples and devotees who trust Brihat Mridanga for their spiritual literature distribution needs.</p>
+            
+            <div class="cta-actions">
+                <a href="{% url 'login' %}" class="primary-button large">
+                    <span>Start Free Trial</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="mailto:mridangabrihat@gmail.com" class="secondary-button large">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    <span>Contact Us</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 
     <!-- Footer -->
-    <footer class="footer">
+<footer class="modern-footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-column">
+            <div class="footer-brand">
                     <h3>Brihat Mridanga</h3>
-                    <p>Efficient book inventory management for your distribution needs. We help organization to streamline their book distribution process with our comprehensive solution.</p>
+                <p>Empowering spiritual book distribution through innovative technology. Serving the mission of spreading transcendental knowledge worldwide.</p>
                 </div>
-                <div class="footer-column contact">
-                    <h3>Contact</h3>
-                    <ul class="footer-contact-info">
-                        <li><a href="mailto:info@brihadmridanga.com">mridangabrihat@gmail.com</a></li>
-                        {% comment %} <li><a href="tel:+1234567890">+1 (234) 567-890</a></li> {% endcomment %}
-                    </ul>
-                </div>
+            
+            <div class="footer-links">
                 <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-contact-info">
-                        <li><a href="#home">Home</a></li>
+                    <h4>Platform</h4>
+                    <ul>
                         <li><a href="#features">Features</a></li>
+                        <li><a href="{% url 'login' %}">Login</a></li>
                         <li><a href="#about">About</a></li>
                     </ul>
                 </div>
+                
+                <div class="footer-column">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="mailto:mridangabrihat@gmail.com">Help Center</a></li>
+                        <li><a href="mailto:mridangabrihat@gmail.com">Contact</a></li>
+                    </ul>
             </div>
-            <div class="copyright">
-                &copy; 2025 Brihat Mridanga. All rights reserved.
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Brihat Mridanga. All rights reserved. Made with 🙏 for the service of Sri Krishna.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Three.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
     <script>
-        // Three.js Scene Setup
-        let heroScene, heroCamera, heroRenderer, heroParticles = [];
-        let featuresScene, featuresCamera, featuresRenderer;
-        let mouseX = 0, mouseY = 0;
+    // Mobile Navigation Toggle
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
 
-        // Initialize Hero 3D Background - Professional Version
-        function initHero3D() {
-            // Skip 3D initialization on small screens
-            if (window.innerWidth <= 480) return;
-            
-            const canvas = document.getElementById('heroCanvas');
-            if (!canvas) return;
-            
-            const container = canvas.parentElement;
-            
-            // Scene setup with professional parameters
-            heroScene = new THREE.Scene();
-            heroCamera = new THREE.PerspectiveCamera(60, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-            heroRenderer = new THREE.WebGLRenderer({ 
-                canvas: canvas, 
-                alpha: true,
-                antialias: window.devicePixelRatio <= 1,
-                powerPreference: "high-performance"
-            });
-            heroRenderer.setSize(container.offsetWidth, container.offsetHeight);
-            heroRenderer.setClearColor(0x000000, 0);
-
-            // Reduced particle count for professional look
-            let particleCount = 25;
-            if (window.innerWidth <= 768) particleCount = 15;
-            if (window.innerWidth <= 480) particleCount = 0;
-            
-            // Professional blue color palette
-            const colors = [0x1e40af, 0x1e3a8a, 0x3b82f6, 0x0ea5e9];
-            
-            for (let i = 0; i < particleCount; i++) {
-                // Smaller, more subtle book particles
-                const geometry = new THREE.BoxGeometry(
-                    Math.random() * 0.3 + 0.2,
-                    Math.random() * 0.4 + 0.3,
-                    Math.random() * 0.1 + 0.05
-                );
-                
-                const material = new THREE.MeshPhongMaterial({
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    transparent: true,
-                    opacity: 0.4
-                });
-                
-                const particle = new THREE.Mesh(geometry, material);
-                
-                // More conservative positioning
-                particle.position.x = (Math.random() - 0.5) * 8;
-                particle.position.y = (Math.random() - 0.5) * 6;
-                particle.position.z = (Math.random() - 0.5) * 4;
-                
-                particle.userData = {
-                    initialX: particle.position.x,
-                    initialY: particle.position.y,
-                    initialZ: particle.position.z,
-                    rotationSpeed: Math.random() * 0.005 + 0.002, // Slower rotation
-                    floatSpeed: Math.random() * 0.8 + 0.5
-                };
-                
-                heroScene.add(particle);
-                heroParticles.push(particle);
-            }
-
-            // Professional lighting setup
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            heroScene.add(ambientLight);
-            
-            const directionalLight = new THREE.DirectionalLight(0x1e40af, 0.4);
-            directionalLight.position.set(2, 2, 2);
-            heroScene.add(directionalLight);
-
-            heroCamera.position.z = 6;
-        }
-
-        // Initialize Features 3D Background - Professional Version
-        function initFeatures3D() {
-            // Skip 3D initialization on small screens
-            if (window.innerWidth <= 480) return;
-            
-            const canvas = document.getElementById('featuresCanvas');
-            if (!canvas) return;
-            
-            const container = canvas.parentElement;
-            
-            // Professional scene setup
-            featuresScene = new THREE.Scene();
-            featuresCamera = new THREE.PerspectiveCamera(60, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-            featuresRenderer = new THREE.WebGLRenderer({ 
-                canvas: canvas, 
-                alpha: true,
-                antialias: window.devicePixelRatio <= 1,
-                powerPreference: "high-performance"
-            });
-            featuresRenderer.setSize(container.offsetWidth, container.offsetHeight);
-            featuresRenderer.setClearColor(0x000000, 0);
-
-            // Subtle connecting lines - professional style
-            const points = [];
-            for (let i = 0; i < 8; i++) {
-                points.push(new THREE.Vector3(
-                    (Math.random() - 0.5) * 6,
-                    (Math.random() - 0.5) * 4,
-                    (Math.random() - 0.5) * 2
-                ));
-            }
-
-            for (let i = 0; i < points.length - 1; i++) {
-                const geometry = new THREE.BufferGeometry().setFromPoints([points[i], points[i + 1]]);
-                const material = new THREE.LineBasicMaterial({
-                    color: 0x1e40af,
-                    transparent: true,
-                    opacity: 0.15
-                });
-                const line = new THREE.Line(geometry, material);
-                featuresScene.add(line);
-            }
-
-            // Professional floating orbs - corporate blue theme
-            for (let i = 0; i < 8; i++) {
-                const geometry = new THREE.SphereGeometry(0.12, 12, 12);
-                const material = new THREE.MeshPhongMaterial({
-                    color: new THREE.Color().setHSL(0.6, 0.5, 0.6),
-                    transparent: true,
-                    opacity: 0.5,
-                    emissive: new THREE.Color().setHSL(0.6, 0.3, 0.1)
-                });
-                
-                const orb = new THREE.Mesh(geometry, material);
-                orb.position.x = (Math.random() - 0.5) * 8;
-                orb.position.y = (Math.random() - 0.5) * 4;
-                orb.position.z = (Math.random() - 0.5) * 2;
-                
-                orb.userData = {
-                    initialX: orb.position.x,
-                    initialY: orb.position.y,
-                    initialZ: orb.position.z,
-                    speed: Math.random() * 0.015 + 0.008, // Slower movement
-                    amplitude: Math.random() * 0.3 + 0.2  // Smaller amplitude
-                };
-                
-                featuresScene.add(orb);
-            }
-
-            // Professional lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            featuresScene.add(ambientLight);
-            
-            const directionalLight = new THREE.DirectionalLight(0x1e40af, 0.5);
-            directionalLight.position.set(2, 2, 2);
-            featuresScene.add(directionalLight);
-
-            featuresCamera.position.z = 4;
-        }
-
-        // Professional Animation Loop - Subtle Corporate Effects
-        function animate() {
-            requestAnimationFrame(animate);
-
-            const time = Date.now() * 0.0005; // Slower time factor for subtle animations
-
-            // Professional hero particles animation
-            if (heroParticles.length > 0) {
-                heroParticles.forEach(particle => {
-                    // Subtle rotation
-                    particle.rotation.x += particle.userData.rotationSpeed * 0.5;
-                    particle.rotation.y += particle.userData.rotationSpeed * 0.3;
-                    
-                    // Gentle floating motion
-                    particle.position.y = particle.userData.initialY + Math.sin(time + particle.userData.initialX) * 0.3;
-                    
-                    // Minimal mouse interaction for professionalism
-                    particle.position.x = particle.userData.initialX + (mouseX * 0.0002);
-                    particle.position.z += (mouseY * 0.0002 - particle.position.z) * 0.02;
-                });
-
-                heroRenderer.render(heroScene, heroCamera);
-            }
-
-            // Professional features elements animation
-            if (featuresScene) {
-                featuresScene.children.forEach(child => {
-                    if (child.userData && child.userData.speed) {
-                        // Smooth, subtle floating motion
-                        child.position.y = child.userData.initialY + Math.sin(time * child.userData.speed) * child.userData.amplitude;
-                        child.position.x = child.userData.initialX + Math.cos(time * child.userData.speed * 0.8) * (child.userData.amplitude * 0.3);
-                        
-                        // Very subtle rotation
-                        child.rotation.x += 0.002;
-                        child.rotation.y += 0.001;
-                        
-                        // Gentle pulsing glow effect
-                        if (child.material && child.material.emissive) {
-                            const glowIntensity = 0.08 + Math.sin(time * 1.5 + child.userData.initialX) * 0.02;
-                            child.material.emissive.setHSL(0.6, 0.3, glowIntensity);
-                        }
-                    }
-                });
-
-                featuresRenderer.render(featuresScene, featuresCamera);
-            }
-        }
-
-        // Mouse tracking
-        document.addEventListener('mousemove', (event) => {
-            mouseX = (event.clientX - window.innerWidth / 2);
-            mouseY = (event.clientY - window.innerHeight / 2);
+    if (navToggle) {
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            navToggle.classList.toggle('active');
         });
+    }
 
-        // Tilt effect for feature cards
-        function initTiltEffect() {
-            const cards = document.querySelectorAll('[data-tilt]');
-            
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
-                    card.style.transition = 'transform 0.1s ease-out';
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
-
-                card.addEventListener('mousemove', (e) => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    
-                    const rotateX = (y - centerY) / 10;
-                    const rotateY = (centerX - x) / 10;
-                    
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
-                });
-
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-                    card.style.transition = 'transform 0.3s ease-out';
-                });
-            });
-        }
-
-        // Enhanced responsive window resize handler
-        function onWindowResize() {
-            // Throttle resize events for performance
-            clearTimeout(window.resizeTimeout);
-            window.resizeTimeout = setTimeout(() => {
-                handleResize();
-            }, 100);
-        }
-
-        function handleResize() {
-            const isSmallScreen = window.innerWidth <= 480;
-            const isMediumScreen = window.innerWidth <= 768;
-            
-            // Hero canvas resize
-            if (heroCamera && heroRenderer && !isSmallScreen) {
-                const heroContainer = document.getElementById('heroCanvas').parentElement;
-                if (heroContainer) {
-                    heroCamera.aspect = heroContainer.offsetWidth / heroContainer.offsetHeight;
-                    heroCamera.updateProjectionMatrix();
-                    heroRenderer.setSize(heroContainer.offsetWidth, heroContainer.offsetHeight);
-                    
-                    // Adjust particle count based on screen size
-                    if (isMediumScreen && heroParticles.length > 25) {
-                        // Remove some particles on smaller screens for performance
-                        for (let i = heroParticles.length - 1; i >= 25; i--) {
-                            heroScene.remove(heroParticles[i]);
-                            heroParticles.splice(i, 1);
-                        }
-                    }
-                }
+                // Close mobile menu if open
+                if (navMenu) navMenu.classList.remove('active');
+                if (navToggle) navToggle.classList.remove('active');
             }
+        });
+    });
 
-            // Features canvas resize
-            if (featuresCamera && featuresRenderer && !isSmallScreen) {
-                const featuresContainer = document.getElementById('featuresCanvas').parentElement;
-                if (featuresContainer) {
-                    featuresCamera.aspect = featuresContainer.offsetWidth / featuresContainer.offsetHeight;
-                    featuresCamera.updateProjectionMatrix();
-                    featuresRenderer.setSize(featuresContainer.offsetWidth, featuresContainer.offsetHeight);
-                }
-            }
-
-            // Hide/show canvases based on screen size
-            const heroCanvas = document.getElementById('heroCanvas');
-            const featuresCanvas = document.getElementById('featuresCanvas');
-            
-            if (isSmallScreen) {
-                if (heroCanvas) heroCanvas.style.display = 'none';
-                if (featuresCanvas) featuresCanvas.style.display = 'none';
+    // Enhanced Navbar scroll effect
+    window.addEventListener('scroll', () => {
+        const nav = document.querySelector('.modern-nav');
+        if (nav) {
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled');
             } else {
-                if (heroCanvas) heroCanvas.style.display = 'block';
-                if (featuresCanvas) featuresCanvas.style.display = 'block';
+                nav.classList.remove('scrolled');
             }
         }
+    });
 
-        // Debounced scroll handler for better performance
-        let scrollTimeout;
-        function throttledScrollHandler() {
-            if (scrollTimeout) return;
-            scrollTimeout = setTimeout(() => {
-                // Navbar scroll effect
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 10) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-                scrollTimeout = null;
-            }, 16); // ~60fps
-        }
+    // Enhanced Scroll Animations with Intersection Observer
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
 
-        // Scroll-triggered animations
-        function initScrollAnimations() {
-            const scrollElements = document.querySelectorAll('.scroll-reveal');
-            
-            const elementInView = (el, dividend = 1) => {
-                const elementTop = el.getBoundingClientRect().top;
-                return (
-                    elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
-                );
-            };
-
-            const elementOutofView = (el) => {
-                const elementTop = el.getBoundingClientRect().top;
-                return (
-                    elementTop > (window.innerHeight || document.documentElement.clientHeight)
-                );
-            };
-
-            const displayScrollElement = (element) => {
-                element.classList.add('revealed');
-            };
-
-            const hideScrollElement = (element) => {
-                element.classList.remove('revealed');
-            };
-
-            const handleScrollAnimation = () => {
-                scrollElements.forEach((el) => {
-                    if (elementInView(el, 1.25)) {
-                        displayScrollElement(el);
-                    } else if (elementOutofView(el)) {
-                        hideScrollElement(el);
-                    }
-                });
-            };
-
-            window.addEventListener('scroll', () => {
-                handleScrollAnimation();
-            });
-
-            // Initial check for elements already in view
-            handleScrollAnimation();
-        }
-
-        // Page loading effect
-        function initPageLoadEffect() {
-            document.body.classList.add('page-loading');
-            
-            window.addEventListener('load', () => {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const delay = entry.target.dataset.delay || 0;
                 setTimeout(() => {
-                    document.body.classList.remove('page-loading');
-                    document.body.classList.add('page-loaded');
-                }, 300);
-            });
-        }
-
-
-
-        // Professional Corporate Particle System
-        function addParticleBackground() {
-            const featuresSection = document.querySelector('.features-3d-container');
-            const heroSection = document.querySelector('.hero');
-            if (!featuresSection) return;
-
-            // Features section particles - professional corporate style
-            for (let i = 0; i < 8; i++) {
-                const particle = document.createElement('div');
-                const size = Math.random() * 4 + 2;
-                
-                particle.style.cssText = `
-                    position: absolute;
-                    width: ${size}px;
-                    height: ${size}px;
-                    background: radial-gradient(circle, rgba(30, 64, 175, 0.6), rgba(30, 64, 175, 0));
-                    border-radius: 50%;
-                    left: ${Math.random() * 100}%;
-                    top: ${Math.random() * 100}%;
-                    animation: professional-float ${Math.random() * 20 + 15}s ease-in-out infinite;
-                    animation-delay: ${Math.random() * 8}s;
-                    pointer-events: none;
-                    filter: blur(0.5px);
-                    z-index: 1;
-                `;
-                featuresSection.appendChild(particle);
+                    entry.target.classList.add('in-view');
+                }, delay);
             }
+        });
+    }, observerOptions);
 
-            // Hero section ambient particles - corporate blue theme
-            if (heroSection) {
-                for (let i = 0; i < 5; i++) {
-                    const particle = document.createElement('div');
-                    const size = Math.random() * 6 + 3;
-                    
-                    particle.style.cssText = `
-                        position: absolute;
-                        width: ${size}px;
-                        height: ${size}px;
-                        background: radial-gradient(circle, rgba(30, 64, 175, 0.3), transparent);
-                        border-radius: 50%;
-                        left: ${Math.random() * 100}%;
-                        top: ${Math.random() * 100}%;
-                        animation: corporate-drift ${Math.random() * 30 + 25}s linear infinite;
-                        animation-delay: ${Math.random() * 10}s;
-                        pointer-events: none;
-                        z-index: 1;
-                    `;
-                    heroSection.appendChild(particle);
-                }
+    // Observe scroll-animate elements
+    document.querySelectorAll('.scroll-animate').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Counter Animation for Stats
+    function animateCounter(element, target, duration = 2000) {
+        const start = 0;
+        const increment = target / (duration / 16);
+        let current = start;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                element.textContent = element.textContent.replace(/[\d,]+/, target.toLocaleString());
+                clearInterval(timer);
+            } else {
+                element.textContent = element.textContent.replace(/[\d,]+/, Math.floor(current).toLocaleString());
             }
-        }
+        }, 16);
+    }
 
-        // Professional CSS animations for particles
-        function addParticleAnimations() {
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes professional-float {
-                    0%, 100% {
-                        transform: translateY(0px) translateX(0px) scale(1);
-                        opacity: 0.2;
-                    }
-                    25% {
-                        transform: translateY(-15px) translateX(8px) scale(1.05);
-                        opacity: 0.4;
-                    }
-                    50% {
-                        transform: translateY(-8px) translateX(-5px) scale(0.95);
-                        opacity: 0.6;
-                    }
-                    75% {
-                        transform: translateY(-20px) translateX(-8px) scale(1.02);
-                        opacity: 0.3;
-                    }
-                }
-
-                @keyframes corporate-drift {
-                    0% {
-                        transform: translateX(-50px) translateY(100vh) scale(0);
-                        opacity: 0;
-                    }
-                    15% {
-                        opacity: 0.2;
-                        transform: scale(1);
-                    }
-                    85% {
-                        opacity: 0.1;
-                    }
-                    100% {
-                        transform: translateX(50px) translateY(-50px) scale(0);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
-        // Initialize everything when page loads
-        window.addEventListener('DOMContentLoaded', () => {
-            initPageLoadEffect();
-            addParticleAnimations(); // Add particle CSS animations first
-            addParticleBackground();
-            
-            // Add throttled scroll handler for better performance
-            window.addEventListener('scroll', throttledScrollHandler);
-        });
-
-        window.addEventListener('load', () => {
-            initHero3D();
-            initFeatures3D();
-            initTiltEffect();
-            initScrollAnimations();
-            animate();
-            
-            // Trigger initial resize for proper responsive setup
-            setTimeout(() => {
-                handleResize();
-            }, 100);
-        });
-
-        // Enhanced resize handling with ResizeObserver for better performance
-        if (window.ResizeObserver) {
-            const resizeObserver = new ResizeObserver(entries => {
-                clearTimeout(window.resizeTimeout);
-                window.resizeTimeout = setTimeout(() => {
-                    handleResize();
-                }, 100);
-            });
-            
-            // Observe main sections for responsive updates
-            document.addEventListener('DOMContentLoaded', () => {
-                const heroSection = document.querySelector('.hero');
-                const featuresSection = document.querySelector('.features-3d-container');
+    // Stats Counter Animation
+    const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counter = entry.target.querySelector('.counter');
+                const dataCount = parseInt(entry.target.dataset.count);
                 
-                if (heroSection) resizeObserver.observe(heroSection);
-                if (featuresSection) resizeObserver.observe(featuresSection);
-            });
-        }
+                if (counter && dataCount) {
+                    animateCounter(counter, dataCount);
+                }
+                
+                statsObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
 
-        window.addEventListener('resize', onWindowResize);
-    </script>
+    document.querySelectorAll('.stat[data-count]').forEach(stat => {
+        statsObserver.observe(stat);
+    });
+
+    // Enhanced Button Hover Effects
+    document.querySelectorAll('.btn-enhanced').forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+            btn.style.transform = 'translateY(-3px) scale(1.02)';
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // Enhanced Feature Card Interactions
+    document.querySelectorAll('.enhanced-feature-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-12px) scale(1.02)';
+            card.style.zIndex = '10';
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0) scale(1)';
+            card.style.zIndex = '1';
+        });
+    });
+
+    // Parallax Effect for Background Elements
+    let ticking = false;
+    
+    function updateParallax() {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.5;
+        
+        document.querySelectorAll('.floating-shape').forEach((shape, index) => {
+            const speed = 0.2 + (index * 0.1);
+            shape.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+        
+        document.querySelectorAll('.gradient-orb').forEach((orb, index) => {
+            const speed = 0.15 + (index * 0.05);
+            orb.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+        
+        ticking = false;
+    }
+    
+    function requestParallax() {
+        if (!ticking) {
+            requestAnimationFrame(updateParallax);
+            ticking = true;
+        }
+    }
+    
+    window.addEventListener('scroll', requestParallax);
+
+    // Image Enhancement Effect
+    const mainImage = document.querySelector('.enhanced-image img');
+    if (mainImage) {
+        mainImage.addEventListener('mouseenter', () => {
+            mainImage.style.filter = 'brightness(1.1) contrast(1.1) saturate(1.2)';
+        });
+        
+        mainImage.addEventListener('mouseleave', () => {
+            mainImage.style.filter = 'brightness(1) contrast(1) saturate(1)';
+        });
+    }
+
+    // Loading Animation on Page Load
+    window.addEventListener('load', () => {
+        document.body.style.overflow = 'hidden';
+        
+        // Trigger hero animations
+        setTimeout(() => {
+            document.querySelectorAll('.animate-slide-up').forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0) scale(1)';
+                }, index * 100);
+            });
+        }, 300);
+        
+        // Re-enable scroll
+        setTimeout(() => {
+            document.body.style.overflow = 'auto';
+        }, 1000);
+    });
+
+    // Performance optimization - Reduce animations on low-end devices
+    if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) {
+        document.documentElement.style.setProperty('--transition-slow', '200ms');
+        document.documentElement.style.setProperty('--transition', '150ms');
+        
+        // Disable some heavy animations
+        document.querySelectorAll('.floating-shape, .gradient-orb').forEach(el => {
+            el.style.display = 'none';
+        });
+    }
+</script>
 {% endblock %}
