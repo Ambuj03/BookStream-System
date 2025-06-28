@@ -7,6 +7,8 @@ __pycache__/
 bm_venv/
 venv/
 env/
+dev_settings.py
+db_dev.sqlite3
 
 # Create or edit .gitignore
 echo "__pycache__/" >> .gitignore
