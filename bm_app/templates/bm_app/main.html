@@ -5,6 +5,42 @@
 
 {%block extra_css%}
 <link rel="stylesheet" href="{%static 'bm_app/css/landing.css'%}">
+<link rel="stylesheet" href="{%static 'bm_app/css/landing-3d.css'%}">
+<style>
+    /* Override original styles for consistency */
+    body {
+        background: var(--surface-primary) !important;
+    }
+    
+    .container {
+        max-width: 1200px !important;
+    }
+    
+    /* Ensure proper stacking */
+    .navbar {
+        z-index: 1000 !important;
+    }
+    
+    /* Enhanced hero container */
+    .hero-container {
+        align-items: center !important;
+        gap: 4rem !important;
+    }
+    
+    /* Feature grid improvements */
+    .features-grid {
+        gap: 2rem !important;
+    }
+    
+    /* Ensure smooth transitions everywhere */
+    .feature-card,
+    .btn,
+    .nav-link,
+    .hero-image,
+    .section-title {
+        transition: all var(--transition-normal) !important;
+    }
+</style>
 {%endblock%}
 
 {% block content %}
@@ -44,12 +80,15 @@
     <main>
         <!-- Hero Section -->
         <section id="home" class="hero">
+            <!-- 3D Background Canvas -->
+            <canvas id="heroCanvas" class="three-canvas"></canvas>
+            
             <div class="container">
                 <div class="hero-container">
                     <div class="hero-content">
-                        <h1 class="hero-title">Manage Your Book Distribution and Inventory Swiftly  </h1>
-                        <p class="hero-subtitle">Streamline your book distribution management process with our comprehensive inventory system designed for efficiency and accuracy.</p>
-                        <div class="hero-cta">
+                        <h1 class="hero-title scroll-reveal" data-text="Manage Your Book Distribution and Inventory Swiftly">Manage Your Book Distribution and Inventory Swiftly  </h1>
+                        <p class="hero-subtitle scroll-reveal">Streamline your book distribution management process with our comprehensive inventory system designed for efficiency and accuracy.</p>
+                        <div class="hero-cta scroll-reveal">
                             <a href={%url 'login' %} class="btn btn-primary">Get Started</a>
                             <a href="#features" class="btn btn-outline">Learn More</a>
                         </div>
@@ -62,13 +101,16 @@
             </div>
         </section>
 
-        <!-- Features Section - Updated layout -->
-        <section id="features" class="section">
+        <!-- Features Section - Enhanced with 3D effects -->
+        <section id="features" class="section features-3d-container">
+            <!-- 3D Features Background -->
+            <canvas id="featuresCanvas" class="three-canvas"></canvas>
+            
             <div class="container">
-                <h2 class="section-title">Our Features</h2>
+                <h2 class="section-title scroll-reveal">Our Features</h2>
                 <div class="features-container">
                     <div class="features-grid">
-                        <div class="feature-card">
+                        <div class="feature-card feature-card-3d scroll-reveal" data-tilt>
                             <div class="feature-icon">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -79,7 +121,7 @@
                             <h3 class="feature-title">Inventory Management</h3>
                             <p>Maintain a complete record of your book inventory with automatic updates as transactions occur.</p>
                         </div>
-                        <div class="feature-card">
+                        <div class="feature-card feature-card-3d scroll-reveal" data-tilt>
                             <div class="feature-icon">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1-2-2h2"></path>
@@ -92,7 +134,7 @@
                             <h3 class="feature-title">Transaction Management</h3>
                             <p>Easily record and manage all your book distributions with our intuitive transaction system.</p>
                         </div>
-                        <div class="feature-card">
+                        <div class="feature-card feature-card-3d scroll-reveal" data-tilt>
                             <div class="feature-icon">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M12 20V10"></path>
@@ -103,7 +145,7 @@
                             <h3 class="feature-title">Analytics & Reports</h3>
                             <p>Get detailed insights about your book distribution activities with advanced analytics and reports.</p>
                         </div>
-                        <div class="feature-card">
+                        <div class="feature-card feature-card-3d scroll-reveal" data-tilt>
                             <div class="feature-icon">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -121,8 +163,8 @@
         <!-- About Section - Text only now -->
         <section id="about" class="section about">
             <div class="container">
-                <h2 class="section-title">About Brihat Mridanga</h2>
-                <div class="about-content">
+                <h2 class="section-title scroll-reveal">About Brihat Mridanga</h2>
+                <div class="about-content scroll-reveal">
                     <div class="about-text">
                         <p>Brihat Mridanga is a comprehensive book inventory management system designed to help organization to streamline their book distribution process. Our platform provides powerful tools to efficiently manage inventory, track distributions, and analyze performance.</p>
                         <br>
@@ -163,15 +205,440 @@
         </div>
     </footer>
 
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
     <script>
-        // Only keep the scroll detection JavaScript - remove menu toggle code
-        window.addEventListener('scroll', () => {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 10) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
+        // Three.js Scene Setup
+        let heroScene, heroCamera, heroRenderer, heroParticles = [];
+        let featuresScene, featuresCamera, featuresRenderer;
+        let mouseX = 0, mouseY = 0;
+
+        // Initialize Hero 3D Background
+        function initHero3D() {
+            // Skip 3D initialization on small screens
+            if (window.innerWidth <= 480) return;
+            
+            const canvas = document.getElementById('heroCanvas');
+            if (!canvas) return;
+            
+            const container = canvas.parentElement;
+            
+            // Scene setup
+            heroScene = new THREE.Scene();
+            heroCamera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            heroRenderer = new THREE.WebGLRenderer({ 
+                canvas: canvas, 
+                alpha: true,
+                antialias: window.devicePixelRatio <= 1, // Disable antialiasing on high DPI for performance
+                powerPreference: "high-performance"
+            });
+            heroRenderer.setSize(container.offsetWidth, container.offsetHeight);
+            heroRenderer.setClearColor(0x000000, 0);
+
+            // Adjust particle count based on screen size
+            let particleCount = 50;
+            if (window.innerWidth <= 768) particleCount = 25;
+            if (window.innerWidth <= 480) particleCount = 0;
+            
+            const colors = [0x667eea, 0x764ba2, 0x667eea, 0x764ba2];
+            
+            for (let i = 0; i < particleCount; i++) {
+                // Create book-like geometry
+                const geometry = new THREE.BoxGeometry(
+                    Math.random() * 0.3 + 0.1,
+                    Math.random() * 0.4 + 0.2,
+                    Math.random() * 0.05 + 0.02
+                );
+                
+                const material = new THREE.MeshPhongMaterial({
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    transparent: true,
+                    opacity: 0.7
+                });
+                
+                const particle = new THREE.Mesh(geometry, material);
+                
+                // Random positioning
+                particle.position.x = (Math.random() - 0.5) * 20;
+                particle.position.y = (Math.random() - 0.5) * 10;
+                particle.position.z = (Math.random() - 0.5) * 10;
+                
+                // Random rotation
+                particle.rotation.x = Math.random() * Math.PI;
+                particle.rotation.y = Math.random() * Math.PI;
+                particle.rotation.z = Math.random() * Math.PI;
+                
+                // Store initial position and random properties
+                particle.userData = {
+                    initialX: particle.position.x,
+                    initialY: particle.position.y,
+                    rotationSpeed: Math.random() * 0.02 + 0.01,
+                    floatSpeed: Math.random() * 0.02 + 0.01
+                };
+                
+                heroParticles.push(particle);
+                heroScene.add(particle);
             }
+
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            heroScene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0x417690, 0.8);
+            directionalLight.position.set(5, 5, 5);
+            heroScene.add(directionalLight);
+
+            heroCamera.position.z = 5;
+        }
+
+        // Initialize Features 3D Background
+        function initFeatures3D() {
+            // Skip 3D initialization on small screens
+            if (window.innerWidth <= 480) return;
+            
+            const canvas = document.getElementById('featuresCanvas');
+            if (!canvas) return;
+            
+            const container = canvas.parentElement;
+            
+            featuresScene = new THREE.Scene();
+            featuresCamera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            featuresRenderer = new THREE.WebGLRenderer({ 
+                canvas: canvas, 
+                alpha: true,
+                antialias: window.devicePixelRatio <= 1, // Disable antialiasing on high DPI for performance
+                powerPreference: "high-performance"
+            });
+            featuresRenderer.setSize(container.offsetWidth, container.offsetHeight);
+            featuresRenderer.setClearColor(0x000000, 0);
+
+            // Create geometric connections
+            const points = [];
+            for (let i = 0; i < 20; i++) {
+                points.push(new THREE.Vector3(
+                    (Math.random() - 0.5) * 15,
+                    (Math.random() - 0.5) * 8,
+                    (Math.random() - 0.5) * 5
+                ));
+            }
+
+            // Create lines connecting points
+            for (let i = 0; i < points.length - 1; i++) {
+                const geometry = new THREE.BufferGeometry().setFromPoints([points[i], points[i + 1]]);
+                const material = new THREE.LineBasicMaterial({
+                    color: 0x417690,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const line = new THREE.Line(geometry, material);
+                featuresScene.add(line);
+            }
+
+            // Add floating geometric shapes
+            for (let i = 0; i < 15; i++) {
+                const geometries = [
+                    new THREE.TetrahedronGeometry(0.3),
+                    new THREE.OctahedronGeometry(0.3),
+                    new THREE.IcosahedronGeometry(0.3)
+                ];
+                
+                const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+                const material = new THREE.MeshPhongMaterial({
+                    color: 0x417690,
+                    transparent: true,
+                    opacity: 0.4,
+                    wireframe: true
+                });
+                
+                const shape = new THREE.Mesh(geometry, material);
+                shape.position.x = (Math.random() - 0.5) * 12;
+                shape.position.y = (Math.random() - 0.5) * 6;
+                shape.position.z = (Math.random() - 0.5) * 4;
+                
+                shape.userData = {
+                    rotationSpeed: Math.random() * 0.01 + 0.005
+                };
+                
+                featuresScene.add(shape);
+            }
+
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            featuresScene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0x417690, 0.6);
+            directionalLight.position.set(3, 3, 3);
+            featuresScene.add(directionalLight);
+
+            featuresCamera.position.z = 4;
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = Date.now() * 0.001;
+
+            // Animate hero particles
+            if (heroParticles.length > 0) {
+                heroParticles.forEach(particle => {
+                    particle.rotation.x += particle.userData.rotationSpeed;
+                    particle.rotation.y += particle.userData.rotationSpeed;
+                    
+                    // Floating motion
+                    particle.position.y = particle.userData.initialY + Math.sin(time + particle.userData.initialX) * 0.5;
+                    
+                    // Mouse interaction
+                    particle.position.x = particle.userData.initialX + (mouseX * 0.0005);
+                    particle.position.z += (mouseY * 0.0005 - particle.position.z) * 0.05;
+                });
+
+                heroRenderer.render(heroScene, heroCamera);
+            }
+
+            // Animate features elements
+            if (featuresScene) {
+                featuresScene.children.forEach(child => {
+                    if (child.userData && child.userData.rotationSpeed) {
+                        child.rotation.x += child.userData.rotationSpeed;
+                        child.rotation.y += child.userData.rotationSpeed;
+                    }
+                });
+
+                featuresRenderer.render(featuresScene, featuresCamera);
+            }
+        }
+
+        // Mouse tracking
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - window.innerWidth / 2);
+            mouseY = (event.clientY - window.innerHeight / 2);
         });
+
+        // Tilt effect for feature cards
+        function initTiltEffect() {
+            const cards = document.querySelectorAll('[data-tilt]');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+                    card.style.transition = 'transform 0.1s ease-out';
+                });
+
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = (y - centerY) / 10;
+                    const rotateY = (centerX - x) / 10;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                    card.style.transition = 'transform 0.3s ease-out';
+                });
+            });
+        }
+
+        // Enhanced responsive window resize handler
+        function onWindowResize() {
+            // Throttle resize events for performance
+            clearTimeout(window.resizeTimeout);
+            window.resizeTimeout = setTimeout(() => {
+                handleResize();
+            }, 100);
+        }
+
+        function handleResize() {
+            const isSmallScreen = window.innerWidth <= 480;
+            const isMediumScreen = window.innerWidth <= 768;
+            
+            // Hero canvas resize
+            if (heroCamera && heroRenderer && !isSmallScreen) {
+                const heroContainer = document.getElementById('heroCanvas').parentElement;
+                if (heroContainer) {
+                    heroCamera.aspect = heroContainer.offsetWidth / heroContainer.offsetHeight;
+                    heroCamera.updateProjectionMatrix();
+                    heroRenderer.setSize(heroContainer.offsetWidth, heroContainer.offsetHeight);
+                    
+                    // Adjust particle count based on screen size
+                    if (isMediumScreen && heroParticles.length > 25) {
+                        // Remove some particles on smaller screens for performance
+                        for (let i = heroParticles.length - 1; i >= 25; i--) {
+                            heroScene.remove(heroParticles[i]);
+                            heroParticles.splice(i, 1);
+                        }
+                    }
+                }
+            }
+
+            // Features canvas resize
+            if (featuresCamera && featuresRenderer && !isSmallScreen) {
+                const featuresContainer = document.getElementById('featuresCanvas').parentElement;
+                if (featuresContainer) {
+                    featuresCamera.aspect = featuresContainer.offsetWidth / featuresContainer.offsetHeight;
+                    featuresCamera.updateProjectionMatrix();
+                    featuresRenderer.setSize(featuresContainer.offsetWidth, featuresContainer.offsetHeight);
+                }
+            }
+
+            // Hide/show canvases based on screen size
+            const heroCanvas = document.getElementById('heroCanvas');
+            const featuresCanvas = document.getElementById('featuresCanvas');
+            
+            if (isSmallScreen) {
+                if (heroCanvas) heroCanvas.style.display = 'none';
+                if (featuresCanvas) featuresCanvas.style.display = 'none';
+            } else {
+                if (heroCanvas) heroCanvas.style.display = 'block';
+                if (featuresCanvas) featuresCanvas.style.display = 'block';
+            }
+        }
+
+        // Debounced scroll handler for better performance
+        let scrollTimeout;
+        function throttledScrollHandler() {
+            if (scrollTimeout) return;
+            scrollTimeout = setTimeout(() => {
+                // Navbar scroll effect
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 10) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+                scrollTimeout = null;
+            }, 16); // ~60fps
+        }
+
+        // Scroll-triggered animations
+        function initScrollAnimations() {
+            const scrollElements = document.querySelectorAll('.scroll-reveal');
+            
+            const elementInView = (el, dividend = 1) => {
+                const elementTop = el.getBoundingClientRect().top;
+                return (
+                    elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
+                );
+            };
+
+            const elementOutofView = (el) => {
+                const elementTop = el.getBoundingClientRect().top;
+                return (
+                    elementTop > (window.innerHeight || document.documentElement.clientHeight)
+                );
+            };
+
+            const displayScrollElement = (element) => {
+                element.classList.add('revealed');
+            };
+
+            const hideScrollElement = (element) => {
+                element.classList.remove('revealed');
+            };
+
+            const handleScrollAnimation = () => {
+                scrollElements.forEach((el) => {
+                    if (elementInView(el, 1.25)) {
+                        displayScrollElement(el);
+                    } else if (elementOutofView(el)) {
+                        hideScrollElement(el);
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', () => {
+                handleScrollAnimation();
+            });
+
+            // Initial check for elements already in view
+            handleScrollAnimation();
+        }
+
+        // Page loading effect
+        function initPageLoadEffect() {
+            document.body.classList.add('page-loading');
+            
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    document.body.classList.remove('page-loading');
+                    document.body.classList.add('page-loaded');
+                }, 300);
+            });
+        }
+
+
+
+        // Particle background for features
+        function addParticleBackground() {
+            const featuresSection = document.querySelector('.features-3d-container');
+            if (!featuresSection) return;
+
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: absolute;
+                    width: ${Math.random() * 4 + 1}px;
+                    height: ${Math.random() * 4 + 1}px;
+                    background: linear-gradient(45deg, #667eea, #764ba2);
+                    border-radius: 50%;
+                    opacity: ${Math.random() * 0.5 + 0.1};
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    animation: float ${Math.random() * 10 + 5}s ease-in-out infinite;
+                    pointer-events: none;
+                `;
+                featuresSection.appendChild(particle);
+            }
+        }
+
+        // Initialize everything when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            initPageLoadEffect();
+            addParticleBackground();
+            
+            // Add throttled scroll handler for better performance
+            window.addEventListener('scroll', throttledScrollHandler);
+        });
+
+        window.addEventListener('load', () => {
+            initHero3D();
+            initFeatures3D();
+            initTiltEffect();
+            initScrollAnimations();
+            animate();
+            
+            // Trigger initial resize for proper responsive setup
+            setTimeout(() => {
+                handleResize();
+            }, 100);
+        });
+
+        // Enhanced resize handling with ResizeObserver for better performance
+        if (window.ResizeObserver) {
+            const resizeObserver = new ResizeObserver(entries => {
+                clearTimeout(window.resizeTimeout);
+                window.resizeTimeout = setTimeout(() => {
+                    handleResize();
+                }, 100);
+            });
+            
+            // Observe main sections for responsive updates
+            document.addEventListener('DOMContentLoaded', () => {
+                const heroSection = document.querySelector('.hero');
+                const featuresSection = document.querySelector('.features-3d-container');
+                
+                if (heroSection) resizeObserver.observe(heroSection);
+                if (featuresSection) resizeObserver.observe(featuresSection);
+            });
+        }
+
+        window.addEventListener('resize', onWindowResize);
     </script>
 {% endblock %}
