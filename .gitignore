@@ -7,8 +7,6 @@ __pycache__/
 bm_venv/
 venv/
 env/
-dev_settings.py
-db_dev.sqlite3
 
 # Create or edit .gitignore
 echo "__pycache__/" >> .gitignore
@@ -20,6 +18,8 @@ echo "*.pyc" >> .gitignore
 # Django migrations (optional: track only initial migrations)
 migrations/
 !migrations/__init__.py
+dev_settings.py
+db_dev.sqlite3
 
 # Database files
 *db.sqlite3

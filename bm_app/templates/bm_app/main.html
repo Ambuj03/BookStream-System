@@ -214,7 +214,7 @@
         let featuresScene, featuresCamera, featuresRenderer;
         let mouseX = 0, mouseY = 0;
 
-        // Initialize Hero 3D Background
+        // Initialize Hero 3D Background - Professional Version
         function initHero3D() {
             // Skip 3D initialization on small screens
             if (window.innerWidth <= 480) return;
@@ -224,75 +224,71 @@
             
             const container = canvas.parentElement;
             
-            // Scene setup
+            // Scene setup with professional parameters
             heroScene = new THREE.Scene();
-            heroCamera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            heroCamera = new THREE.PerspectiveCamera(60, container.offsetWidth / container.offsetHeight, 0.1, 1000);
             heroRenderer = new THREE.WebGLRenderer({ 
                 canvas: canvas, 
                 alpha: true,
-                antialias: window.devicePixelRatio <= 1, // Disable antialiasing on high DPI for performance
+                antialias: window.devicePixelRatio <= 1,
                 powerPreference: "high-performance"
             });
             heroRenderer.setSize(container.offsetWidth, container.offsetHeight);
             heroRenderer.setClearColor(0x000000, 0);
 
-            // Adjust particle count based on screen size
-            let particleCount = 50;
-            if (window.innerWidth <= 768) particleCount = 25;
+            // Reduced particle count for professional look
+            let particleCount = 25;
+            if (window.innerWidth <= 768) particleCount = 15;
             if (window.innerWidth <= 480) particleCount = 0;
             
-            const colors = [0x667eea, 0x764ba2, 0x667eea, 0x764ba2];
+            // Professional blue color palette
+            const colors = [0x1e40af, 0x1e3a8a, 0x3b82f6, 0x0ea5e9];
             
             for (let i = 0; i < particleCount; i++) {
-                // Create book-like geometry
+                // Smaller, more subtle book particles
                 const geometry = new THREE.BoxGeometry(
-                    Math.random() * 0.3 + 0.1,
-                    Math.random() * 0.4 + 0.2,
-                    Math.random() * 0.05 + 0.02
+                    Math.random() * 0.3 + 0.2,
+                    Math.random() * 0.4 + 0.3,
+                    Math.random() * 0.1 + 0.05
                 );
                 
                 const material = new THREE.MeshPhongMaterial({
                     color: colors[Math.floor(Math.random() * colors.length)],
                     transparent: true,
-                    opacity: 0.7
+                    opacity: 0.4
                 });
                 
                 const particle = new THREE.Mesh(geometry, material);
                 
-                // Random positioning
-                particle.position.x = (Math.random() - 0.5) * 20;
-                particle.position.y = (Math.random() - 0.5) * 10;
-                particle.position.z = (Math.random() - 0.5) * 10;
+                // More conservative positioning
+                particle.position.x = (Math.random() - 0.5) * 8;
+                particle.position.y = (Math.random() - 0.5) * 6;
+                particle.position.z = (Math.random() - 0.5) * 4;
                 
-                // Random rotation
-                particle.rotation.x = Math.random() * Math.PI;
-                particle.rotation.y = Math.random() * Math.PI;
-                particle.rotation.z = Math.random() * Math.PI;
-                
-                // Store initial position and random properties
                 particle.userData = {
                     initialX: particle.position.x,
                     initialY: particle.position.y,
-                    rotationSpeed: Math.random() * 0.02 + 0.01,
-                    floatSpeed: Math.random() * 0.02 + 0.01
+                    initialZ: particle.position.z,
+                    rotationSpeed: Math.random() * 0.005 + 0.002, // Slower rotation
+                    floatSpeed: Math.random() * 0.8 + 0.5
                 };
                 
-                heroParticles.push(particle);
                 heroScene.add(particle);
+                heroParticles.push(particle);
             }
 
-            // Add lighting
+            // Professional lighting setup
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             heroScene.add(ambientLight);
             
-            const directionalLight = new THREE.DirectionalLight(0x417690, 0.8);
-            directionalLight.position.set(5, 5, 5);
+            const directionalLight = new THREE.DirectionalLight(0x1e40af, 0.4);
+            directionalLight.position.set(2, 2, 2);
             heroScene.add(directionalLight);
 
-            heroCamera.position.z = 5;
+            heroCamera.position.z = 6;
         }
 
-        // Initialize Features 3D Background
+        // Initialize Features 3D Background - Professional Version
         function initFeatures3D() {
             // Skip 3D initialization on small screens
             if (window.innerWidth <= 480) return;
@@ -302,115 +298,116 @@
             
             const container = canvas.parentElement;
             
+            // Professional scene setup
             featuresScene = new THREE.Scene();
-            featuresCamera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            featuresCamera = new THREE.PerspectiveCamera(60, container.offsetWidth / container.offsetHeight, 0.1, 1000);
             featuresRenderer = new THREE.WebGLRenderer({ 
                 canvas: canvas, 
                 alpha: true,
-                antialias: window.devicePixelRatio <= 1, // Disable antialiasing on high DPI for performance
+                antialias: window.devicePixelRatio <= 1,
                 powerPreference: "high-performance"
             });
             featuresRenderer.setSize(container.offsetWidth, container.offsetHeight);
             featuresRenderer.setClearColor(0x000000, 0);
 
-            // Create geometric connections
+            // Subtle connecting lines - professional style
             const points = [];
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 8; i++) {
                 points.push(new THREE.Vector3(
-                    (Math.random() - 0.5) * 15,
-                    (Math.random() - 0.5) * 8,
-                    (Math.random() - 0.5) * 5
+                    (Math.random() - 0.5) * 6,
+                    (Math.random() - 0.5) * 4,
+                    (Math.random() - 0.5) * 2
                 ));
             }
 
-            // Create lines connecting points
             for (let i = 0; i < points.length - 1; i++) {
                 const geometry = new THREE.BufferGeometry().setFromPoints([points[i], points[i + 1]]);
                 const material = new THREE.LineBasicMaterial({
-                    color: 0x417690,
+                    color: 0x1e40af,
                     transparent: true,
-                    opacity: 0.3
+                    opacity: 0.15
                 });
                 const line = new THREE.Line(geometry, material);
                 featuresScene.add(line);
             }
 
-            // Add elegant floating orbs instead of geometric shapes
-            for (let i = 0; i < 12; i++) {
-                const geometry = new THREE.SphereGeometry(0.15, 16, 16);
+            // Professional floating orbs - corporate blue theme
+            for (let i = 0; i < 8; i++) {
+                const geometry = new THREE.SphereGeometry(0.12, 12, 12);
                 const material = new THREE.MeshPhongMaterial({
-                    color: new THREE.Color().setHSL(0.65 + Math.random() * 0.1, 0.7, 0.6),
+                    color: new THREE.Color().setHSL(0.6, 0.5, 0.6),
                     transparent: true,
-                    opacity: 0.6,
-                    emissive: new THREE.Color().setHSL(0.65 + Math.random() * 0.1, 0.3, 0.1)
+                    opacity: 0.5,
+                    emissive: new THREE.Color().setHSL(0.6, 0.3, 0.1)
                 });
                 
                 const orb = new THREE.Mesh(geometry, material);
-                orb.position.x = (Math.random() - 0.5) * 10;
-                orb.position.y = (Math.random() - 0.5) * 5;
-                orb.position.z = (Math.random() - 0.5) * 3;
+                orb.position.x = (Math.random() - 0.5) * 8;
+                orb.position.y = (Math.random() - 0.5) * 4;
+                orb.position.z = (Math.random() - 0.5) * 2;
                 
                 orb.userData = {
                     initialX: orb.position.x,
                     initialY: orb.position.y,
                     initialZ: orb.position.z,
-                    speed: Math.random() * 0.02 + 0.01,
-                    amplitude: Math.random() * 0.5 + 0.3
+                    speed: Math.random() * 0.015 + 0.008, // Slower movement
+                    amplitude: Math.random() * 0.3 + 0.2  // Smaller amplitude
                 };
                 
                 featuresScene.add(orb);
             }
 
-            // Add lighting
+            // Professional lighting
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
             featuresScene.add(ambientLight);
             
-            const directionalLight = new THREE.DirectionalLight(0x417690, 0.6);
-            directionalLight.position.set(3, 3, 3);
+            const directionalLight = new THREE.DirectionalLight(0x1e40af, 0.5);
+            directionalLight.position.set(2, 2, 2);
             featuresScene.add(directionalLight);
 
             featuresCamera.position.z = 4;
         }
 
-        // Animation loop
+        // Professional Animation Loop - Subtle Corporate Effects
         function animate() {
             requestAnimationFrame(animate);
 
-            const time = Date.now() * 0.001;
+            const time = Date.now() * 0.0005; // Slower time factor for subtle animations
 
-            // Animate hero particles
+            // Professional hero particles animation
             if (heroParticles.length > 0) {
                 heroParticles.forEach(particle => {
-                    particle.rotation.x += particle.userData.rotationSpeed;
-                    particle.rotation.y += particle.userData.rotationSpeed;
+                    // Subtle rotation
+                    particle.rotation.x += particle.userData.rotationSpeed * 0.5;
+                    particle.rotation.y += particle.userData.rotationSpeed * 0.3;
                     
-                    // Floating motion
-                    particle.position.y = particle.userData.initialY + Math.sin(time + particle.userData.initialX) * 0.5;
+                    // Gentle floating motion
+                    particle.position.y = particle.userData.initialY + Math.sin(time + particle.userData.initialX) * 0.3;
                     
-                    // Mouse interaction
-                    particle.position.x = particle.userData.initialX + (mouseX * 0.0005);
-                    particle.position.z += (mouseY * 0.0005 - particle.position.z) * 0.05;
+                    // Minimal mouse interaction for professionalism
+                    particle.position.x = particle.userData.initialX + (mouseX * 0.0002);
+                    particle.position.z += (mouseY * 0.0002 - particle.position.z) * 0.02;
                 });
 
                 heroRenderer.render(heroScene, heroCamera);
             }
 
-            // Animate features elements with smooth floating orbs
+            // Professional features elements animation
             if (featuresScene) {
                 featuresScene.children.forEach(child => {
                     if (child.userData && child.userData.speed) {
-                        // Smooth sine wave floating motion
+                        // Smooth, subtle floating motion
                         child.position.y = child.userData.initialY + Math.sin(time * child.userData.speed) * child.userData.amplitude;
-                        child.position.x = child.userData.initialX + Math.cos(time * child.userData.speed * 0.7) * (child.userData.amplitude * 0.5);
+                        child.position.x = child.userData.initialX + Math.cos(time * child.userData.speed * 0.8) * (child.userData.amplitude * 0.3);
                         
-                        // Subtle rotation for elegance
-                        child.rotation.x += 0.005;
-                        child.rotation.y += 0.003;
+                        // Very subtle rotation
+                        child.rotation.x += 0.002;
+                        child.rotation.y += 0.001;
                         
                         // Gentle pulsing glow effect
                         if (child.material && child.material.emissive) {
-                            const glowIntensity = 0.1 + Math.sin(time * 2 + child.userData.initialX) * 0.05;
-                            child.material.emissive.setHSL(0.65 + Math.sin(time) * 0.05, 0.3, glowIntensity);
+                            const glowIntensity = 0.08 + Math.sin(time * 1.5 + child.userData.initialX) * 0.02;
+                            child.material.emissive.setHSL(0.6, 0.3, glowIntensity);
                         }
                     }
                 });
@@ -584,51 +581,50 @@
 
 
 
-        // Enhanced particle background system
+        // Professional Corporate Particle System
         function addParticleBackground() {
             const featuresSection = document.querySelector('.features-3d-container');
             const heroSection = document.querySelector('.hero');
             if (!featuresSection) return;
 
-            // Features section particles - more elegant
-            for (let i = 0; i < 15; i++) {
+            // Features section particles - professional corporate style
+            for (let i = 0; i < 8; i++) {
                 const particle = document.createElement('div');
-                const size = Math.random() * 6 + 2;
-                const hue = 250 + Math.random() * 40; // Purple-blue range
+                const size = Math.random() * 4 + 2;
                 
                 particle.style.cssText = `
                     position: absolute;
                     width: ${size}px;
                     height: ${size}px;
-                    background: radial-gradient(circle, hsla(${hue}, 70%, 60%, 0.8), hsla(${hue}, 70%, 60%, 0));
+                    background: radial-gradient(circle, rgba(30, 64, 175, 0.6), rgba(30, 64, 175, 0));
                     border-radius: 50%;
                     left: ${Math.random() * 100}%;
                     top: ${Math.random() * 100}%;
-                    animation: elegant-float ${Math.random() * 15 + 10}s ease-in-out infinite;
-                    animation-delay: ${Math.random() * 5}s;
+                    animation: professional-float ${Math.random() * 20 + 15}s ease-in-out infinite;
+                    animation-delay: ${Math.random() * 8}s;
                     pointer-events: none;
-                    filter: blur(1px);
+                    filter: blur(0.5px);
                     z-index: 1;
                 `;
                 featuresSection.appendChild(particle);
             }
 
-            // Hero section ambient particles
+            // Hero section ambient particles - corporate blue theme
             if (heroSection) {
-                for (let i = 0; i < 8; i++) {
+                for (let i = 0; i < 5; i++) {
                     const particle = document.createElement('div');
-                    const size = Math.random() * 8 + 3;
+                    const size = Math.random() * 6 + 3;
                     
                     particle.style.cssText = `
                         position: absolute;
                         width: ${size}px;
                         height: ${size}px;
-                        background: radial-gradient(circle, rgba(102, 126, 234, 0.3), transparent);
+                        background: radial-gradient(circle, rgba(30, 64, 175, 0.3), transparent);
                         border-radius: 50%;
                         left: ${Math.random() * 100}%;
                         top: ${Math.random() * 100}%;
-                        animation: ambient-drift ${Math.random() * 20 + 15}s linear infinite;
-                        animation-delay: ${Math.random() * 8}s;
+                        animation: corporate-drift ${Math.random() * 30 + 25}s linear infinite;
+                        animation-delay: ${Math.random() * 10}s;
                         pointer-events: none;
                         z-index: 1;
                     `;
@@ -637,43 +633,43 @@
             }
         }
 
-        // Add CSS animations for particles
+        // Professional CSS animations for particles
         function addParticleAnimations() {
             const style = document.createElement('style');
             style.textContent = `
-                @keyframes elegant-float {
+                @keyframes professional-float {
                     0%, 100% {
                         transform: translateY(0px) translateX(0px) scale(1);
-                        opacity: 0.3;
+                        opacity: 0.2;
                     }
                     25% {
-                        transform: translateY(-20px) translateX(10px) scale(1.1);
-                        opacity: 0.6;
+                        transform: translateY(-15px) translateX(8px) scale(1.05);
+                        opacity: 0.4;
                     }
                     50% {
-                        transform: translateY(-10px) translateX(-5px) scale(0.9);
-                        opacity: 0.8;
+                        transform: translateY(-8px) translateX(-5px) scale(0.95);
+                        opacity: 0.6;
                     }
                     75% {
-                        transform: translateY(-30px) translateX(-10px) scale(1.05);
-                        opacity: 0.4;
+                        transform: translateY(-20px) translateX(-8px) scale(1.02);
+                        opacity: 0.3;
                     }
                 }
 
-                @keyframes ambient-drift {
+                @keyframes corporate-drift {
                     0% {
-                        transform: translateX(-100px) translateY(100vh) scale(0);
+                        transform: translateX(-50px) translateY(100vh) scale(0);
                         opacity: 0;
                     }
-                    10% {
-                        opacity: 0.3;
+                    15% {
+                        opacity: 0.2;
                         transform: scale(1);
                     }
-                    90% {
+                    85% {
                         opacity: 0.1;
                     }
                     100% {
-                        transform: translateX(100px) translateY(-100px) scale(0);
+                        transform: translateX(50px) translateY(-50px) scale(0);
                         opacity: 0;
                     }
                 }
